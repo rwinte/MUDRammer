@@ -34,29 +34,30 @@
 
 #import "HockeySDKPrivate.h"
 #import "BITHockeyHelper.h"
+#import "BITHockeyHelper+Application.h"
 
 #import "BITHockeyBaseManagerPrivate.h"
 #import "BITStoreUpdateManagerPrivate.h"
 
+@interface BITStoreUpdateManager ()
 
-@implementation BITStoreUpdateManager {
-  NSString *_newStoreVersion;
-  NSString *_appStoreURLString;
-  NSString *_currentUUID;
-  
-  BOOL _updateAlertShowing;
-  BOOL _lastCheckFailed;
-  
-  id _appDidBecomeActiveObserver;
-  id _networkDidBecomeReachableObserver;
-}
+@property (nonatomic, copy) NSString *latestStoreVersion;
+@property (nonatomic, copy) NSString *appStoreURLString;
+@property (nonatomic, copy) NSString *currentUUID;
+@property (nonatomic) BOOL updateAlertShowing;
+@property (nonatomic) BOOL lastCheckFailed;
+@property (nonatomic, weak) id appDidBecomeActiveObserver;
+@property (nonatomic, weak) id networkDidBecomeReachableObserver;
 
+@end
+
+@implementation BITStoreUpdateManager
 
 #pragma mark - private
 
 - (void)reportError:(NSError *)error {
-  BITHockeyLog(@"ERROR: %@", [error localizedDescription]);
-  _lastCheckFailed = YES;
+  BITHockeyLogError(@"ERROR: %@", [error localizedDescription]);
+  self.lastCheckFailed = YES;
 }
 
 
@@ -64,7 +65,7 @@
   if ([self shouldCancelProcessing]) return;
   
   if ([self isCheckingForUpdateOnLaunch] && [self shouldAutoCheckForUpdates]) {
-    [self performSelector:@selector(checkForUpdateDelayed) withObject:nil afterDelay:1.0f];
+    [self performSelector:@selector(checkForUpdateDelayed) withObject:nil afterDelay:1.0];
   }
 }
 
@@ -72,20 +73,20 @@
 
 - (void) registerObservers {
   __weak typeof(self) weakSelf = self;
-  if(nil == _appDidBecomeActiveObserver) {
-    _appDidBecomeActiveObserver = [[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationDidBecomeActiveNotification
+  if(nil == self.appDidBecomeActiveObserver) {
+    self.appDidBecomeActiveObserver = [[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationDidBecomeActiveNotification
                                                                                     object:nil
                                                                                      queue:NSOperationQueue.mainQueue
-                                                                                usingBlock:^(NSNotification *note) {
+                                                                                usingBlock:^(NSNotification __unused *note) {
                                                                                   typeof(self) strongSelf = weakSelf;
                                                                                   [strongSelf didBecomeActiveActions];
                                                                                 }];
   }
-  if(nil == _networkDidBecomeReachableObserver) {
-    _networkDidBecomeReachableObserver = [[NSNotificationCenter defaultCenter] addObserverForName:BITHockeyNetworkDidBecomeReachableNotification
+  if(nil == self.networkDidBecomeReachableObserver) {
+    self.networkDidBecomeReachableObserver = [[NSNotificationCenter defaultCenter] addObserverForName:BITHockeyNetworkDidBecomeReachableNotification
                                                                                      object:nil
                                                                                       queue:NSOperationQueue.mainQueue
-                                                                                 usingBlock:^(NSNotification *note) {
+                                                                                 usingBlock:^(NSNotification __unused *note) {
                                                                                    typeof(self) strongSelf = weakSelf;
                                                                                    [strongSelf didBecomeActiveActions];
                                                                                  }];
@@ -93,13 +94,15 @@
 }
 
 - (void) unregisterObservers {
-  if(_appDidBecomeActiveObserver) {
-    [[NSNotificationCenter defaultCenter] removeObserver:_appDidBecomeActiveObserver];
-    _appDidBecomeActiveObserver = nil;
+  id strongAppDidBecomeActiveObserver = self.appDidBecomeActiveObserver;
+  id strongNetworkDidBecomeReachableObserver = self.networkDidBecomeReachableObserver;
+  if(strongAppDidBecomeActiveObserver) {
+    [[NSNotificationCenter defaultCenter] removeObserver:strongAppDidBecomeActiveObserver];
+    self.appDidBecomeActiveObserver = nil;
   }
-  if(_networkDidBecomeReachableObserver) {
-    [[NSNotificationCenter defaultCenter] removeObserver:_networkDidBecomeReachableObserver];
-    _networkDidBecomeReachableObserver = nil;
+  if(strongNetworkDidBecomeReachableObserver) {
+    [[NSNotificationCenter defaultCenter] removeObserver:strongNetworkDidBecomeReachableObserver];
+    self.networkDidBecomeReachableObserver = nil;
   }
 }
 
@@ -114,7 +117,7 @@
     _enableStoreUpdateManager = NO;
     _updateAlertShowing = NO;
     _updateUIEnabled = YES;
-    _newStoreVersion = nil;
+    _latestStoreVersion = nil;
     _appStoreURLString = nil;
     _currentUUID = [[self executableUUID] copy];
     _countryCode = nil;
@@ -128,7 +131,7 @@
     self.updateSetting = BITStoreUpdateCheckWeekly;
 
     if (!BITHockeyBundle()) {
-      NSLog(@"[HockeySDK] WARNING: %@ is missing, built in UI is deactivated!", BITHOCKEYSDK_BUNDLE);
+      BITHockeyLogWarning(@"[HockeySDK] WARNING: %@ is missing, built in UI is deactivated!", BITHOCKEYSDK_BUNDLE);
     }
   }
   return self;
@@ -155,9 +158,9 @@
   if ([self.userDefaults objectForKey:kBITStoreUpdateLastUUID]) {
     lastSavedUUID = [self.userDefaults objectForKey:kBITStoreUpdateLastUUID];
 
-    if (lastSavedUUID && [lastSavedUUID length] > 0 && ![lastSavedUUID isEqualToString:_currentUUID]) {
+    if (lastSavedUUID && [lastSavedUUID length] > 0 && ![lastSavedUUID isEqualToString:self.currentUUID]) {
       // the UUIDs don't match, store the new one
-      [self.userDefaults setObject:_currentUUID forKey:kBITStoreUpdateLastUUID];
+      [self.userDefaults setObject:self.currentUUID forKey:kBITStoreUpdateLastUUID];
       
       if (versionString) {
         // a new version has been installed, reset everything
@@ -165,8 +168,6 @@
         [self.userDefaults removeObjectForKey:kBITStoreUpdateLastStoreVersion];
         versionString = nil;
       }
-
-      [self.userDefaults synchronize];
     }
   }
   
@@ -174,26 +175,26 @@
 }
 
 - (BOOL)hasNewVersion:(NSDictionary *)dictionary {
-  _lastCheckFailed = YES;
+  self.lastCheckFailed = YES;
   
   NSString *lastStoreVersion = [self lastStoreVersion];
   
   if ([[dictionary objectForKey:@"results"] isKindOfClass:[NSArray class]] &&
       [(NSArray *)[dictionary objectForKey:@"results"] count] > 0 ) {
-    _lastCheckFailed = NO;
+    self.lastCheckFailed = NO;
 
-    _newStoreVersion = [(NSDictionary *)[(NSArray *)[dictionary objectForKey:@"results"] objectAtIndex:0] objectForKey:@"version"];
-    _appStoreURLString = [(NSDictionary *)[(NSArray *)[dictionary objectForKey:@"results"] objectAtIndex:0] objectForKey:@"trackViewUrl"];
+    self.latestStoreVersion = [(NSDictionary *)[(NSArray *)[dictionary objectForKey:@"results"] objectAtIndex:0] objectForKey:@"version"];
+    self.appStoreURLString = [(NSDictionary *)[(NSArray *)[dictionary objectForKey:@"results"] objectAtIndex:0] objectForKey:@"trackViewUrl"];
     
     NSString *ignoredVersion = nil;
     if ([self.userDefaults objectForKey:kBITStoreUpdateIgnoreVersion]) {
       ignoredVersion = [self.userDefaults objectForKey:kBITStoreUpdateIgnoreVersion];
-      BITHockeyLog(@"INFO: Ignored version: %@", ignoredVersion);
+      BITHockeyLogDebug(@"INFO: Ignored version: %@", ignoredVersion);
     }
     
-    if (!_newStoreVersion || !_appStoreURLString) {
+    if (!self.latestStoreVersion || !self.appStoreURLString) {
       return NO;
-    } else if (ignoredVersion && [ignoredVersion isEqualToString:_newStoreVersion]) {
+    } else if (ignoredVersion && [ignoredVersion isEqualToString:self.latestStoreVersion]) {
       return NO;
     } else if (!lastStoreVersion) {
       // this is the very first time we get a valid response and
@@ -203,14 +204,13 @@
       // iTunes Connect doesn't have to match CFBundleVersion or CFBundleShortVersionString
       // and even if it matches it is hard/impossible to 100% determine which one it is,
       // since they could change at any time
-      [self.userDefaults setObject:_currentUUID forKey:kBITStoreUpdateLastUUID];
-      [self.userDefaults setObject:_newStoreVersion forKey:kBITStoreUpdateLastStoreVersion];
-      [self.userDefaults synchronize];
+      [self.userDefaults setObject:self.currentUUID forKey:kBITStoreUpdateLastUUID];
+      [self.userDefaults setObject:self.latestStoreVersion forKey:kBITStoreUpdateLastStoreVersion];
       return NO;
     } else {
-      BITHockeyLog(@"INFO: Compare new version string %@ with %@", _newStoreVersion, lastStoreVersion);
+      BITHockeyLogDebug(@"INFO: Compare new version string %@ with %@", self.latestStoreVersion, lastStoreVersion);
       
-      NSComparisonResult comparisonResult = bit_versionCompare(_newStoreVersion, lastStoreVersion);
+      NSComparisonResult comparisonResult = bit_versionCompare(self.latestStoreVersion, lastStoreVersion);
       
       if (comparisonResult == NSOrderedDescending) {
         return YES;
@@ -261,8 +261,15 @@
 #pragma mark - Private
 
 - (BOOL)shouldCancelProcessing {
-  if (![self isAppStoreEnvironment]) return YES;
-  if (![self isStoreUpdateManagerEnabled]) return YES;
+  if (self.appEnvironment != BITEnvironmentAppStore) {
+    BITHockeyLogWarning(@"WARNING: StoreUpdateManager is cancelled because it's not running in an AppStore environment");
+    return YES;
+  }
+  
+  if (![self isStoreUpdateManagerEnabled]) {
+    return YES;
+  }
+  
   return NO;
 }
 
@@ -276,7 +283,7 @@
   NSDictionary *json = (NSDictionary *)[NSJSONSerialization JSONObjectWithData:data options:0 error:&error];
   
   if (error) {
-    BITHockeyLog(@"ERROR: Invalid JSON string. %@", [error localizedDescription]);
+    BITHockeyLogError(@"ERROR: Invalid JSON string. %@", [error localizedDescription]);
     return NO;
   }
   
@@ -285,24 +292,24 @@
   
   self.updateAvailable = [self hasNewVersion:json];
   
-  BITHockeyLog(@"INFO: Update available: %i", self.updateAvailable);
+  BITHockeyLogDebug(@"INFO: Update available: %i", self.updateAvailable);
   
-  if (_lastCheckFailed) {
-    BITHockeyLog(@"ERROR: Last check failed");
+  if (self.lastCheckFailed) {
+    BITHockeyLogError(@"ERROR: Last check failed");
     return NO;
   }
   
   if ([self isUpdateAvailable]) {
-    if (self.delegate && [self.delegate respondsToSelector:@selector(detectedUpdateFromStoreUpdateManager:newVersion:storeURL:)]) {
-      [self.delegate detectedUpdateFromStoreUpdateManager:self newVersion:_newStoreVersion storeURL:[NSURL URLWithString:_appStoreURLString]];
+    id strongDelegate = self.delegate;
+    if ([strongDelegate respondsToSelector:@selector(detectedUpdateFromStoreUpdateManager:newVersion:storeURL:)]) {
+      [strongDelegate detectedUpdateFromStoreUpdateManager:self newVersion:self.latestStoreVersion storeURL:[NSURL URLWithString:self.appStoreURLString]];
     }
     
     if (self.updateUIEnabled && BITHockeyBundle()) {
       [self showUpdateAlert];
     } else {
       // Ignore this version
-      [self.userDefaults setObject:_newStoreVersion forKey:kBITStoreUpdateIgnoreVersion];
-      [self.userDefaults synchronize];
+      [self.userDefaults setObject:self.latestStoreVersion forKey:kBITStoreUpdateIgnoreVersion];
     }
   }
   
@@ -320,7 +327,7 @@
   
   // do we need to update?
   if (!manual && ![self shouldAutoCheckForUpdates]) {
-    BITHockeyLog(@"INFO: Update check not needed right now");
+    BITHockeyLogDebug(@"INFO: Update check not needed right now");
     self.checkInProgress = NO;
     return;
   }
@@ -334,7 +341,7 @@
       country = [NSString stringWithFormat:@"&country=%@", [(NSDictionary *)self.currentLocale objectForKey:NSLocaleCountryCode]];
     } else {
       // don't check, just to be save
-      BITHockeyLog(@"ERROR: Locale returned nil, can't determine the store to use!");
+      BITHockeyLogError(@"ERROR: Locale returned nil, can't determine the store to use!");
       self.checkInProgress = NO;
       return;
     }
@@ -342,32 +349,46 @@
   
   NSString *appBundleIdentifier = [self.mainBundle objectForInfoDictionaryKey:@"CFBundleIdentifier"];
   
-  NSString *url = [NSString stringWithFormat:@"http://itunes.apple.com/lookup?bundleId=%@%@",
+  NSString *url = [NSString stringWithFormat:@"https://itunes.apple.com/lookup?bundleId=%@%@",
                    bit_URLEncodedString(appBundleIdentifier),
                    country];
   
-  BITHockeyLog(@"INFO: Sending request to %@", url);
+  BITHockeyLogDebug(@"INFO: Sending request to %@", url);
   
-  NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:url] cachePolicy:1 timeoutInterval:10.0];
+  NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:(NSURL *)[NSURL URLWithString:url] cachePolicy:1 timeoutInterval:10.0];
   [request setHTTPMethod:@"GET"];
   [request setValue:@"gzip" forHTTPHeaderField:@"Accept-Encoding"];
   
-  [NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *responseData, NSError *error){
-    self.checkInProgress = NO;
+  __weak typeof (self) weakSelf = self;
+  NSURLSessionConfiguration *sessionConfiguration = [NSURLSessionConfiguration defaultSessionConfiguration];
+  __block NSURLSession *session = [NSURLSession sessionWithConfiguration:sessionConfiguration];
+
+  NSURLSessionDataTask *task = [session dataTaskWithRequest:request
+                                          completionHandler: ^(NSData *data, NSURLResponse __unused *response, NSError *error) {
+                                            typeof (self) strongSelf = weakSelf;
+
+                                            [session finishTasksAndInvalidate];
+
+                                            [strongSelf handleResponeWithData:data error:error];
+                                          }];
+  [task resume];
+}
+
+- (void)handleResponeWithData:(NSData *)responseData error:(NSError *)error{
+  self.checkInProgress = NO;
+  
+  if (error) {
+    [self reportError:error];
+  } else if ([responseData length]) {
+    NSString *responseString = [[NSString alloc] initWithBytes:[responseData bytes] length:[responseData length] encoding: NSUTF8StringEncoding];
+    BITHockeyLogWarning(@"INFO: Received API response: %@", responseString);
     
-    if (error) {
-      [self reportError:error];
-    } else if ([responseData length]) {
-      NSString *responseString = [[NSString alloc] initWithBytes:[responseData bytes] length:[responseData length] encoding: NSUTF8StringEncoding];
-      BITHockeyLog(@"INFO: Received API response: %@", responseString);
-      
-      if (!responseString || ![responseString dataUsingEncoding:NSUTF8StringEncoding]) {
-        return;
-      }
-      
-      [self processStoreResponseWithString:responseString];
+    if (!responseString || ![responseString dataUsingEncoding:NSUTF8StringEncoding]) {
+      return;
     }
-  }];
+    
+    [self processStoreResponseWithString:responseString];
+  }
 }
 
 - (void)checkForUpdateDelayed {
@@ -383,25 +404,26 @@
 - (void)startManager {
   if ([self shouldCancelProcessing]) return;
   
-  BITHockeyLog(@"INFO: Start UpdateManager");
+  BITHockeyLogDebug(@"INFO: Start UpdateManager");
 
   if ([self.userDefaults objectForKey:kBITStoreUpdateDateOfLastCheck]) {
     self.lastCheck = [self.userDefaults objectForKey:kBITStoreUpdateDateOfLastCheck];
   }
   
-  if (!_lastCheck) {
+  if (!self.lastCheck) {
     self.lastCheck = [NSDate distantPast];
   }
   
   [self registerObservers];
   
   // we are already delayed, so the notification already came in and this won't invoked twice
-  switch ([[UIApplication sharedApplication] applicationState]) {
-    case UIApplicationStateActive:
+  switch ([BITHockeyHelper applicationState]) {
+    case BITApplicationStateActive:
       [self didBecomeActiveActions];
       break;
-    case UIApplicationStateBackground:
-    case UIApplicationStateInactive:
+    case BITApplicationStateBackground:
+    case BITApplicationStateInactive:
+    case BITApplicationStateUnknown:
       // do nothing, wait for active state
       break;
   }
@@ -411,18 +433,39 @@
 #pragma mark - Alert
 
 - (void)showUpdateAlert {
-  if (!_updateAlertShowing) {
-    NSString *versionString = [NSString stringWithFormat:@"%@ %@", BITHockeyLocalizedString(@"UpdateVersion"), _newStoreVersion];
-    
-    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:BITHockeyLocalizedString(@"UpdateAvailable")
-                                                        message:[NSString stringWithFormat:BITHockeyLocalizedString(@"UpdateAlertTextWithAppVersion"), versionString]
-                                                       delegate:self
-                                              cancelButtonTitle:BITHockeyLocalizedString(@"UpdateIgnore")
-                                              otherButtonTitles:BITHockeyLocalizedString(@"UpdateRemindMe"), BITHockeyLocalizedString(@"UpdateShow"), nil
-                              ];
-    [alertView show];
-    _updateAlertShowing = YES;
+  dispatch_async(dispatch_get_main_queue(), ^{
+  if (!self.updateAlertShowing) {
+    NSString *versionString = [NSString stringWithFormat:@"%@ %@", BITHockeyLocalizedString(@"UpdateVersion"), self.latestStoreVersion];
+    __weak typeof(self) weakSelf = self;
+
+    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:BITHockeyLocalizedString(@"UpdateAvailable")
+                                                                             message:[NSString stringWithFormat:BITHockeyLocalizedString(@"UpdateAlertTextWithAppVersion"), versionString]
+                                                                      preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertAction *ignoreAction = [UIAlertAction actionWithTitle:BITHockeyLocalizedString(@"UpdateIgnore")
+                                                           style:UIAlertActionStyleCancel
+                                                         handler:^(UIAlertAction __unused *action) {
+                                                           typeof(self) strongSelf = weakSelf;
+                                                           [strongSelf ignoreAction];
+                                                         }];
+    [alertController addAction:ignoreAction];
+    UIAlertAction *remindAction = [UIAlertAction actionWithTitle:BITHockeyLocalizedString(@"UpdateRemindMe")
+                                                           style:UIAlertActionStyleDefault
+                                                         handler:^(UIAlertAction __unused *action) {
+                                                           typeof(self) strongSelf = weakSelf;
+                                                           [strongSelf remindAction];
+                                                         }];
+    [alertController addAction:remindAction];
+    UIAlertAction *showAction = [UIAlertAction actionWithTitle:BITHockeyLocalizedString(@"UpdateShow")
+                                                         style:UIAlertActionStyleDefault
+                                                       handler:^(UIAlertAction __unused *action) {
+                                                         typeof(self) strongSelf = weakSelf;
+                                                         [strongSelf showAction];
+                                                       }];
+    [alertController addAction:showAction];
+    [self showAlertController:alertController];
+    self.updateAlertShowing = YES;
   }
+  });
 }
 
 
@@ -433,31 +476,26 @@
     _lastCheck = aLastCheck;
     
     [self.userDefaults setObject:self.lastCheck forKey:kBITStoreUpdateDateOfLastCheck];
-    [self.userDefaults synchronize];
   }
 }
 
-#pragma mark - UIAlertViewDelegate
+- (void)ignoreAction {
+  self.updateAlertShowing = NO;
+  [self.userDefaults setObject:self.latestStoreVersion forKey:kBITStoreUpdateIgnoreVersion];
+}
 
-// invoke the selected action from the action sheet for a location element
-- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex {
-  _updateAlertShowing = NO;
-  if (buttonIndex == [alertView cancelButtonIndex]) {
-    // Ignore
-    [self.userDefaults setObject:_newStoreVersion forKey:kBITStoreUpdateIgnoreVersion];
-    [self.userDefaults synchronize];
-  } else if (buttonIndex == [alertView firstOtherButtonIndex]) {
-    // Remind button
-  } else if (buttonIndex == [alertView firstOtherButtonIndex] + 1) {
-    // Show button
-    [self.userDefaults setObject:_newStoreVersion forKey:kBITStoreUpdateIgnoreVersion];
-    [self.userDefaults synchronize];
-    
-    if (_appStoreURLString) {
-      [[UIApplication sharedApplication] openURL:[NSURL URLWithString:_appStoreURLString]];
-    } else {
-      BITHockeyLog(@"WARNING: The app store page couldn't be opened, since we did not get a valid URL from the store API.");
-    }
+- (void)remindAction {
+  self.updateAlertShowing = NO;
+}
+
+- (void)showAction {
+  self.updateAlertShowing = NO;
+  [self.userDefaults setObject:self.latestStoreVersion forKey:kBITStoreUpdateIgnoreVersion];
+  
+  if (self.appStoreURLString) {
+    [[UIApplication sharedApplication] openURL:(NSURL *)[NSURL URLWithString:self.appStoreURLString]];
+  } else {
+    BITHockeyLogWarning(@"WARNING: The app store page couldn't be opened, since we did not get a valid URL from the store API.");
   }
 }
 

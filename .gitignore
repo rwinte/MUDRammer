@@ -25,3 +25,4 @@ vendor/bundle
 .bundle
 src/Pods/CocoaPodsKeys
 Keys.xcscheme
+Pods

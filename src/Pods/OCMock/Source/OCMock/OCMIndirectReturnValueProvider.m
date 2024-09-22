@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2009-2014 Erik Doernenburg and contributors
+ *  Copyright (c) 2009-2020 Erik Doernenburg and contributors
  *
  *  Licensed under the Apache License, Version 2.0 (the "License"); you may
  *  not use these files except in compliance with the License. You may obtain
@@ -14,7 +14,6 @@
  *  under the License.
  */
 
-#import "NSMethodSignature+OCMAdditions.h"
 #import "OCMIndirectReturnValueProvider.h"
 
 
@@ -22,9 +21,12 @@
 
 - (id)initWithProvider:(id)aProvider andSelector:(SEL)aSelector
 {
-	self = [super init];
-	provider = [aProvider retain];
-	selector = aSelector;
+    if ((self = [super init]))
+    {
+        provider = [aProvider retain];
+        selector = aSelector;
+    }
+	
 	return self;
 }
 
@@ -36,9 +38,15 @@
 
 - (void)handleInvocation:(NSInvocation *)anInvocation
 {
-	[anInvocation setTarget:provider];
+    id originalTarget = [anInvocation target];
+    SEL originalSelector = [anInvocation selector];
+
+    [anInvocation setTarget:provider];
 	[anInvocation setSelector:selector];
 	[anInvocation invoke];
+
+    [anInvocation setTarget:originalTarget];
+    [anInvocation setSelector:originalSelector];
 }
 
 @end

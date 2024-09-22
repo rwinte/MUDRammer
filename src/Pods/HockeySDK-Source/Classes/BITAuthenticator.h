@@ -230,7 +230,7 @@ typedef NS_ENUM(NSUInteger, BITAuthenticatorAppRestrictionEnforcementFrequency) 
  * @see identificationType
  * @see handleOpenURL:sourceApplication:annotation:
  */
-@property (nonatomic, strong) NSString *urlScheme;
+@property (nonatomic, copy) NSString *urlScheme;
 
 /**
  Should be used by the app-delegate to forward handle application:openURL:sourceApplication:annotation: calls.
@@ -313,7 +313,7 @@ typedef NS_ENUM(NSUInteger, BITAuthenticatorAppRestrictionEnforcementFrequency) 
  * @see authenticateInstallation
  * @see validateWithCompletion:
  *
- * @param completion Block being executed once identification completed
+ * @param completion Block being executed once identification completed. Be sure to properly dispatch code to the main queue if necessary.
  */
 - (void) identifyWithCompletion:(void(^)(BOOL identified, NSError *error)) completion;
 
@@ -342,7 +342,7 @@ typedef NS_ENUM(NSUInteger, BITAuthenticatorAppRestrictionEnforcementFrequency) 
  * @see authenticateInstallation
  * @see identifyWithCompletion:
  *
- * @param completion Block being executed once validation completed
+ * @param completion Block being executed once validation completed. Be sure to properly dispatch code to the main queue if necessary.
  */
 - (void) validateWithCompletion:(void(^)(BOOL validated, NSError *error)) completion;
 

@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2006-2014 Erik Doernenburg and contributors
+ *  Copyright (c) 2006-2020 Erik Doernenburg and contributors
  *
  *  Licensed under the Apache License, Version 2.0 (the "License"); you may
  *  not use these files except in compliance with the License. You may obtain
@@ -14,22 +14,191 @@
  *  under the License.
  */
 
+#import <objc/runtime.h>
+#import <Availability.h>
+#import <TargetConditionals.h>
 #import "NSInvocation+OCMAdditions.h"
-#import "OCMFunctions.h"
+#import "OCMFunctionsPrivate.h"
+#import "NSMethodSignature+OCMAdditions.h"
+
+
+#if (TARGET_OS_OSX && (!defined(__MAC_10_10) || __MAC_OS_X_VERSION_MIN_REQUIRED < __MAC_10_10)) || \
+    (TARGET_OS_IPHONE && (!defined(__IPHONE_8_0) || __IPHONE_OS_VERSION_MIN_REQUIRED < __IPHONE_8_0))
+static BOOL OCMObjectIsClass(id object) {
+  return class_isMetaClass(object_getClass(object));
+}
+#define object_isClass OCMObjectIsClass
+#endif
 
 
 @implementation NSInvocation(OCMAdditions)
 
-- (BOOL)hasCharPointerArgument
++ (NSInvocation *)invocationForBlock:(id)block withArguments:(NSArray *)arguments
 {
-    NSMethodSignature *signature = [self methodSignature];
-    for(NSUInteger i = 0; i < [signature numberOfArguments]; i++)
+	NSMethodSignature *sig = [NSMethodSignature signatureForBlock:block];
+	NSInvocation *inv = [self invocationWithMethodSignature:sig];
+
+	NSUInteger numArgsRequired = sig.numberOfArguments - 1;
+	if((arguments != nil) && ([arguments count] != numArgsRequired))
+		[NSException raise:NSInvalidArgumentException format:@"Specified too few arguments for block; expected %lu arguments.", (unsigned long) numArgsRequired];
+
+	for(NSUInteger i = 0, j = 1; i < numArgsRequired; ++i, ++j)
+	{
+		id arg = [arguments objectAtIndex:i];
+		[inv setArgumentWithObject:arg atIndex:j];
+	}
+
+	return inv;
+
+}
+
+
+static NSString *const OCMRetainedObjectArgumentsKey = @"OCMRetainedObjectArgumentsKey";
+
+- (void)retainObjectArgumentsExcludingObject:(id)objectToExclude
+{
+    if(objc_getAssociatedObject(self, OCMRetainedObjectArgumentsKey) != nil)
     {
-        const char *argType = OCMTypeWithoutQualifiers([signature getArgumentTypeAtIndex:i]);
-        if(strcmp(argType, "*") == 0)
-            return YES;
+        // looks like we've retained the arguments already; do nothing else
+        return;
     }
-    return NO;
+
+    NSMutableArray *retainedArguments = [[NSMutableArray alloc] init];
+
+    id target = [self target];
+    if((target != nil) && (target != objectToExclude) && !object_isClass(target))
+    {
+        // Bad things will happen if the target is a block since it's not being
+        // copied. There isn't a very good way to tell if an invocation's target
+        // is a block though (the argument type at index 0 is always "@" even if
+        // the target is a Class or block), and in practice it's OK since you
+        // can't mock a block.
+        [retainedArguments addObject:target];
+    }
+
+    NSUInteger numberOfArguments = [[self methodSignature] numberOfArguments];
+    for(NSUInteger index = 2; index < numberOfArguments; index++)
+    {
+        const char *argumentType = [[self methodSignature] getArgumentTypeAtIndex:index];
+        if(OCMIsObjectType(argumentType))
+        {
+            id argument;
+            [self getArgument:&argument atIndex:index];
+            if((argument != nil) && (argument != objectToExclude))
+            {
+                if(OCMIsBlockType(argumentType))
+                {
+                    // Block types need to be copied because they could be stack blocks.
+                    // However, non-escaping blocks have a lifetime that is stack-based and they
+                    // treat copy/release as a no-op. For details see:
+                    // https://reviews.llvm.org/rGdbfa453e4138bb977644929c69d1c71e5e8b4bee
+                    // If we keep a reference to a non-escaping block in retainedArguments, it
+                    // will end up as dangling pointer, resulting in a crash later.
+                    if(OCMIsNonEscapingBlock(argument) == NO)
+                    {
+                        id blockArgument = [argument copy];
+                        [retainedArguments addObject:blockArgument];
+                        [blockArgument release];
+                    }
+                }
+                else if(OCMIsClassType(argumentType) && object_isClass(argument))
+                {
+                    // The argument's type is class and the passed argument is a class. In this
+                    // case do not retain the argument. Note: Even though the type is class the
+                    // argument could be a non-class, e.g. an instance of OCMArg.
+                }
+                else
+                {
+                	[retainedArguments addObject:argument];
+                }
+            }
+        }
+    }
+
+    const char *returnType = [[self methodSignature] methodReturnType];
+    if(OCMIsObjectType(returnType))
+    {
+        id returnValue;
+        [self getReturnValue:&returnValue];
+        if((returnValue != nil) && (returnValue != objectToExclude))
+        {
+            if(OCMIsBlockType(returnType))
+            {
+                // See above for an explanation
+                if(OCMIsNonEscapingBlock(returnValue) == NO)
+                {
+                    id blockReturnValue = [returnValue copy];
+                    [retainedArguments addObject:blockReturnValue];
+                    [blockReturnValue release];
+                }
+            }
+            else
+            {
+                [retainedArguments addObject:returnValue];
+            }
+        }
+    }
+
+    objc_setAssociatedObject(self, OCMRetainedObjectArgumentsKey, retainedArguments, OBJC_ASSOCIATION_RETAIN);
+    [retainedArguments release];
+}
+
+
+- (void)setArgumentWithObject:(id)arg atIndex:(NSInteger)idx
+{
+	const char *typeEncoding = [[self methodSignature] getArgumentTypeAtIndex:idx];
+	if((arg == nil) || ([arg respondsToSelector:@selector(isKindOfClass:)] && [arg isKindOfClass:[NSNull class]]))
+	{
+		if(typeEncoding[0] == '^')
+		{
+			void *nullPtr = NULL;
+			[self setArgument:&nullPtr atIndex:idx];
+		}
+		else if(typeEncoding[0] == '@')
+		{
+			id nilObj =  nil;
+			[self setArgument:&nilObj atIndex:idx];
+		}
+		else if(OCMNumberTypeForObjCType(typeEncoding))
+		{
+			NSUInteger argSize;
+			NSGetSizeAndAlignment(typeEncoding, NULL, &argSize);
+			void *argBuffer = calloc(1, argSize);
+			[self setArgument:argBuffer atIndex:idx];
+			free(argBuffer);
+		}
+		else
+		{
+			[NSException raise:NSInvalidArgumentException format:@"Unable to create default value for type '%s'.", typeEncoding];
+		}
+	}
+	else if(OCMIsObjectType(typeEncoding))
+	{
+		[self setArgument:&arg atIndex:idx];
+	}
+	else
+	{
+		if(![arg isKindOfClass:[NSValue class]])
+			[NSException raise:NSInvalidArgumentException format:@"Argument '%@' should be boxed in NSValue.", arg];
+
+		char const *valEncoding = [arg objCType];
+
+		/// @note Here we allow any data pointer to be passed as a void pointer and
+		/// any numerical types to be passed as arguments to the block.
+		BOOL takesVoidPtr = !strcmp(typeEncoding, "^v") && valEncoding[0] == '^';
+		BOOL takesNumber = OCMNumberTypeForObjCType(typeEncoding) && OCMNumberTypeForObjCType(valEncoding);
+
+		if(!takesVoidPtr && !takesNumber && !OCMEqualTypesAllowingOpaqueStructs(typeEncoding, valEncoding))
+			[NSException raise:NSInvalidArgumentException format:@"Argument type mismatch; type of argument required is '%s' but type of value provided is '%s'", typeEncoding, valEncoding];
+
+		NSUInteger argSize;
+		NSGetSizeAndAlignment(typeEncoding, &argSize, NULL);
+		void *argBuffer = malloc(argSize);
+		[arg getValue:argBuffer];
+		[self setArgument:argBuffer atIndex:idx];
+		free(argBuffer);
+	}
+
 }
 
 
@@ -364,8 +533,8 @@
 	char *cStringPtr;
 	
 	[self getArgument:&cStringPtr atIndex:anInt];
-	strncpy(buffer, cStringPtr, 100);
-    strcpy(buffer + 100, "...");
+	strlcpy(buffer, cStringPtr, sizeof(buffer));
+	strlcpy(buffer + 100, "...", (sizeof(buffer) - 100));
 	return [NSString stringWithFormat:@"\"%s\"", buffer];
 }
 
@@ -376,5 +545,60 @@
 	[self getArgument:&selectorValue atIndex:anInt];
 	return [NSString stringWithFormat:@"@selector(%@)", NSStringFromSelector(selectorValue)];
 }
+
+
+- (BOOL)isMethodFamily:(NSString *)family
+{
+	// Definitions here: https://clang.llvm.org/docs/AutomaticReferenceCounting.html#method-families
+
+	NSMethodSignature *signature = [self methodSignature];
+	if(OCMIsObjectType(signature.methodReturnType) == NO)
+	{
+		return NO;
+	}
+
+	NSString *selString = NSStringFromSelector([self selector]);
+	NSRange underscoreRange = [selString rangeOfString:@"^_*" options:NSRegularExpressionSearch];
+	selString = [selString substringFromIndex:NSMaxRange(underscoreRange)];
+
+	if([selString hasPrefix:family] == NO)
+	{
+		return NO;
+	}
+	NSUInteger familyLength = [family length];
+	if(([selString length] > familyLength) &&
+			([[NSCharacterSet lowercaseLetterCharacterSet] characterIsMember:[selString characterAtIndex:familyLength]]))
+	{
+		return NO;
+	}
+	return YES;
+}
+
+
+- (BOOL)methodIsInInitFamily
+{
+	return [self isMethodFamily:@"init"];
+}
+
+- (BOOL)methodIsInAllocFamily
+{
+	return [self isMethodFamily:@"alloc"];
+}
+
+- (BOOL)methodIsInCopyFamily
+{
+	return [self isMethodFamily:@"copy"];
+}
+
+- (BOOL)methodIsInMutableCopyFamily
+{
+	return [self isMethodFamily:@"mutableCopy"];
+}
+
+- (BOOL)methodIsInNewFamily
+{
+	return [self isMethodFamily:@"new"];
+}
+
 
 @end

@@ -26,6 +26,10 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
+#import "HockeySDK.h"
+
+#if HOCKEYSDK_FEATURE_CRASH_REPORTER || HOCKEYSDK_FEATURE_FEEDBACK
+
 #import "BITHockeyAttachment.h"
 
 @implementation BITHockeyAttachment
@@ -34,7 +38,7 @@
             hockeyAttachmentData:(NSData *)hockeyAttachmentData
                      contentType:(NSString *)contentType
 {
-  if (self = [super init]) {
+  if ((self = [super init])) {
     _filename = filename;
 
     _hockeyAttachmentData = hockeyAttachmentData;
@@ -73,3 +77,5 @@
 }
 
 @end
+
+#endif /* HOCKEYSDK_FEATURE_CRASH_REPORTER || HOCKEYSDK_FEATURE_FEEDBACK */

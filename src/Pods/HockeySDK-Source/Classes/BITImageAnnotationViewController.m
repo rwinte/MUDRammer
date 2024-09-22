@@ -26,6 +26,10 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
+#import "HockeySDK.h"
+
+#if HOCKEYSDK_FEATURE_FEEDBACK
+
 #import "BITImageAnnotationViewController.h"
 #import "BITImageAnnotation.h"
 #import "BITRectangleImageAnnotation.h"
@@ -97,7 +101,7 @@ typedef NS_ENUM(NSInteger, BITImageAnnotationViewControllerInteractionMode) {
   self.imageView.image = self.image;
   self.imageView.contentMode = UIViewContentModeScaleToFill;
   
-  self.view.frame = UIScreen.mainScreen.applicationFrame;
+  self.view.frame = UIScreen.mainScreen.bounds;
   
   [self.view addSubview:self.imageView];
   // Erm.
@@ -113,13 +117,8 @@ typedef NS_ENUM(NSInteger, BITImageAnnotationViewControllerInteractionMode) {
   
   self.imageView.userInteractionEnabled = YES;
   
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_8_0
   self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc ] initWithImage:bit_imageNamed(@"Cancel.png", BITHOCKEYSDK_BUNDLE) landscapeImagePhone:bit_imageNamed(@"Cancel.png", BITHOCKEYSDK_BUNDLE) style:UIBarButtonItemStylePlain target:self action:@selector(discard:)];
   self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc ] initWithImage:bit_imageNamed(@"Ok.png", BITHOCKEYSDK_BUNDLE) landscapeImagePhone:bit_imageNamed(@"Ok.png", BITHOCKEYSDK_BUNDLE) style:UIBarButtonItemStylePlain target:self action:@selector(save:)];
-#else
-  self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc ] initWithImage:bit_imageNamed(@"Cancel.png", BITHOCKEYSDK_BUNDLE) landscapeImagePhone:bit_imageNamed(@"Cancel.png", BITHOCKEYSDK_BUNDLE) style:UIBarButtonItemStyleBordered target:self action:@selector(discard:)];
-  self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc ] initWithImage:bit_imageNamed(@"Ok.png", BITHOCKEYSDK_BUNDLE) landscapeImagePhone:bit_imageNamed(@"Ok.png", BITHOCKEYSDK_BUNDLE) style:UIBarButtonItemStyleBordered target:self action:@selector(save:)];
-#endif
   
   self.view.autoresizesSubviews = NO;
 }
@@ -141,10 +140,10 @@ typedef NS_ENUM(NSInteger, BITImageAnnotationViewControllerInteractionMode) {
 }
 
 - (BOOL)prefersStatusBarHidden {
-  return self.navigationController.navigationBarHidden || self.navigationController.navigationBar.alpha == 0.0f;
+  return self.navigationController.navigationBarHidden || self.navigationController.navigationBar.alpha == 0;
 }
 
-- (void)orientationDidChange:(NSNotification *)notification {
+- (void)orientationDidChange:(NSNotification *) __unused notification {
   [self fitImageViewFrame];
 }
 
@@ -168,7 +167,7 @@ typedef NS_ENUM(NSInteger, BITImageAnnotationViewControllerInteractionMode) {
   self.imageView.frame = baseFrame;
 }
 
-- (void)editingAction:(id)sender {
+- (void)editingAction:(id) __unused sender {
   
 }
 
@@ -184,12 +183,12 @@ typedef NS_ENUM(NSInteger, BITImageAnnotationViewControllerInteractionMode) {
 
 #pragma mark - Actions
 
-- (void)discard:(id)sender {
+- (void)discard:(id) __unused sender {
   [self.delegate annotationControllerDidCancel:self];
   [self dismissViewControllerAnimated:YES completion:nil];
 }
 
-- (void)save:(id)sender {
+- (void)save:(id) __unused sender {
   UIImage *image = [self extractImage];
   [self.delegate annotationController:self didFinishWithImage:image];
   [self dismissViewControllerAnimated:YES completion:nil];
@@ -199,7 +198,7 @@ typedef NS_ENUM(NSInteger, BITImageAnnotationViewControllerInteractionMode) {
   UIGraphicsBeginImageContextWithOptions(self.image.size, YES, 0.0);
   CGContextRef ctx = UIGraphicsGetCurrentContext();
   [self.image drawInRect:CGRectMake(0, 0, self.image.size.width, self.image.size.height)];
-  CGContextScaleCTM(ctx,1.0/self.scaleFactor,1.0f/self.scaleFactor);
+  CGContextScaleCTM(ctx,((CGFloat)1.0)/self.scaleFactor,((CGFloat)1.0)/self.scaleFactor);
   
   // Drawing all the annotations onto the final image.
   for (BITImageAnnotation *annotation in self.objects){
@@ -302,7 +301,7 @@ typedef NS_ENUM(NSInteger, BITImageAnnotationViewControllerInteractionMode) {
     BITImageAnnotation *candidate = nil;
     BOOL validView = YES;
     
-    for ( int i = 0; i<gestureRecognizer.numberOfTouches; i++){
+    for (uint i = 0; i < gestureRecognizer.numberOfTouches; i++){
       BITImageAnnotation *newCandidate = (BITImageAnnotation *)[self.view hitTest:[gestureRecognizer locationOfTouch:i inView:self.view] withEvent:nil];
       
       if (![newCandidate isKindOfClass:[BITImageAnnotation class]]){
@@ -349,39 +348,46 @@ typedef NS_ENUM(NSInteger, BITImageAnnotationViewControllerInteractionMode) {
   }
 }
 
-- (void)tapped:(UIGestureRecognizer *)tapRecognizer {
+- (void)tapped:(UIGestureRecognizer *) __unused tapRecognizer {
+  
+  // TODO: remove pre-iOS 8 code.
+  
   // This toggles the nav and status bar. Since iOS7 and pre-iOS7 behave weirdly different,
   // this might look rather hacky, but hiding the navbar under iOS6 leads to some ugly
   // animation effect which is avoided by simply hiding the navbar setting it's alpha to 0. // moritzh
   
   if (self.navigationController.navigationBar.alpha == 0 || self.navigationController.navigationBarHidden ){
     
-    [UIView animateWithDuration:0.35f animations:^{
+    [UIView animateWithDuration:0.35 animations:^{
+      [self.navigationController setNavigationBarHidden:NO animated:NO];
       
-      if (NSFoundationVersionNumber > NSFoundationVersionNumber_iOS_6_1) {
-        [self.navigationController setNavigationBarHidden:NO animated:NO];
+      if ([self respondsToSelector:@selector(prefersStatusBarHidden)]) {
+        [self setNeedsStatusBarAppearanceUpdate];
       } else {
-        self.navigationController.navigationBar.alpha = 1.0;
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+        [[UIApplication sharedApplication] setStatusBarHidden:NO];
+#pragma clang diagnostic pop
       }
       
-      [[UIApplication sharedApplication] setStatusBarHidden:NO];
-      
-    } completion:^(BOOL finished) {
+    } completion:^(BOOL __unused finished) {
       [self fitImageViewFrame];
       
     }];
   } else {
-    [UIView animateWithDuration:0.35f animations:^{
+    [UIView animateWithDuration:0.35 animations:^{
+      [self.navigationController setNavigationBarHidden:YES animated:NO];
       
-      if (NSFoundationVersionNumber > NSFoundationVersionNumber_iOS_6_1) {
-        [self.navigationController setNavigationBarHidden:YES animated:NO];
+      if ([self respondsToSelector:@selector(prefersStatusBarHidden)]) {
+        [self setNeedsStatusBarAppearanceUpdate];
       } else {
-        self.navigationController.navigationBar.alpha = 0.0;
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+        [[UIApplication sharedApplication] setStatusBarHidden:YES];
+#pragma clang diagnostic pop
       }
       
-      [[UIApplication sharedApplication] setStatusBarHidden:YES];
-      
-    } completion:^(BOOL finished) {
+    } completion:^(BOOL __unused finished) {
       [self fitImageViewFrame];
       
     }];
@@ -405,3 +411,5 @@ typedef NS_ENUM(NSInteger, BITImageAnnotationViewControllerInteractionMode) {
   return [self.editingControls selectedSegmentIndex] != UISegmentedControlNoSegment;
 }
 @end
+
+#endif /* HOCKEYSDK_FEATURE_FEEDBACK */

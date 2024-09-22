@@ -47,23 +47,14 @@
 - (void)storeButtonFired:(BITStoreButton *)button;
 @end
 
-
-#ifndef __IPHONE_6_1
-#define __IPHONE_6_1     60100
-#endif
-
 /**
  * Button style depending on the iOS version
  */
 typedef NS_ENUM(NSUInteger, BITStoreButtonStyle) {
   /**
-   * Default is iOS 6 style
-   */
-  BITStoreButtonStyleDefault = 0,
-  /**
    * Draw buttons in the iOS 7 style
    */
-  BITStoreButtonStyleOS7 = 1
+  BITStoreButtonStyleOS7 = 0
 };
 
 

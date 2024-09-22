@@ -30,6 +30,7 @@
 
 
 #import <Foundation/Foundation.h>
+#import "BITHockeyLogger.h"
 
 #ifndef HockeySDK_HockeySDKPrivate_h
 #define HockeySDK_HockeySDKPrivate_h
@@ -67,42 +68,30 @@
 #define BITHOCKEYSDK_BUNDLE @"HockeySDKResources.bundle"
 #define BITHOCKEYSDK_URL @"https://sdk.hockeyapp.net/"
 
-#define BITHockeyLog(fmt, ...) do { if([BITHockeyManager sharedHockeyManager].isDebugLogEnabled && ![BITHockeyManager sharedHockeyManager].isAppStoreEnvironment) { NSLog((@"[HockeySDK] %s/%d " fmt), __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__); }} while(0)
-
-#define BIT_RGBCOLOR(r,g,b) [UIColor colorWithRed:(r)/255.0 green:(g)/255.0 blue:(b)/255.0 alpha:1]
+#define BIT_RGBCOLOR(r,g,b) [UIColor colorWithRed:(CGFloat)((r)/255.0) green:(CGFloat)((g)/255.0) blue:(CGFloat)((b)/255.0) alpha:(CGFloat)1]
 
 NSBundle *BITHockeyBundle(void);
 NSString *BITHockeyLocalizedString(NSString *stringToken);
 NSString *BITHockeyMD5(NSString *str);
 
-#ifndef __IPHONE_8_0
-#define __IPHONE_8_0     80000
+#ifndef __IPHONE_11_0
+#define __IPHONE_11_0    110000
 #endif
 
-#ifdef __IPHONE_6_0
+#ifndef TARGET_OS_SIMULATOR
 
-#define kBITTextLabelAlignmentCenter        NSTextAlignmentCenter
-#define kBITTextLabelAlignmentLeft          NSTextAlignmentLeft
-#define kBITTextLabelAlignmentRight         NSTextAlignmentRight
-#define kBITLineBreakModeMiddleTruncation   NSLineBreakByTruncatingMiddle
+  #ifdef TARGET_IPHONE_SIMULATOR
 
-#else
+    #define TARGET_OS_SIMULATOR TARGET_IPHONE_SIMULATOR
 
-#define kBITTextLabelAlignmentCenter        UITextAlignmentCenter
-#define kBITTextLabelAlignmentLeft          UITextAlignmentLeft
-#define kBITTextLabelAlignmentRight         UITextAlignmentRight
-#define kBITLineBreakModeMiddleTruncation   UILineBreakModeMiddleTruncation
+  #else
 
-#endif /* __IPHONE_6_0 */
+    #define TARGET_OS_SIMULATOR 0
 
-#if __IPHONE_OS_VERSION_MIN_REQUIRED > __IPHONE_6_1
+  #endif /* TARGET_IPHONE_SIMULATOR */
+
+#endif /* TARGET_OS_SIMULATOR */
 
 #define kBITButtonTypeSystem                UIButtonTypeSystem
 
-#else
-
-#define kBITButtonTypeSystem                UIButtonTypeRoundedRect
-
-#endif
-
-#endif //HockeySDK_HockeySDKPrivate_h
+#endif /* HockeySDK_HockeySDKPrivate_h */

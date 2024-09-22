@@ -26,6 +26,10 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
+#import "HockeySDK.h"
+
+#if HOCKEYSDK_FEATURE_FEEDBACK
+
 #import "BITImageAnnotation.h"
 
 @implementation BITImageAnnotation
@@ -34,12 +38,6 @@
   return NO;
 }
 
-- (void)setSelected:(BOOL)selected {
-  self->_selected = selected;
-}
-
-- (BOOL)isSelected {
-  return self->_selected;
-}
-
 @end
+
+#endif

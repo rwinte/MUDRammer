@@ -17,6 +17,8 @@
 #define nonnull
 #define null_unspecified
 #define null_resettable
+#define _Nullable
+#define _Nonnull
 #define __nullable
 #define __nonnull
 #define __null_unspecified
@@ -30,4 +32,4 @@
 #define NS_ASSUME_NONNULL_END _Pragma("clang assume_nonnull end")
 #endif
 
-#endif
+#endif /* HockeySDK_HockeyNullability_h */

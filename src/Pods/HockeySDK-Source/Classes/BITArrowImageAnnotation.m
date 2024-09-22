@@ -26,7 +26,12 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
+#import "HockeySDK.h"
+
+#if HOCKEYSDK_FEATURE_FEEDBACK
+
 #import "BITArrowImageAnnotation.h"
+#import <tgmath.h>
 
 #define kArrowPointCount 7
 
@@ -63,17 +68,17 @@
 
 - (void)buildShape {
   CGFloat baseWidth = MAX(self.frame.size.width, self.frame.size.height);
-  CGFloat topHeight = MAX(baseWidth / 3.0f,10);
+  CGFloat topHeight = MAX(baseWidth / 3,10);
 
   
-  CGFloat lineWidth = MAX(baseWidth / 10.0f,3);
+  CGFloat lineWidth = MAX(baseWidth / 10,3);
   CGFloat startX, startY, endX, endY;
   
   CGRect boundRect = CGRectInset(self.bounds, 0, 0);
-  CGFloat arrowLength= sqrt(pow(CGRectGetWidth(boundRect), 2) + pow(CGRectGetHeight(boundRect), 2));
-  if (arrowLength < 30){
-    
-    CGFloat factor = 30.f/arrowLength;
+  CGFloat arrowLength= sqrt(pow(CGRectGetWidth(boundRect), (CGFloat)2) + pow(CGRectGetHeight(boundRect), (CGFloat)2));
+  if (0 < arrowLength && arrowLength < 30){
+
+    CGFloat factor = 30 / arrowLength;
     
     boundRect = CGRectApplyAffineTransform(boundRect, CGAffineTransformMakeScale(factor,factor));
   }
@@ -100,7 +105,7 @@
   if (fabs(CGRectGetWidth(boundRect)) < 30 || fabs(CGRectGetHeight(boundRect)) < 30){
     CGFloat smallerOne = MIN(fabs(CGRectGetHeight(boundRect)), fabs(CGRectGetWidth(boundRect)));
     
-    CGFloat factor = smallerOne/30.f;
+    CGFloat factor = smallerOne / 30;
     
     CGRectApplyAffineTransform(boundRect, CGAffineTransformMakeScale(factor,factor));
   }
@@ -111,8 +116,8 @@
   self.strokeLayer.path = path.CGPath;
   [CATransaction begin];
   [CATransaction setAnimationDuration:0];
-  self.strokeLayer.lineWidth = lineWidth/1.5f;
-  self.shapeLayer.lineWidth = lineWidth / 3.0f;
+  self.strokeLayer.lineWidth = lineWidth / (CGFloat)1.5;
+  self.shapeLayer.lineWidth = lineWidth / 3;
 
   [CATransaction commit];
 
@@ -124,7 +129,7 @@
                                          tailWidth:(CGFloat)tailWidth
                                          headWidth:(CGFloat)headWidth
                                         headLength:(CGFloat)headLength {
-  CGFloat length = hypotf(endPoint.x - startPoint.x, endPoint.y - startPoint.y);
+  CGFloat length = hypot(endPoint.x - startPoint.x, endPoint.y - startPoint.y);
   
   CGPoint points[kArrowPointCount];
   [self getAxisAlignedArrowPoints:points
@@ -172,6 +177,10 @@
 - (CGAffineTransform)transformForStartPoint:(CGPoint)startPoint
                                        endPoint:(CGPoint)endPoint
                                          length:(CGFloat)length {
+  if (CGPointEqualToPoint(startPoint, CGPointZero) && (length == 0)) {
+    return CGAffineTransformIdentity;
+  }
+  
   CGFloat cosine = (endPoint.x - startPoint.x) / length;
   CGFloat sine = (endPoint.y - startPoint.y) / length;
   return (CGAffineTransform){ cosine, sine, -sine, cosine, startPoint.x, startPoint.y };
@@ -179,9 +188,9 @@
 
 #pragma mark - UIView 
 
-- (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event {
+- (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *) __unused event {
 
-  CGPathRef strokePath = CGPathCreateCopyByStrokingPath(self.shapeLayer.path, NULL, fmaxf(90.0f, self.shapeLayer.lineWidth), kCGLineCapRound,kCGLineJoinMiter,0);
+  CGPathRef strokePath = CGPathCreateCopyByStrokingPath(self.shapeLayer.path, NULL, fmax(90.0f, self.shapeLayer.lineWidth), kCGLineCapRound,kCGLineJoinMiter,0);
   
   BOOL containsPoint = CGPathContainsPoint(strokePath, NULL, point, NO);
   
@@ -202,3 +211,5 @@
 }
 
 @end
+
+#endif /* HOCKEYSDK_FEATURE_FEEDBACK */

@@ -26,6 +26,10 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
+#import "HockeySDK.h"
+
+#if HOCKEYSDK_FEATURE_CRASH_REPORTER
+
 #import "BITCrashCXXExceptionHandler.h"
 #import <vector>
 #import <cxxabi.h>
@@ -49,12 +53,17 @@ typedef struct
 static bool _BITCrashIsOurTerminateHandlerInstalled = false;
 static std::terminate_handler _BITCrashOriginalTerminateHandler = nullptr;
 static BITCrashUncaughtCXXExceptionHandlerList _BITCrashUncaughtExceptionHandlerList;
+// We are ignoring warnings about OSSpinLock being deprecated because a replacement API
+// for this was introduced only in iOS 10.0.
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
 static OSSpinLock _BITCrashCXXExceptionHandlingLock = OS_SPINLOCK_INIT;
+#pragma clang diagnostic pop
 static pthread_key_t _BITCrashCXXExceptionInfoTSDKey = 0;
 
 @implementation BITCrashUncaughtCXXExceptionHandlerManager
 
-extern "C" void LIBCXXABI_NORETURN __cxa_throw(void *exception_object, std::type_info *tinfo, void (*dest)(void *))
+extern "C" void __attribute__((noreturn)) __cxa_throw(void *exception_object, std::type_info *tinfo, void (*dest)(void *))
 {
   // Purposely do not take a lock in this function. The aim is to be as fast as
   // possible. While we could really use some of the info set up by the real
@@ -68,7 +77,7 @@ extern "C" void LIBCXXABI_NORETURN __cxa_throw(void *exception_object, std::type
   // implementation changing in a future version. (Or not existing in an earlier
   // version).
   
-  typedef void (*cxa_throw_func)(void *, std::type_info *, void (*)(void *)) LIBCXXABI_NORETURN;
+  typedef void (*cxa_throw_func)(void *, std::type_info *, void (*)(void *)) __attribute__((noreturn));
   static dispatch_once_t predicate = 0;
   static cxa_throw_func __original__cxa_throw = nullptr;
   static const void **__real_objc_ehtype_vtable = nullptr;
@@ -121,6 +130,8 @@ static inline void BITCrashIterateExceptionHandlers_unlocked(const BITCrashUncau
   }
 }
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
 static void BITCrashUncaughtCXXTerminateHandler(void)
 {
   BITCrashUncaughtCXXExceptionInfo info = {
@@ -168,7 +179,7 @@ static void BITCrashUncaughtCXXTerminateHandler(void)
       } catch (const char *e) { // Plain string as exception.
         info.exception_message = e;
         BITCrashIterateExceptionHandlers_unlocked(info);
-      } catch (id e) { // Objective-C exception. Pass it on to Foundation.
+      } catch (id __unused e) { // Objective-C exception. Pass it on to Foundation.
         OSSpinLockUnlock(&_BITCrashCXXExceptionHandlingLock);
         if (_BITCrashOriginalTerminateHandler != nullptr) {
           _BITCrashOriginalTerminateHandler();
@@ -229,5 +240,8 @@ static void BITCrashUncaughtCXXTerminateHandler(void)
     }
   } OSSpinLockUnlock(&_BITCrashCXXExceptionHandlingLock);
 }
+#pragma clang diagnostic pop
 
 @end
+
+#endif /* HOCKEYSDK_FEATURE_CRASH_REPORTER */

@@ -28,15 +28,18 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
+#import "HockeySDK.h"
+
+#if HOCKEYSDK_FEATURE_UPDATES
 
 #import "BITStoreButton.h"
 #import "HockeySDKPrivate.h"
 #import <QuartzCore/QuartzCore.h>
 
-#define BIT_MIN_HEIGHT 25.0f
-#define BIT_MAX_WIDTH 120.0f
-#define BIT_PADDING 12.0f
-#define kDefaultButtonAnimationTime 0.25f
+#define BIT_MIN_HEIGHT 25.0
+#define BIT_MAX_WIDTH 120.0
+#define BIT_PADDING 12.0
+#define kDefaultButtonAnimationTime 0.25
 
 
 @implementation BITStoreButtonData
@@ -57,19 +60,22 @@
 
 @end
 
+@interface BITStoreButton ()
 
-@implementation BITStoreButton {
-  CALayer *_defaultBorderLayer;
-  CALayer *_inActiveBorderLayer;
-}
+@property (nonatomic, strong) CALayer *defaultBorderLayer;
+@property (nonatomic, strong) CALayer *inActiveBorderLayer;
+
+@end
+
+@implementation BITStoreButton
 
 #pragma mark - private
 
-- (void)buttonPressed:(id)sender {
-  [_buttonDelegate storeButtonFired:self];
+- (void)buttonPressed:(id) __unused sender {
+  [self.buttonDelegate storeButtonFired:self];
 }
 
-- (void)animationDidStop:(NSString *)animationID finished:(NSNumber *)finished context:(void *)context {
+- (void)animationDidStop:(NSString *) __unused animationID finished:(NSNumber *)finished context:(void *) __unused context {
   // show text again, but only if animation did finish (or else another animation is on the way)
   if ([finished boolValue]) {
     [self setTitle:self.buttonData.label forState:UIControlStateNormal];
@@ -93,18 +99,14 @@
   
   // show white or gray text, depending on the state
   if (self.buttonData.isEnabled) {
-    if (self.style == BITStoreButtonStyleDefault) {
-      [self setTitleColor:BIT_RGBCOLOR(106, 106, 106) forState:UIControlStateNormal];
-    } else {
-      [self setTitleColor:BIT_RGBCOLOR(35, 111, 251) forState:UIControlStateNormal];
-      [_defaultBorderLayer setHidden:NO];
-      [_inActiveBorderLayer setHidden:YES];
-    }
+    [self setTitleColor:BIT_RGBCOLOR(35, 111, 251) forState:UIControlStateNormal];
+    [self.defaultBorderLayer setHidden:NO];
+    [self.inActiveBorderLayer setHidden:YES];
   } else {
     [self setTitleColor:BIT_RGBCOLOR(148, 150, 151) forState:UIControlStateNormal];
     if (self.style == BITStoreButtonStyleOS7) {
-      [_defaultBorderLayer setHidden:YES];
-      [_inActiveBorderLayer setHidden:NO];
+      [self.defaultBorderLayer setHidden:YES];
+      [self.inActiveBorderLayer setHidden:NO];
     }
   }
   
@@ -143,8 +145,8 @@
   [self sizeToFit];
   if (self.superview) {
     CGRect cr = self.frame;
-    cr.origin.y = _customPadding.y;
-    cr.origin.x = self.superview.frame.size.width - cr.size.width - _customPadding.x * 2;
+    cr.origin.y = self.customPadding.y;
+    cr.origin.x = self.superview.frame.size.width - cr.size.width - self.customPadding.x * 2;
     self.frame = cr;
   }
 }
@@ -162,7 +164,7 @@
     // register for touch events
 		[self addTarget:self action:@selector(buttonPressed:) forControlEvents:UIControlEventTouchUpInside];
     
-    [self bringSubviewToFront:self.titleLabel];
+    [self bringSubviewToFront:(UILabel *)self.titleLabel];
   }
   return self;
 }
@@ -173,24 +175,9 @@
     _customPadding = padding;
     _style = style;
 
-    if (style == BITStoreButtonStyleDefault) {
-      // main gradient layer
-      CAGradientLayer *gradient = [CAGradientLayer layer];
-      gradient.colors = @[(id)BIT_RGBCOLOR(243, 243, 243).CGColor, (id)BIT_RGBCOLOR(222, 222, 222).CGColor];
-      gradient.locations = @[[NSNumber numberWithFloat:0.0], [NSNumber numberWithFloat:1.0]];
-      gradient.frame = CGRectMake(0.0, 0.0, CGRectGetWidth(frame), CGRectGetHeight(frame));
-      gradient.cornerRadius = 2.5;
-      gradient.needsDisplayOnBoundsChange = YES;
-      [self.layer addSublayer:gradient];
-    }
-    
     // border layers for more sex!
     _defaultBorderLayer = [CALayer layer];
-    if (style == BITStoreButtonStyleDefault) {
-      _defaultBorderLayer.borderColor = [BIT_RGBCOLOR(191, 191, 191) CGColor];
-    } else {
       _defaultBorderLayer.borderColor = [BIT_RGBCOLOR(35, 111, 251) CGColor];
-    }
     _defaultBorderLayer.borderWidth = 1.0;
 		_defaultBorderLayer.frame = CGRectMake(0.0, 0.0, CGRectGetWidth(frame), CGRectGetHeight(frame));
 		_defaultBorderLayer.cornerRadius = 2.5;
@@ -208,7 +195,7 @@
       [_inActiveBorderLayer setHidden:YES];
     }
     
-    [self bringSubviewToFront:self.titleLabel];
+    [self bringSubviewToFront:(UILabel *)self.titleLabel];
   }
   return self;
 }
@@ -217,31 +204,27 @@
 
 #pragma mark - UIView
 
-- (CGSize)sizeThatFits:(CGSize)size {
+- (CGSize)sizeThatFits:(CGSize) __unused size {
   CGSize constr = (CGSize){.height = self.frame.size.height, .width = BIT_MAX_WIDTH};
   CGSize newSize;
   
-#if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_6_1
   if ([self.buttonData.label respondsToSelector:@selector(boundingRectWithSize:options:attributes:context:)]) {
     CGRect calculatedRect = [self.buttonData.label boundingRectWithSize:constr
                                                                 options:NSStringDrawingUsesFontLeading
-                                                             attributes:@{NSFontAttributeName:self.titleLabel.font}
+                                                             attributes:@{NSFontAttributeName:(id)self.titleLabel.font}
                                                                 context:nil];
     newSize = calculatedRect.size;
   } else {
-#endif
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
     newSize = [self.buttonData.label sizeWithFont:self.titleLabel.font
                                 constrainedToSize:constr
-                                    lineBreakMode:kBITLineBreakModeMiddleTruncation];
+                                    lineBreakMode:NSLineBreakByTruncatingMiddle];
 #pragma clang diagnostic pop
-#if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_6_1
   }
-#endif
   
-  CGFloat newWidth = newSize.width + (BIT_PADDING * 2);
-  CGFloat newHeight = BIT_MIN_HEIGHT > newSize.height ? BIT_MIN_HEIGHT : newSize.height;
+  CGFloat newWidth = newSize.width + ((CGFloat)BIT_PADDING * 2);
+  CGFloat newHeight = (CGFloat)BIT_MIN_HEIGHT > newSize.height ? (CGFloat)BIT_MIN_HEIGHT : newSize.height;
   
   CGSize sizeThatFits = CGSizeMake(newWidth, newHeight);
   return sizeThatFits;
@@ -268,11 +251,16 @@
 }
 
 - (void)setButtonData:(BITStoreButtonData *)aButtonData animated:(BOOL)animated {
-  if (_buttonData != aButtonData) {
+  if (self.buttonData != aButtonData) {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdirect-ivar-access"
     _buttonData = aButtonData;
+#pragma clang diagnostic pop
   }
   
   [self updateButtonAnimated:animated];
 }
 
 @end
+
+#endif /* HOCKEYSDK_FEATURE_UPDATES */

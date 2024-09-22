@@ -3,7 +3,7 @@ source 'https://github.com/CocoaPods/Specs.git'
 
 platform :ios, '8.0'
 
-xcodeproj 'Mudrammer'
+project 'Mudrammer'
 
 deployment_target = '7.0'
 
@@ -26,9 +26,10 @@ pod 'SSOperations', '0.1.0'
 pod 'SSApplication', '0.3.0'
 pod 'SPLUserActivity', '0.1.2'
 
-# Networking
+# Networking  
 pod 'CocoaAsyncSocket', '7.3.5'
-pod 'libtelnet', :head # via SPLSpecs
+pod 'libtelnet', '0.21'
+# pod 'libtelnet', :git => 'https://github.com/seanmiddleditch/libtelnet.git', :commit => 'c3afbda4ef38ecf8e70e58e7614944fc60f9635e' # via SPLSpecs
 
 # Engine
 pod 'SAMRateLimit', '0.2.0'
@@ -70,7 +71,7 @@ post_install do |installer_representation|
 end
 
 # Tests
-target "MRTests", :exclusive => true do
+target "MRTests" do
     pod 'Expecta'
     pod 'OCMock'
 end

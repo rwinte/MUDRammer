@@ -66,7 +66,8 @@ end
 desc 'Install RubyGems'
 task :gems do
   puts "Installing bundle...".cyan
-  sh "bundle install --jobs=4 --retry=2 --path=vendor/bundle"
+  sh "bundle config set path 'vendor/bundle'"
+  sh "bundle install --jobs=4 --retry=2"
 end
 
 desc 'Install pods'

@@ -26,6 +26,10 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
+#import "HockeySDK.h"
+
+#if HOCKEYSDK_FEATURE_CRASH_REPORTER
+
 #import "BITCrashDetails.h"
 #import "BITCrashDetailsPrivate.h"
 
@@ -66,10 +70,12 @@ NSString *const kBITCrashKillSignal = @"SIGKILL";
 - (BOOL)isAppKill {
   BOOL result = NO;
   
-  if (_signal && [[_signal uppercaseString] isEqualToString:kBITCrashKillSignal])
+  if (self.signal && [[self.signal uppercaseString] isEqualToString:kBITCrashKillSignal])
     result = YES;
   
   return result;
 }
 
 @end
+
+#endif /* HOCKEYSDK_FEATURE_CRASH_REPORTER */

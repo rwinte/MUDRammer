@@ -33,6 +33,8 @@
 #import "BITFeedbackListViewController.h"
 #import "BITFeedbackComposeViewController.h"
 
+#import "HockeySDKNullability.h"
+NS_ASSUME_NONNULL_BEGIN
 
 // Notification message which tells that loading messages finished
 #define BITHockeyFeedbackMessagesLoadingStarted @"BITHockeyFeedbackMessagesLoadingStarted"
@@ -72,9 +74,13 @@ typedef NS_ENUM(NSInteger, BITFeedbackObservationMode) {
    */
   BITFeedbackObservationModeOnScreenshot = 1,
   /**
-   *  Triggers when the user taps with three fingers on the screen.
+   *  Triggers when the user taps with three fingers on the screen. Captures a screenshot and attaches it to the composer.
    */
-  BITFeedbackObservationModeThreeFingerTap = 2
+  BITFeedbackObservationModeThreeFingerTap = 2,
+  /**
+   * Allows both BITFeedbackObservationModeOnScreenshot and BITFeedbackObservationModeThreeFingerTap at the same time.
+   */
+   BITFeedbackObservationModeAll = 3
 };
 
 
@@ -93,7 +99,7 @@ typedef NS_ENUM(NSInteger, BITFeedbackObservationMode) {
  
      [BITHockeyManager sharedHockeyManager].feedbackManager
 
- The user interface provides a list view than can be presented modally using
+ The user interface provides a list view that can be presented modally using
  `[BITFeedbackManager showFeedbackListView]` or adding
  `[BITFeedbackManager feedbackListViewController:]` to push onto a navigation stack.
  This list integrates all features to load new messages, write new messages, view messages
@@ -126,7 +132,9 @@ typedef NS_ENUM(NSInteger, BITFeedbackObservationMode) {
  New messages are automatically loaded on startup, when the app becomes active again
  or when the notification `BITHockeyNetworkDidBecomeReachableNotification` is fired. This
  only happens if the user ever did initiate a conversation by writing the first
- feedback message.
+ feedback message. The app developer has to fire this notification to trigger another retry
+ when it detects the device having network access again. The SDK only retries automatically
+ when the app becomes active again.
  
  Implementing the `BITFeedbackManagerDelegate` protocol will notify your app when a new
  message was received from the server. The `BITFeedbackComposeViewControllerDelegate`
@@ -212,27 +220,16 @@ typedef NS_ENUM(NSInteger, BITFeedbackObservationMode) {
    own trigger and then call `[[BITHockeyManager sharedHockeyManager].feedbackManager showFeedbackComposeViewWithGeneratedScreenshot];` to handle your custom events
    that should trigger this.
  - `BITFeedbackObservationModeOnScreenshot`: Triggers when the user takes a screenshot.
-    This will grab the latest image from the camera roll. Requires iOS 7 or later!
- - `BITFeedbackObservationModeThreeFingerTap`: Triggers when the user taps on the screen for three seconds with three fingers.
+    This will grab the latest image from the camera roll. It also requires to add a NSPhotoLibraryUsageDescription to your app's Info.plist.
+ - `BITFeedbackObservationModeThreeFingerTap`: Triggers when the user taps on the screen with three fingers. Takes a screenshot and attaches it to the composer. It also requires to add a NSPhotoLibraryUsageDescription to your app's Info.plist.
  
- Default is `BITFeedbackObservationNone`
+ Default is `BITFeedbackObservationNone`.
+ If BITFeedbackManger was disabled, setting a new value will be ignored.
+ @see `[BITHockeyManager disableFeedbackManager]`
  
  @see showFeedbackComposeViewWithGeneratedScreenshot
  */
 @property (nonatomic, readwrite) BITFeedbackObservationMode feedbackObservationMode;
-
-
-/**
- Prefill feedback compose message user interface with the items given.
- 
- All NSString-Content in the array will be concatenated and result in the message,
- while all UIImage and NSData-instances will be turned into attachments.
- 
- @param items an NSArray with objects that should be attached
- @see `[BITFeedbackComposeViewController prepareWithItems:]`
- */
-@property (nonatomic, copy) NSArray *feedbackComposerPreparedItems;
-
 
 /**
  Don't show the option to add images from the photo library
@@ -286,6 +283,8 @@ typedef NS_ENUM(NSInteger, BITFeedbackObservationMode) {
 
 /**
  Present the modal feedback list user interface.
+ 
+ @warning This methods needs to be called on the main thread!
  */
 - (void)showFeedbackListView;
 
@@ -302,6 +301,8 @@ typedef NS_ENUM(NSInteger, BITFeedbackObservationMode) {
 
 /**
  Present the modal feedback compose message user interface.
+ 
+ @warning This methods needs to be called on the main thread!
  */
 - (void)showFeedbackComposeView;
 
@@ -311,10 +312,16 @@ typedef NS_ENUM(NSInteger, BITFeedbackObservationMode) {
  All NSString-Content in the array will be concatenated and result in the message,
  while all UIImage and NSData-instances will be turned into attachments.
  
+ Alternatively you can implement the `preparedItemsForFeedbackManager:` delegate method
+ and call `showFeedbackComposeView` instead. If you use both, the items from the delegate method
+ and the items passed with this method will be combined.
+ 
  @param items an NSArray with objects that should be attached
  @see `[BITFeedbackComposeViewController prepareWithItems:]`
+ @see `BITFeedbackManagerDelegate preparedItemsForFeedbackManager:`
+ @warning This methods needs to be called on the main thread!
  */
-- (void)showFeedbackComposeViewWithPreparedItems:(NSArray *)items;
+- (void)showFeedbackComposeViewWithPreparedItems:(nullable NSArray *)items;
 
 /**
  Presents a modal feedback compose interface with a screenshot attached which is taken at the time of calling this method.
@@ -324,6 +331,7 @@ typedef NS_ENUM(NSInteger, BITFeedbackObservationMode) {
      [[BITHockeyManager sharedHockeyManager].feedbackManager showFeedbackComposeViewWithGeneratedScreenshot];
  
  @see feedbackObservationMode
+ @warning This methods needs to be called on the main thread!
  */
 - (void)showFeedbackComposeViewWithGeneratedScreenshot;
 
@@ -331,6 +339,10 @@ typedef NS_ENUM(NSInteger, BITFeedbackObservationMode) {
 /**
  Create a feedback compose view
 
+ This method also adds items from `feedbackComposerPreparedItems` and
+ the `preparedItemsForFeedbackManager:` delegate methods to the instance of
+ `BITFeedbackComposeViewController` that will be returned.
+ 
  Example to show a modal feedback compose UI with prefilled text
      
      BITFeedbackComposeViewController *feedbackCompose = [[BITHockeyManager sharedHockeyManager].feedbackManager feedbackComposeViewController];
@@ -348,5 +360,6 @@ typedef NS_ENUM(NSInteger, BITFeedbackObservationMode) {
  */
 - (BITFeedbackComposeViewController *)feedbackComposeViewController;
 
-
 @end
+
+NS_ASSUME_NONNULL_END

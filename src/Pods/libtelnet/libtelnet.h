@@ -34,7 +34,7 @@
  *
  * \file libtelnet.h
  *
- * \version 0.21
+ * \version 0.23
  *
  * \author Sean Middleditch <sean@sourcemud.org>
  */
@@ -44,6 +44,7 @@
 
 /* standard C headers necessary for the libtelnet API */
 #include <stdarg.h>
+#include <stddef.h>
 
 /* C++ support */
 #if defined(__cplusplus)
@@ -58,6 +59,9 @@ extern "C" {
 # define TELNET_GNU_PRINTF(f,a) /*!< internal helper */
 # define TELNET_GNU_SENTINEL /*!< internal helper */
 #endif
+
+/* Disable environ macro for Visual C++ 2015. */
+#undef environ
 
 /*! Telnet state tracker object type. */
 typedef struct telnet_t telnet_t;
@@ -175,7 +179,11 @@ typedef struct telnet_telopt_t telnet_telopt_t;
 /*@{*/
 /*! Control behavior of telnet state tracker. */
 #define TELNET_FLAG_PROXY (1<<0)
+#define TELNET_FLAG_NVT_EOL (1<<1)
 
+/* Internal-only bits in option flags */
+#define TELNET_FLAG_TRANSMIT_BINARY (1<<5)
+#define TELNET_FLAG_RECEIVE_BINARY (1<<6)
 #define TELNET_PFLAG_DEFLATE (1<<7)
 /*@}*/
 
@@ -244,7 +252,7 @@ union telnet_event_t {
 		enum telnet_event_type_t _type; /*!< alias for type */
 		const char *buffer;             /*!< byte buffer */
 		size_t size;                    /*!< number of bytes in buffer */
-	} data;
+	} data; /*!< DATA and SEND */
 
 	/*! 
 	 * WARNING and ERROR events 
@@ -256,7 +264,7 @@ union telnet_event_t {
 		const char *msg;                /*!< error message string */
 		int line;                       /*!< line of file error occured on */
 		telnet_error_t errcode;         /*!< error code */
-	} error;
+	} error; /*!< WARNING and ERROR */
 
 	/*! 
 	 * command event: for IAC 
@@ -264,7 +272,7 @@ union telnet_event_t {
 	struct iac_t {
 		enum telnet_event_type_t _type; /*!< alias for type */
 		unsigned char cmd;              /*!< telnet command received */
-	} iac;
+	} iac; /*!< IAC */
 
 	/*! 
 	 * negotiation event: WILL, WONT, DO, DONT 
@@ -272,7 +280,7 @@ union telnet_event_t {
 	struct negotiate_t {
 		enum telnet_event_type_t _type; /*!< alias for type */
 		unsigned char telopt;           /*!< option being negotiated */
-	} neg;
+	} neg; /*!< WILL, WONT, DO, DONT */
 
 	/*! 
 	 * subnegotiation event 
@@ -282,7 +290,7 @@ union telnet_event_t {
 		const char *buffer;             /*!< data of sub-negotiation */
 		size_t size;                    /*!< number of bytes in buffer */
 		unsigned char telopt;           /*!< option code for negotiation */
-	} sub;
+	} sub; /*!< SB */
 
 	/*! 
 	 * ZMP event 
@@ -291,7 +299,7 @@ union telnet_event_t {
 		enum telnet_event_type_t _type; /*!< alias for type */
 		const char **argv;              /*!< array of argument string */
 		size_t argc;                    /*!< number of elements in argv */
-	} zmp;
+	} zmp; /*!< ZMP */
 
 	/*! 
 	 * TTYPE event 
@@ -300,7 +308,7 @@ union telnet_event_t {
 		enum telnet_event_type_t _type; /*!< alias for type */
 		unsigned char cmd;              /*!< TELNET_TTYPE_IS or TELNET_TTYPE_SEND */
 		const char* name;               /*!< terminal type name (IS only) */
-	} ttype;
+	} ttype; /*!< TTYPE */
 
 	/*! 
 	 * COMPRESS event 
@@ -309,7 +317,7 @@ union telnet_event_t {
 		enum telnet_event_type_t _type; /*!< alias for type */
 		unsigned char state;            /*!< 1 if compression is enabled,
 	                                         0 if disabled */
-	} compress;
+	} compress; /*!< COMPRESS */
 
 	/*! 
 	 * ENVIRON/NEW-ENVIRON event
@@ -319,7 +327,7 @@ union telnet_event_t {
 		const struct telnet_environ_t *values; /*!< array of variable values */
 		size_t size;                           /*!< number of elements in values */
 		unsigned char cmd;                     /*!< SEND, IS, or INFO */
-	} environ;
+	} environ; /*!< ENVIRON, NEW-ENVIRON */
 	
 	/*!
 	 * MSSP event
@@ -328,7 +336,7 @@ union telnet_event_t {
 		enum telnet_event_type_t _type;        /*!< alias for type */
 		const struct telnet_environ_t *values; /*!< array of variable values */
 		size_t size;                           /*!< number of elements in values */
-	} mssp;
+	} mssp; /*!< MSSP */
 };
 
 /*! 
@@ -371,7 +379,7 @@ struct telnet_t;
  * \param eh        Event handler function called for every event.
  * \param flags     0 or TELNET_FLAG_PROXY.
  * \param user_data Optional data pointer that will be passsed to eh.
- * \return Telent state tracker object.
+ * \return Telnet state tracker object.
  */
 extern telnet_t* telnet_init(const telnet_telopt_t *telopts,
 		telnet_event_handler_t eh, unsigned char flags, void *user_data);
@@ -432,6 +440,17 @@ extern void telnet_negotiate(telnet_t *telnet, unsigned char cmd,
  * \param size   Number of bytes to send.
  */
 extern void telnet_send(telnet_t *telnet,
+		const char *buffer, size_t size);
+
+/*!
+ * Send non-command text (escapes IAC bytes and translates
+ * \\r -> CR-NUL and \\n -> CR-LF unless in BINARY mode.
+ *
+ * \param telnet Telnet state tracker object.
+ * \param buffer Buffer of bytes to send.
+ * \param size   Number of bytes to send.
+ */
+extern void telnet_send_text(telnet_t *telnet,
 		const char *buffer, size_t size);
 
 /*!

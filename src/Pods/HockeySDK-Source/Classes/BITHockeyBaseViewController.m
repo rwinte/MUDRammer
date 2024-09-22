@@ -26,14 +26,20 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
+#import "HockeySDK.h"
+
+#if HOCKEYSDK_FEATURE_AUTHENTICATOR || HOCKEYSDK_FEATURE_UPDATES || HOCKEYSDK_FEATURE_FEEDBACK
+
 #import "BITHockeyBaseViewController.h"
 #import "HockeySDKPrivate.h"
 
+@interface BITHockeyBaseViewController ()
 
-@implementation BITHockeyBaseViewController {
-  BOOL _modal;
-  UIStatusBarStyle _statusBarStyle;
-}
+@property (nonatomic) BOOL modal;
+
+@end
+
+@implementation BITHockeyBaseViewController
 
 
 - (instancetype)initWithStyle:(UITableViewStyle)style {
@@ -69,8 +75,8 @@
 
 #pragma mark - View lifecycle
 
-- (void)onDismissModal:(id)sender {
-  if (_modal) {
+- (void)onDismissModal:(id) __unused sender {
+  if (self.modal) {
     UIViewController *presentingViewController = [self presentingViewController];
     
     // If there is no presenting view controller just remove view
@@ -82,51 +88,22 @@
   } else {
     [self.navigationController popViewControllerAnimated:YES];
   }
-  
-  [[UIApplication sharedApplication] setStatusBarStyle:_statusBarStyle];
-}
-
-
-- (void)viewWillAppear:(BOOL)animated {
-  [super viewWillAppear:animated];
-  
-  _statusBarStyle = [[UIApplication sharedApplication] statusBarStyle];
-  if ([self.navigationController.navigationBar.tintColor isEqual:BIT_RGBCOLOR(25, 25, 25)]) {
-#if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_6_1
-    [[UIApplication sharedApplication] setStatusBarStyle:(self.navigationController.navigationBar.barStyle == UIBarStyleDefault) ? UIStatusBarStyleDefault : UIStatusBarStyleLightContent];
-#else
-    [[UIApplication sharedApplication] setStatusBarStyle:(self.navigationController.navigationBar.barStyle == UIBarStyleDefault) ? UIStatusBarStyleDefault : UIStatusBarStyleBlackOpaque];
-#endif
-  }
-}
-
-- (void)viewWillDisappear:(BOOL)animated {
-  [super viewWillDisappear:animated];
-  
-  if ([self.navigationController.navigationBar.tintColor isEqual:BIT_RGBCOLOR(25, 25, 25)]) {
-    [[UIApplication sharedApplication] setStatusBarStyle:_statusBarStyle];
-  }
 }
 
 
 #pragma mark - Rotation
 
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
-  BOOL shouldAutorotate;
-  
+-(UIInterfaceOrientationMask)supportedInterfaceOrientations {
   if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
-    shouldAutorotate = (interfaceOrientation == UIInterfaceOrientationLandscapeLeft ||
-                        interfaceOrientation == UIInterfaceOrientationLandscapeRight ||
-                        interfaceOrientation == UIInterfaceOrientationPortrait);
+    return (UIInterfaceOrientationMaskPortrait | UIInterfaceOrientationMaskLandscape);
   } else {
-    shouldAutorotate = YES;
+    return UIInterfaceOrientationMaskAll;
   }
-  
-  return shouldAutorotate;
 }
-
 
 #pragma mark - Modal presentation
 
 
 @end
+
+#endif /* HOCKEYSDK_FEATURE_AUTHENTICATOR || HOCKEYSDK_FEATURE_UPDATES || HOCKEYSDK_FEATURE_FEEDBACK */
