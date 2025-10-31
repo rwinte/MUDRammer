@@ -39,9 +39,9 @@
 
 /**
  Initializes a new `TOWebViewController` object with the specified URL string.
- 
- @param url The URL as a string, of the web page that the controller will initially display.
- 
+
+ @param urlString The URL as a string, of the web page that the controller will initially display.
+
  @return The newly initialized `TOWebViewController` object.
  */
 - (instancetype)initWithURLString:(NSString *)urlString;

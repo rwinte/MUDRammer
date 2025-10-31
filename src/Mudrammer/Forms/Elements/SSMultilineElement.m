@@ -48,11 +48,15 @@
     textController.textView.font = themer.currentFont;
     textController.textView.textColor = [themer valueForThemeKey:kThemeFontColor];
 
-    @weakify(self,tableView,textController);
+    __weak typeof(self) weakSelf = self;
+    __weak typeof(tableView) weakTableView = tableView;
+    __weak typeof(textController) weakTextController = textController;
     textController.willDisappearCallback = ^{
-        @strongify(self,tableView,textController);
-        self.textValue = textController.textView.text;
-        [tableView reloadCellForElements:self, nil];
+        __strong typeof(weakSelf) strongSelf = weakSelf; (void)strongSelf;
+        __strong typeof(weakTableView) strongTableView = weakTableView; (void)strongTableView;
+        __strong typeof(weakTextController) strongTextController = weakTextController; (void)strongTextController;
+        strongSelf.textValue = strongTextController.textView.text;
+        [strongTableView reloadCellForElements:strongSelf, nil];
     };
     [controller displayViewController:textController withPresentationMode:self.presentationMode];
 }

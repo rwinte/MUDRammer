@@ -63,7 +63,7 @@
 
     _dataSource = [[SSSectionedDataSource alloc] initWithSections:sections];
 
-    @weakify(self);
+    __weak typeof(self) weakSelf = self;
 
     self.dataSource.tableActionBlock = ^BOOL(SSCellActionType action,
                                              UITableView *tableView,
@@ -101,7 +101,7 @@
                                            NSNumber *item,
                                            UITableView *tableView,
                                            NSIndexPath *indexPath) {
-        @strongify(self);
+        __strong typeof(weakSelf) strongSelf = weakSelf; (void)strongSelf;
         if (indexPath.section == SSAdvancedSectionAcknowledgements) {
             cell.textLabel.text = [VTAcknowledgementsViewController localizedTitle];
             cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
@@ -109,7 +109,7 @@
             [SSThemes configureCell:cell];
         } else if (indexPath.section == SSAdvancedSectionStringEncoding) {
             cell.textLabel.text = NSLocalizedString(@"STRING_ENCODING", nil);
-            cell.detailTextLabel.text = [self.coder currentStringEncoding].localizedName;
+            cell.detailTextLabel.text = [strongSelf.coder currentStringEncoding].localizedName;
             cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
             cell.selectionStyle = UITableViewCellSelectionStyleGray;
             [SSThemes configureCell:cell];
@@ -130,12 +130,12 @@
                                        ? textField.text
                                        : kPrefSemicolonDefaultDelimiter);
 
-                [[NSNotificationCenter defaultCenter] removeObserver:self];
+                [[NSNotificationCenter defaultCenter] removeObserver:strongSelf];
 
                 [[NSUserDefaults standardUserDefaults] setObject:delimiter
                                                           forKey:kPrefSemicolonCommandDelimiter];
 
-                [[NSNotificationCenter defaultCenter] addObserver:self
+                [[NSNotificationCenter defaultCenter] addObserver:strongSelf
                                                          selector:@selector(userDefaultsChanged)
                                                              name:NSUserDefaultsDidChangeNotification
                                                            object:nil];
@@ -225,21 +225,21 @@
                 isSelected = [[NSUserDefaults standardUserDefaults] boolForKey:pref];
 
                 changeHandler = ^(BOOL isOn) {
-                    [[NSNotificationCenter defaultCenter] removeObserver:self];
+                    [[NSNotificationCenter defaultCenter] removeObserver:strongSelf];
 
                     [[NSUserDefaults standardUserDefaults] setBool:isOn
                                                             forKey:pref];
 
-                    [[NSNotificationCenter defaultCenter] addObserver:self
+                    [[NSNotificationCenter defaultCenter] addObserver:strongSelf
                                                              selector:@selector(userDefaultsChanged)
                                                                  name:NSUserDefaultsDidChangeNotification
                                                                object:nil];
 
                     if ([pref isEqualToString:kPrefSemicolonCommands]) {
-                        if (isOn && [self.dataSource numberOfItemsInSection:SSAdvancedSectionSemicolonCommands] == 1) {
-                            [self.dataSource appendItems:@[ @0 ] toSection:SSAdvancedSectionSemicolonCommands];
-                        } else if (!isOn && [self.dataSource numberOfItemsInSection:SSAdvancedSectionSemicolonCommands] == 2) {
-                            [self.dataSource removeItemsInRange:NSMakeRange(1, 1) inSection:SSAdvancedSectionSemicolonCommands];
+                        if (isOn && [strongSelf.dataSource numberOfItemsInSection:SSAdvancedSectionSemicolonCommands] == 1) {
+                            [strongSelf.dataSource appendItems:@[ @0 ] toSection:SSAdvancedSectionSemicolonCommands];
+                        } else if (!isOn && [strongSelf.dataSource numberOfItemsInSection:SSAdvancedSectionSemicolonCommands] == 2) {
+                            [strongSelf.dataSource removeItemsInRange:NSMakeRange(1, 1) inSection:SSAdvancedSectionSemicolonCommands];
                         }
                     }
                 };

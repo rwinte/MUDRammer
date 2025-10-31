@@ -108,7 +108,7 @@
         // Data source
         _dataSource = [[SPLTerminalDataSource alloc] initWithItems:nil];
 
-        @weakify(self);
+        __weak typeof(self) weakSelf = self;
         self.dataSource.cellClass = [SSTextViewCell class];
         self.dataSource.tableActionBlock = ^BOOL(SSCellActionType action,
                                                  UITableView *tableView,
@@ -120,10 +120,10 @@
                                                SSAttributedLineGroupItem *line,
                                                UITableView *tableView,
                                                NSIndexPath *indexPath) {
-            @strongify(self);
+            __strong typeof(weakSelf) strongSelf = weakSelf; (void)strongSelf;
             cell.textView.linkAttributes = @{ (id)kCTForegroundColorAttributeName : (id)((UIColor *)[[SSThemes sharedThemer] valueForThemeKey:kThemeLinkColor]).CGColor };
             cell.textView.activeLinkAttributes = @{ (id)kCTForegroundColorAttributeName : (id)((UIColor *)[[SSThemes sharedThemer] valueForThemeKey:kThemeFontColor]).CGColor };
-            cell.textView.delegate = self.delegate;
+            cell.textView.delegate = strongSelf.delegate;
 
             if ([line.line length] > 0) {
                 cell.textView.text = line.line;
@@ -145,32 +145,33 @@
 
     if( enabled ) {
         // drag-to-dismiss keyboard
-        @weakify(self);
+        __weak typeof(self) weakSelf = self;
         [self addKeyboardNonpanningWithFrameBasedActionHandler:nil
                                   constraintBasedActionHandler:^(CGRect keyboardFrame, BOOL opening, BOOL closing)
         {
-            @strongify(self);
+            __strong typeof(weakSelf) strongSelf = weakSelf; (void)strongSelf;
+            if (!strongSelf) { return; }
 //            DLog(@"%@ %i %i", NSStringFromCGRect(keyboardFrame), opening, closing);
 
-            BOOL isNearBottom = [self.tableView isNearBottom];
+            BOOL isNearBottom = [strongSelf.tableView isNearBottom];
             BOOL kbPref = [[NSUserDefaults standardUserDefaults] boolForKey:kPrefBTKeyboard];
             CGFloat keyboardHeight = CGRectGetHeight(keyboardFrame);
 
             if (!kbPref) {
-                [self mas_updateConstraints:^(MASConstraintMaker *make) {
+                [strongSelf mas_updateConstraints:^(MASConstraintMaker *make) {
                     if (closing || keyboardHeight <= 0) {
-                        make.bottom.equalTo(self.superview);
+                        make.bottom.equalTo(strongSelf.superview);
                     } else if (opening && keyboardHeight > 0) {
-                        make.bottom.equalTo(self.superview).offset(-keyboardHeight);
+                        make.bottom.equalTo(strongSelf.superview).offset(-keyboardHeight);
                     }
                 }];
             }
 
-            [self repositionRadialControls];
+            [strongSelf repositionRadialControls];
 
             if (isNearBottom && (opening || closing)) {
                 dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                     [self.tableView scrollToBottom];
+                     [strongSelf.tableView scrollToBottom];
                 });
             }
         }];
@@ -637,3 +638,4 @@
 }
 
 @end
+

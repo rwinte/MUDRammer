@@ -44,13 +44,13 @@
     id <SSConnectButtonDelegate> del = self.connectDelegate;
 
     if (self.isConnected) {
-        @weakify(self);
+        __weak typeof(self) weakSelf = self;
         [SPLAlerts SPLShowActionViewWithTitle:nil
                                   cancelTitle:NSLocalizedString(@"CANCEL", @"Cancel")
                                   cancelBlock:nil
                              destructiveTitle:NSLocalizedString(@"DISCONNECT", @"Disconnect")
                              destructiveBlock:^{
-                                 @strongify(self);
+                                 __strong typeof(weakSelf) strongSelf = weakSelf; (void)strongSelf;
                                  if ([del respondsToSelector:@selector(connectButton:didChangeState:)]) {
                                      [del connectButton:self
                                          didChangeState:NO];

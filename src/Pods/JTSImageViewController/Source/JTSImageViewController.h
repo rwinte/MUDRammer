@@ -69,8 +69,8 @@ extern CGFloat const JTSImageViewController_DefaultBackgroundBlurRadius;
  @param imageInfo The source info for image and transition metadata. Required.
  
  @param mode The mode to be used. (JTSImageViewController has an alternate alt text mode). Required.
- 
- @param backgroundStyle Currently, either scaled-and-dimmed, or scaled-dimmed-and-blurred. 
+
+ @param backgroundOptions Currently, either scaled-and-dimmed, or scaled-dimmed-and-blurred.
  The latter is like Tweetbot 3.0's background style.
  */
 - (instancetype)initWithImageInfo:(JTSImageInfo *)imageInfo

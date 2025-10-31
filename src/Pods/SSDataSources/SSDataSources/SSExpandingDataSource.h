@@ -41,10 +41,10 @@ typedef NSInteger (^SSCollapsedSectionCountBlock) (SSSection *section,
  *
  *  An expanded section does not limit the number of items that it displays.
  *
- *  @param section      the section being expanded or collapsed
- *  @param sectionIndex the index of this section
+ *  param section      the section being expanded or collapsed
+ *  param sectionIndex the index of this section
  *
- *  @return the maximum number of rows to display in this section when collapsed
+ *  return the maximum number of rows to display in this section when collapsed
  */
 @property (nonatomic, copy) SSCollapsedSectionCountBlock collapsedSectionCountBlock;
 

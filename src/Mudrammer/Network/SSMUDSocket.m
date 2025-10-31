@@ -53,6 +53,10 @@
 
 #pragma mark - init
 
+- (instancetype)init {
+    return [self initWithSocket:nil];
+}
+
 - (instancetype)initWithSocket:(GCDAsyncSocket *)socket {
 
     if ((self = [super init])) {
@@ -248,9 +252,9 @@
 }
 
 - (void)socketDidDisconnect:(SSMUDSocket *)sock withError:(NSError *)err {
-    @weakify(self);
+    __weak typeof(self) weakSelf = self;
     [self.parsingQueue ss_addBlockOperationWithBlock:^(SSBlockOperation *operation) {
-        @strongify(self);
+        __strong typeof(weakSelf) strongSelf = weakSelf; (void)strongSelf;
         self.telnetLib = nil;
         [self informDelegateWithSelector:@selector(mudsocket:didDisconnectWithError:)
                                   object:err];
@@ -258,10 +262,10 @@
 }
 
 - (void)socket:(GCDAsyncSocket *)sock didReadData:(NSData *)data withTag:(long)tag {
-    @weakify(self);
+    __weak typeof(self) weakSelf = self;
 
     [self.parsingQueue ss_addBlockOperationWithBlock:^(SSBlockOperation *operation) {
-        @strongify(self);
+        __strong typeof(weakSelf) strongSelf = weakSelf; (void)strongSelf;
         if ([operation isCancelled]) {
             return;
         }

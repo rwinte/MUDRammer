@@ -51,12 +51,12 @@
         return NO;
     };
 
-    @weakify(self);
+    __weak typeof(self) weakSelf = self;
     self.dataSource.cellConfigureBlock = ^(SSBaseTableCell *cell,
                                            id sound,
                                            UITableView *tableView,
                                            NSIndexPath *indexPath) {
-        @strongify(self);
+        __strong typeof(weakSelf) strongSelf = weakSelf; (void)strongSelf;
         [SSThemes configureCell:cell];
         BOOL selected;
 

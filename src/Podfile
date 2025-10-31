@@ -1,11 +1,9 @@
 source 'https://github.com/splinesoft/specs.git'
 source 'https://github.com/CocoaPods/Specs.git'
 
-platform :ios, '8.0'
+platform :ios, '17.0'
 
 project 'Mudrammer'
-
-deployment_target = '7.0'
 
 plugin 'cocoapods-keys', {
   :project => "Mudrammer",
@@ -18,60 +16,102 @@ plugin 'cocoapods-keys', {
   ]
 }
 
-# Splinesoft
-pod 'SPLCore', '1.0.1' # via SPLSpecs
-pod 'SSAccessibility', '0.2.0'
-pod 'SSDataSources', '0.8.5'
-pod 'SSOperations', '0.1.0'
-pod 'SSApplication', '0.3.0'
-pod 'SPLUserActivity', '0.1.2'
+target 'MUDRammer' do
+  pod 'libextobjc', '0.6'
+  pod 'BlocksKit', '~> 2.2'
 
-# Networking  
-pod 'CocoaAsyncSocket', '7.3.5'
-pod 'libtelnet', '0.21'
-# pod 'libtelnet', :git => 'https://github.com/seanmiddleditch/libtelnet.git', :commit => 'c3afbda4ef38ecf8e70e58e7614944fc60f9635e' # via SPLSpecs
+  # Splinesoft
+  pod 'SPLCore', :path => '/Users/bob/code/SPLCore'
+  pod 'SSAccessibility', '0.2.0'
+  pod 'SSDataSources', '0.8.5'
+  pod 'SSOperations', '0.1.0'
+  pod 'SSApplication', '0.3.0'
+  pod 'SPLUserActivity', '0.1.2'
 
-# Engine
-pod 'SAMRateLimit', '0.2.0'
-pod 'KVOController', '1.0.3'
-pod 'OSCache', '1.2'
-pod 'MyLilTimer', '0.1.0'
+  # Networking  
+  pod 'CocoaAsyncSocket', '7.3.5'
+  # pod 'libtelnet', '0.21'
 
-# Analytics
-pod 'ARAnalytics/HockeyApp', '3.6.2'
+  # Engine
+  pod 'SAMRateLimit', '0.2.0'
+  pod 'KVOController', '1.0.3'
+  pod 'OSCache', '1.2'
+  pod 'MyLilTimer', '0.1.0'
 
-# UI
-pod 'TOWebViewController', '2.0.17'
-pod 'DAKeyboardControl', '2.4.0'
-pod 'TTTAttributedLabel', '1.13.1'
-pod 'JASidePanels', '1.3.2'
-pod 'Masonry', '0.6.2'
-pod 'JSQSystemSoundPlayer', '4.0.0'
-pod 'JTSImageViewController', '1.4'
-pod 'IFTTTLaunchImage', '0.4.1'
+  # Analytics
+  # pod 'ARAnalytics/HockeyApp', '3.6.2' # Removed - HockeyApp shut down in 2019
 
-# Support
-pod 'uservoice-iphone-sdk', '3.2.3'
+  # UI
+  pod 'TOWebViewController', '2.0.17'
+  pod 'DAKeyboardControl', '2.4.0'
+  pod 'TTTAttributedLabel', '1.13.1'
+  pod 'JASidePanels', '1.3.2'
+  pod 'Masonry', '0.6.2'
+  pod 'JSQSystemSoundPlayer', '4.0.0'
+  pod 'JTSImageViewController', '1.4'
+  pod 'IFTTTLaunchImage', '0.4.1'
+  pod 'SwiftGen', '~> 6.0'
 
-# Forms
-pod 'QuickDialog', :subspecs => ['Core', 'Extras'], :git => 'https://github.com/escoz/QuickDialog.git', :commit => 'c5891e6d63def55af5b7f5f5efe8d64330d3a4fd'
-pod 'FXForms', '1.2.13'
+  # Support
+  pod 'uservoice-iphone-sdk', '3.2.3'
 
-# Pods Ack.
-pod 'VTAcknowledgementsViewController', '0.14'
+  # Forms
+  pod 'QuickDialog', :subspecs => ['Core', 'Extras'], :git => 'https://github.com/escoz/QuickDialog.git', :commit => 'c5891e6d63def55af5b7f5f5efe8d64330d3a4fd'
+  pod 'FXForms', '1.2.13'
 
-# `pod install` resets all pod deployment targets after each install.
-# Ensure that MUDRammer builds with 8.0 but supports a minimum deploy target of 7.0.
-post_install do |installer_representation|
-    installer_representation.pods_project.targets.each do |pod_target|
-        pod_target.build_configurations.each do |config|
-            config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = deployment_target
-        end
-    end
-end
+  # Pods Ack.
+  pod 'VTAcknowledgementsViewController', '0.14'
 
-# Tests
-target "MRTests" do
+  target "MRTests" do
+    inherit! :search_paths
+    pod 'MagicalRecord'
     pod 'Expecta'
     pod 'OCMock'
+  end
+end
+
+post_install do |installer|
+  installer.pods_project.targets.each do |target|
+    target.build_configurations.each do |config|
+      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '17.0'
+      # Suppress newline-eof warning for pods (especially deprecated BlocksKit)
+      config.build_settings['WARNING_CFLAGS'] ||= '$(inherited)'
+      config.build_settings['WARNING_CFLAGS'] += ' -Wno-newline-eof'
+    end
+  end
+
+  # Add libtelnet header and library paths to Pods target
+  installer.pods_project.targets.each do |target|
+    if target.name == 'Pods-MUDRammer'
+      target.build_configurations.each do |config|
+        config.build_settings['HEADER_SEARCH_PATHS'] ||= '$(inherited) '
+        config.build_settings['HEADER_SEARCH_PATHS'] << '/Users/bob/code/libtelnet '
+
+        config.build_settings['LIBRARY_SEARCH_PATHS'] ||= '$(inherited) '
+        config.build_settings['LIBRARY_SEARCH_PATHS'] << '/Users/bob/code/libtelnet/build-sim/Release-iphonesimulator '
+
+        config.build_settings['OTHER_LDFLAGS'] ||= '$(inherited) '
+        config.build_settings['OTHER_LDFLAGS'] << ' /Users/bob/code/libtelnet/build-sim/Release-iphonesimulator/liblibtelnet.a'
+      end
+    end
+  end
+
+  # Add libtelnet header and library paths to main app target
+  project_path = installer.aggregate_targets[0].user_project_path
+  project = Xcodeproj::Project.open(project_path)
+  project.targets.each do |target|
+    if target.name == 'MUDRammer'
+      target.build_configurations.each do |config|
+        config.build_settings['HEADER_SEARCH_PATHS'] ||= '$(inherited) '
+        config.build_settings['HEADER_SEARCH_PATHS'] << '/Users/bob/code/libtelnet '
+
+        config.build_settings['LIBRARY_SEARCH_PATHS'] ||= '$(inherited) '
+        config.build_settings['LIBRARY_SEARCH_PATHS'] << '/Users/bob/code/libtelnet/build-sim/Release-iphonesimulator '
+
+        config.build_settings['OTHER_LDFLAGS'] ||= '$(inherited) '
+        config.build_settings['OTHER_LDFLAGS'] << ' /Users/bob/code/libtelnet/build-sim/Release-iphonesimulator/liblibtelnet.a'
+      end
+    end
+  end
+  project.save
 end

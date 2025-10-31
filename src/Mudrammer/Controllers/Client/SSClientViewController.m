@@ -31,6 +31,7 @@
 #import "SSTGAEditor.h"
 #import "SPLHandoffWebViewController.h"
 #import "SPLTimerManager.h"
+#import <BlocksKit/UIBarButtonItem+BlocksKit.h>
 
 #define kObservedProperties         @[ kThemeFontSize, kThemeFontName ]
 
@@ -116,21 +117,21 @@ typedef void (^SPLSettingsCloseBlock) (void);
         _titleView = [[SPLMUDTitleView alloc] initWithFrame:CGRectMake(0, 0, ([[UIDevice currentDevice] isIPad] ? 280 : 160), 44)];
         [self updateTitle:NSLocalizedString(@"DISCONNECTED", @"Disconnected")];
 
-        @weakify(self);
+        __weak typeof(self) weakSelf = self;
         self.titleView.MSSPButtonBlock = ^{
-            @strongify(self);
-            SPLMSSPViewController *MSSPVC = [[SPLMSSPViewController alloc] initWithMSSPData:self.titleView.MSSPData];
+            __strong typeof(weakSelf) strongSelf = weakSelf;
+            SPLMSSPViewController *MSSPVC = [[SPLMSSPViewController alloc] initWithMSSPData:strongSelf.titleView.MSSPData];
             MSSPVC.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] bk_initWithBarButtonSystemItem:UIBarButtonSystemItemDone
                                                                                                       handler:^(id sender)
             {
-                [self dismissViewControllerAnimated:YES completion:nil];
+                [strongSelf dismissViewControllerAnimated:YES completion:nil];
             }];
 
             UINavigationController *nav = [MSSPVC wrappedNavigationController];
 
             nav.modalPresentationStyle = UIModalPresentationFormSheet;
 
-            [self presentViewController:nav animated:YES completion:nil];
+            [strongSelf presentViewController:nav animated:YES completion:nil];
         };
         self.navigationItem.titleView = self.titleView;
 
@@ -190,7 +191,7 @@ typedef void (^SPLSettingsCloseBlock) (void);
     [super viewDidAppear:animated];
 
     if ([self isConnected] && [[NSUserDefaults standardUserDefaults] boolForKey:kPrefInitialSetupComplete]) {
-        [[SSAppDelegate sharedApplication].notificationObserver registerForLocalNotifications];
+        [[SSAppDelegate sharedApplication].notificationObserver registerForNotificationsFromObjC];
     }
 }
 
@@ -334,11 +335,14 @@ typedef void (^SPLSettingsCloseBlock) (void);
     [self updateWorldToolbar];
 }
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-implementations"
 - (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation {
     [super didRotateFromInterfaceOrientation:fromInterfaceOrientation];
 
     [self sendNAWS];
 }
+#pragma clang diagnostic pop
 
 - (void)setNavVisible:(BOOL)visible {
     if (![[self.navigationController visibleViewController] isEqual:self]) {
@@ -393,6 +397,8 @@ typedef void (^SPLSettingsCloseBlock) (void);
 
 #pragma mark - UIPopoverControllerDelegate
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-implementations"
 - (BOOL)popoverControllerShouldDismissPopover:(UIPopoverController *)popoverController {
     return YES;
 }
@@ -412,6 +418,7 @@ typedef void (^SPLSettingsCloseBlock) (void);
 
     [SSClientContainer sharedClientContainer].recognizesPanGesture = YES;
 }
+#pragma clang diagnostic pop
 
 #pragma mark - UINavigationControllerDelegate
 
@@ -504,11 +511,11 @@ typedef void (^SPLSettingsCloseBlock) (void);
 
     [self.mudView endEditing:YES];
 
-    @weakify(self);
+    __weak typeof(self) weakSelf = self;
 
     SSWorldEditViewController *editor = [SSWorldEditViewController editorForWorld:currentId];
     editor.saveCompletionBlock = ^(BOOL didSave) {
-        @strongify(self);
+        __strong typeof(weakSelf) strongSelf = weakSelf; (void)strongSelf;
         [self closeSettingsWithCompletion:nil];
     };
     UINavigationController *nav = [editor wrappedNavigationController];
@@ -566,16 +573,16 @@ typedef void (^SPLSettingsCloseBlock) (void);
 
         [world setDefaultWorld];
 
-        logFileName = [SSSessionLogger logFileNameForHost:world.hostname];
+        self->logFileName = [SSSessionLogger logFileNameForHost:world.hostname];
 
-        if (![currentWorld isEqual:world]) {
-            currentWorld = world;
+        if (![self->currentWorld isEqual:world]) {
+            self->currentWorld = world;
 
-            defaultWorldFetcher.delegate = nil;
-            defaultWorldFetcher = nil;
+            self->defaultWorldFetcher.delegate = nil;
+            self->defaultWorldFetcher = nil;
             // default world
-            defaultWorldFetcher = [World MR_fetchAllGroupedBy:nil
-                                                withPredicate:[NSPredicate predicateWithFormat:@"(self = %@)", currentWorld]
+            self->defaultWorldFetcher = [World MR_fetchAllGroupedBy:nil
+                                                withPredicate:[NSPredicate predicateWithFormat:@"(self = %@)", self->currentWorld]
                                                      sortedBy:[World defaultSortField]
                                                     ascending:[World defaultSortAscending]
                                                      delegate:self];
@@ -583,8 +590,8 @@ typedef void (^SPLSettingsCloseBlock) (void);
 
         [self updateWorldToolbar];
 
-        self.hostname = currentWorld.hostname;
-        self.port = currentWorld.port;
+        self.hostname = self->currentWorld.hostname;
+        self.port = self->currentWorld.port;
 
         if ([self isConnected]) {
             [self disconnect];
@@ -594,13 +601,13 @@ typedef void (^SPLSettingsCloseBlock) (void);
         [self.mudView purgeHistory];
         [self.mudView clearText];
 
-        @weakify(self);
+        __weak typeof(self) weakSelf = self;
 
         if (connectAfterUpdate) {
             CGFloat delayInSeconds = 0.4f;
             dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
             dispatch_after(popTime, dispatch_get_main_queue(), ^{
-                @strongify(self);
+                __strong typeof(weakSelf) strongSelf = weakSelf; (void)strongSelf;
                 [self connect];
             });
         }
@@ -647,10 +654,10 @@ typedef void (^SPLSettingsCloseBlock) (void);
 }
 
 - (void)settingsViewShouldOpenContact:(SSSettingsViewController *)settingsViewController {
-    @weakify(self);
+    __weak typeof(self) weakSelf = self;
 
     [self closeSettingsWithCompletion:^{
-        @strongify(self);
+        __strong typeof(weakSelf) strongSelf = weakSelf; (void)strongSelf;
 
         if (![[UIDevice currentDevice] isIPad]) {
             [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleDefault animated:YES];
@@ -662,17 +669,17 @@ typedef void (^SPLSettingsCloseBlock) (void);
 }
 
 - (void)settingsViewShouldSendSessionLog:(SSSettingsViewController *)settingsViewController {
-    @weakify(self);
+    __weak typeof(self) weakSelf = self;
 
     [self closeSettingsWithCompletion:^{
-        @strongify(self);
+        __strong typeof(weakSelf) strongSelf = weakSelf;
 
-        if (![MFMailComposeViewController canSendMail] || [logFileName length] == 0) {
+        if (![MFMailComposeViewController canSendMail] || [strongSelf->logFileName length] == 0) {
             return;
         }
 
         void (^LogProcessOperation) (void) = ^{
-            NSString *logString = [SSSessionLogger contentsOfLogWithFileName:logFileName];
+            NSString *logString = [SSSessionLogger contentsOfLogWithFileName:strongSelf->logFileName];
 
             if ([logString length] == 0) {
                 return;
@@ -826,7 +833,7 @@ typedef void (^SPLSettingsCloseBlock) (void);
                 trigger.trigger = text;
             } completion:^(BOOL didSave, NSError *error) {
                 SSTGAEditor *editor = [SSTGAEditor editorForRecord:objectID
-                                                           inWorld:currentWorld.objectID
+                                                           inWorld:self->currentWorld.objectID
                                                      parentContext:[NSManagedObjectContext MR_defaultContext]];
 
                 UINavigationController *nav = [editor wrappedNavigationController];
@@ -846,7 +853,7 @@ typedef void (^SPLSettingsCloseBlock) (void);
                 gag.gag = text;
             } completion:^(BOOL didSave, NSError *error) {
                 SSTGAEditor *editor = [SSTGAEditor editorForRecord:objectID
-                                                           inWorld:currentWorld.objectID
+                                                           inWorld:self->currentWorld.objectID
                                                      parentContext:[NSManagedObjectContext MR_defaultContext]];
 
                 UINavigationController *nav = [editor wrappedNavigationController];
@@ -866,10 +873,10 @@ typedef void (^SPLSettingsCloseBlock) (void);
 - (void)sendText:(NSString *)text appendToHistory:(BOOL)appendToHistory {
     NSManagedObjectID *currentID = [currentWorld objectID];
 
-    @weakify(self);
+    __weak typeof(self) weakSelf = self;
 
     SSBlockOperationBlock writeBlock = ^(SSBlockOperation *operation) {
-        @strongify(self);
+        __strong typeof(weakSelf) strongSelf = weakSelf; (void)strongSelf;
 
         if ([operation isCancelled]) {
             return;
@@ -946,45 +953,45 @@ typedef void (^SPLSettingsCloseBlock) (void);
     [self.readParsingQueue cancelAllOperations];
     [self.writeQueue cancelAllOperations];
 
-    @weakify(self);
+    __weak typeof(self) weakSelf = self;
     [self.readParsingQueue ss_addBlockOperationWithBlock:^(SSBlockOperation *operation) {
         if( [operation isCancelled] )
             return;
 
         dispatch_sync(dispatch_get_main_queue(), ^{
-            @strongify(self);
+            __strong typeof(weakSelf) strongSelf = weakSelf;
 
-            if ([self isViewVisible] && [[NSUserDefaults standardUserDefaults] boolForKey:kPrefInitialSetupComplete]) {
-                [[SSAppDelegate sharedApplication].notificationObserver registerForLocalNotifications];
+            if ([strongSelf isViewVisible] && [[NSUserDefaults standardUserDefaults] boolForKey:kPrefInitialSetupComplete]) {
+                [[SSAppDelegate sharedApplication].notificationObserver registerForNotificationsFromObjC];
             }
 
             if ([operation isCancelled]) {
                 return;
             }
 
-            [self appendText:[NSLocalizedString(@"CONNECTED", @"Connected") stringByAppendingString:@"\n"]
+            [strongSelf appendText:[NSLocalizedString(@"CONNECTED", @"Connected") stringByAppendingString:@"\n"]
                  isUserInput:NO];
 
-            if( [[currentWorld worldDescription] length] > 0 )
-                [self updateTitle:[currentWorld worldDescription]];
+            if( [[strongSelf->currentWorld worldDescription] length] > 0 )
+                [strongSelf updateTitle:[strongSelf->currentWorld worldDescription]];
             else
-                [self updateTitle:[NSString stringWithFormat:@"%@:%@",
-                                   self.hostname,
-                                   self.port]];
+                [strongSelf updateTitle:[NSString stringWithFormat:@"%@:%@",
+                                   strongSelf.hostname,
+                                   strongSelf.port]];
 
-            [self.titleView setMSSPData:nil];
+            [strongSelf.titleView setMSSPData:nil];
 
-            [self.connectButton setConnected:YES];
+            [strongSelf.connectButton setConnected:YES];
 
-            [self.mudView.tableView scrollToBottom];
+            [strongSelf.mudView.tableView scrollToBottom];
 
-            [self.mudView setEditable:YES];
-            [self.mudView setKeyboardPanningEnabled:YES];
+            [strongSelf.mudView setEditable:YES];
+            [strongSelf.mudView setKeyboardPanningEnabled:YES];
 
-            self.tickerIdentifier = [self.tickerManager enableAndObserveTickersForWorld:currentWorld
+            strongSelf.tickerIdentifier = [strongSelf.tickerManager enableAndObserveTickersForWorld:strongSelf->currentWorld
                                                                             tickerBlock:^(NSManagedObjectID *tickerId)
             {
-                @strongify(self);
+                __strong typeof(weakSelf) strongSelf2 = weakSelf;
 
                 Ticker *ticker = [Ticker existingObjectWithId:tickerId];
 
@@ -993,7 +1000,7 @@ typedef void (^SPLSettingsCloseBlock) (void);
                 }
 
                 if ([ticker.commands length] > 0) {
-                    [self sendText:ticker.commands
+                    [strongSelf2 sendText:ticker.commands
                    appendToHistory:YES];
                 }
 
@@ -1010,14 +1017,14 @@ typedef void (^SPLSettingsCloseBlock) (void);
             }];
 
             // Connect command
-            if ([currentWorld.connectCommand length] > 0) {
+            if ([strongSelf->currentWorld.connectCommand length] > 0) {
                 DLog(@"Scheduling connect commands");
                 dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(kConnectCommandsDelay * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                    if (![self isConnected] || [currentWorld.connectCommand length] == 0) {
+                    if (![strongSelf isConnected] || [strongSelf->currentWorld.connectCommand length] == 0) {
                         return;
                     }
 
-                    [self mudView:self.mudView didReceiveUserCommand:currentWorld.connectCommand];
+                    [strongSelf mudView:strongSelf.mudView didReceiveUserCommand:strongSelf->currentWorld.connectCommand];
                 });
             }
 
@@ -1034,7 +1041,7 @@ typedef void (^SPLSettingsCloseBlock) (void);
 
     [self.writeQueue cancelAllOperations];
 
-    @weakify(self);
+    __weak typeof(self) weakSelf = self;
     [self.readParsingQueue ss_addBlockOperationWithBlock:^(SSBlockOperation *operation) {
         if( [operation isCancelled] )
             return;
@@ -1052,31 +1059,31 @@ typedef void (^SPLSettingsCloseBlock) (void);
         [str appendString:@"\n"];
 
         dispatch_sync(dispatch_get_main_queue(), ^{
-            @strongify(self);
+            __strong typeof(weakSelf) strongSelf = weakSelf;
 
             if( [operation isCancelled] )
                 return;
 
-            [self appendText:str isUserInput:NO];
+            [strongSelf appendText:str isUserInput:NO];
 
-            [self updateTitle:NSLocalizedString(@"DISCONNECTED", @"Disconnected")];
-            [self.titleView setMSSPData:nil];
+            [strongSelf updateTitle:NSLocalizedString(@"DISCONNECTED", @"Disconnected")];
+            [strongSelf.titleView setMSSPData:nil];
 
-            [self setNavVisible:YES];
+            [strongSelf setNavVisible:YES];
 
-            [self.connectButton setConnected:NO];
-            [self.mudView setEditable:NO];
+            [strongSelf.connectButton setConnected:NO];
+            [strongSelf.mudView setEditable:NO];
 
-            [self.mudView appendTTS:[NSString stringWithFormat:@"Disconnected from %@", self.hostname]];
+            [strongSelf.mudView appendTTS:[NSString stringWithFormat:@"Disconnected from %@", strongSelf.hostname]];
 
-            [self.logger closeStreamForFileName:logFileName];
+            [strongSelf.logger closeStreamForFileName:strongSelf->logFileName];
 
-            [self.tickerManager disableTickersForIdentifier:self.tickerIdentifier];
+            [strongSelf.tickerManager disableTickersForIdentifier:strongSelf.tickerIdentifier];
 
-            id del = self.delegate;
+            id del = strongSelf.delegate;
 
             if ([del respondsToSelector:@selector(clientDidDisconnect:)]) {
-                [del clientDidDisconnect:self];
+                [del clientDidDisconnect:strongSelf];
             }
         });
     }];
@@ -1085,10 +1092,10 @@ typedef void (^SPLSettingsCloseBlock) (void);
 - (void)mudsocket:(SSMUDSocket *)sock didReceiveAttributedLineGroup:(SSAttributedLineGroup *)group {
     NSManagedObjectID *worldID = [currentWorld objectID];
 
-    @weakify(self);
+    __weak typeof(self) weakSelf = self;
 
     [self.readParsingQueue ss_addBlockOperationWithBlock:^(SSBlockOperation *operation) {
-        @strongify(self);
+        __strong typeof(weakSelf) strongSelf = weakSelf; (void)strongSelf;
 
         if ([operation isCancelled]) {
             return;

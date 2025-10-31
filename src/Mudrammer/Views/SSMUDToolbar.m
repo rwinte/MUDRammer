@@ -33,6 +33,19 @@ UIEdgeInsets const kToolbarInsets = (UIEdgeInsets) { 4, 8, 4, 8 };
 
 - (instancetype)initWithFrame:(CGRect)frame {
     if ((self = [super initWithFrame:frame])) {
+        [self commonInit];
+    }
+    return self;
+}
+
+- (instancetype)initWithCoder:(NSCoder *)coder {
+    if ((self = [super initWithCoder:coder])) {
+        [self commonInit];
+    }
+    return self;
+}
+
+- (void)commonInit {
         self.backgroundColor = UIColorFromRGB(0xDDDDDD);
         self.tintColor = [UIColor darkGrayColor];
 
@@ -132,9 +145,6 @@ UIEdgeInsets const kToolbarInsets = (UIEdgeInsets) { 4, 8, 4, 8 };
                                                  selector:@selector(refreshTextViewHeight)
                                                      name:UIDeviceOrientationDidChangeNotification
                                                    object:nil];
-    }
-
-    return self;
 }
 
 - (void)setInputBarEnabled:(BOOL)editable {

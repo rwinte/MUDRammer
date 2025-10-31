@@ -80,9 +80,9 @@
     SSSoundPickerViewController *picker = [SSSoundPickerViewController new];
     picker.selectedFileName = ((SPLTickerForm *)self.formController.form).soundFileName;
 
-    @weakify(self);
+    __weak typeof(self) weakSelf = self;
     picker.selectedBlock = ^(NSString *str) {
-        @strongify(self);
+        __strong typeof(weakSelf) strongSelf = weakSelf; (void)strongSelf;
 
         SSSound *newSound = [JSQSystemSoundPlayer soundForFileName:str];
 
@@ -122,7 +122,7 @@
 - (void)deleteCurrentRecord {
     [self.tableView endEditing:YES];
 
-    @weakify(self);
+    __weak typeof(self) weakSelf = self;
     NSString *title;
 
     if( [_record isKindOfClass:[Trigger class]] )
@@ -140,7 +140,7 @@
                               cancelBlock:nil
                          destructiveTitle:title
                          destructiveBlock:^{
-                             @strongify(self);
+                             __strong typeof(weakSelf) strongSelf = weakSelf; (void)strongSelf;
                              [self.record deleteObject];
                              [self.record saveObjectWithCompletion:^{
                                  [self.navigationController popViewControllerAnimated:YES];

@@ -39,7 +39,7 @@ NSUInteger const kFormMaxInputLength = 1024;
 }
 
 - (void)refreshWorldFormForController:(SSWorldEditViewController *)controller {
-    @weakify(controller);
+    __weak typeof(controller) weakController = controller;
     [self.sections removeAllObjects];
 
     [self.world refreshObject];
@@ -120,7 +120,7 @@ NSUInteger const kFormMaxInputLength = 1024;
                                                                        Value:trigger.commands];
         triggerElement.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
         triggerElement.onSelected = ^{
-            @strongify(controller);
+            __strong typeof(weakController) strongController = weakController; (void)strongController;
             [controller editRecord:[trigger objectID]];
         };
         triggerElement.keepSelected = NO;
@@ -143,7 +143,7 @@ NSUInteger const kFormMaxInputLength = 1024;
                                                                      Value:alias.commands];
         aliasElement.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
         aliasElement.onSelected = ^{
-            @strongify(controller);
+            __strong typeof(weakController) strongController = weakController; (void)strongController;
             [controller editRecord:[alias objectID]];
         };
         aliasElement.keepSelected = NO;
@@ -188,7 +188,7 @@ NSUInteger const kFormMaxInputLength = 1024;
                                                                       Value:tickerValue];
         tickerElement.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
         tickerElement.onSelected = ^{
-            @strongify(controller);
+            __strong typeof(weakController) strongController = weakController; (void)strongController;
             [controller editRecord:[ticker objectID]];
         };
         tickerElement.keepSelected = NO;
@@ -213,7 +213,7 @@ NSUInteger const kFormMaxInputLength = 1024;
                                                                    Value:nil];
         gagElement.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
         gagElement.onSelected = ^{
-            @strongify(controller);
+            __strong typeof(weakController) strongController = weakController; (void)strongController;
             [controller editRecord:[gag objectID]];
         };
         gagElement.keepSelected = NO;
@@ -233,7 +233,7 @@ NSUInteger const kFormMaxInputLength = 1024;
                                                                            Value:trigger.commands];
             triggerElement.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
             triggerElement.onSelected = ^{
-                @strongify(controller);
+                __strong typeof(weakController) strongController = weakController; (void)strongController;
                 [controller editRecord:[trigger objectID]];
             };
             triggerElement.keepSelected = NO;

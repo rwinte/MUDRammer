@@ -12,6 +12,10 @@
 
 @implementation SSLineGroupCommand
 
+- (instancetype)init {
+    return [self initWithCommand:SSLineGroupCommandLineClear number1:0 number2:0];
+}
+
 - (instancetype)initWithCommand:(SSLineGroupCommandType)command number1:(NSUInteger)number1 number2:(NSUInteger)number2 {
     if ((self = [super init])) {
         _command = command;
@@ -111,8 +115,13 @@
     SSAttributedLineGroupItem *groupLine = [SSAttributedLineGroupItem new];
     groupLine.line = [string mutableCopy];
 
-    BOOL endsInNewLine = [[NSCharacterSet newlineCharacterSet] characterIsMember:
-                          [[string string] characterAtIndex:([[string string] length] - 1)]];
+    NSUInteger stringLength = [[string string] length];
+    BOOL endsInNewLine = NO;
+
+    if (stringLength > 0) {
+        endsInNewLine = [[NSCharacterSet newlineCharacterSet] characterIsMember:
+                         [[string string] characterAtIndex:(stringLength - 1)]];
+    }
 
     if (endsInNewLine) {
         [groupLine.line deleteCharactersInRange:NSMakeRange(groupLine.line.length - 1, 1)];

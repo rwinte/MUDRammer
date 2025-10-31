@@ -138,12 +138,12 @@
         [self.tickerIdentifiers addObject:tickerIdentifier];
     }
 
-    @weakify(self);
+    __weak typeof(self) weakSelf = self;
     SPLTimerManager *manager = self.timerManager;
     [manager scheduleRepeatingTimerWithName:tickerIdentifier
                                    interval:[ticker.interval unsignedIntegerValue]
                                       block:^{
-                                          @strongify(self);
+                                          __strong typeof(weakSelf) strongSelf = weakSelf; (void)strongSelf;
                                           if (self.tickerBlock) {
                                               self.tickerBlock(tickerId);
                                           }

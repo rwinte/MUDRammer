@@ -1,1 +1,1 @@
-../../../SPLCore/SPLCore/Models/SSMagicManagedObject.h
+../../../../../../SPLCore/SPLCore/Models/SSMagicManagedObject.h

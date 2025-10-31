@@ -17,6 +17,10 @@
 
 @implementation SSSound
 
+- (instancetype)init {
+    return [self initWithFileName:nil soundName:nil];
+}
+
 - (instancetype)initWithFileName:(NSString *)fileName soundName:(NSString *)soundName {
     if ((self = [super init])) {
         _fileName = fileName;

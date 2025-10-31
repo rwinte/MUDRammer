@@ -10,9 +10,6 @@
 
 @interface SSTextTableView : UITableView <UIScrollViewAccessibilityDelegate>
 
-// Specify a frame.
-- (instancetype) initWithFrame:(CGRect)frame NS_DESIGNATED_INITIALIZER;
-
 // Scrolling to bottom
 - (void) scrollToBottom;
 @property (nonatomic, getter=isNearBottom, readonly) BOOL nearBottom;

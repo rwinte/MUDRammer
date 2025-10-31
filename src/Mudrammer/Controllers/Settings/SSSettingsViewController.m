@@ -89,7 +89,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
 
-    @weakify(self);
+    __weak typeof(self) weakSelf = self;
 
     _dataSource = [[SSSectionedDataSource alloc] initWithItems:nil];
     _dataSource.tableActionBlock = ^BOOL(SSCellActionType action,
@@ -206,10 +206,10 @@
         cell.textLabel.minimumScaleFactor = 0.6f;
         cell.textLabel.adjustsFontSizeToFitWidth = YES;
 
-        @strongify(self);
+        __strong typeof(weakSelf) strongSelf = weakSelf;
         // Shortcuts
         if ([cell isKindOfClass:[SSBooleanCell class]]) {
-            [self configureBooleanCell:(SSBooleanCell *)cell atIndexPath:indexPath];
+            [strongSelf configureBooleanCell:(SSBooleanCell *)cell atIndexPath:indexPath];
             return;
         } else if ([cell isKindOfClass:[SSSegmentCell class]]) {
             NSString *label = NSLocalizedString(@"MOVE_CONTROL", @"Move Control");
@@ -221,15 +221,15 @@
                                         selectedIndex:[[[NSUserDefaults standardUserDefaults]
                                                         objectForKey:kPrefMoveControl] integerValue]
                                         changeHandler:^(NSInteger index) {
-                                            @strongify(self);
-                                            [[NSNotificationCenter defaultCenter] removeObserver:self
+                                            __strong typeof(weakSelf) strongSelf2 = weakSelf;
+                                            [[NSNotificationCenter defaultCenter] removeObserver:strongSelf2
                                                                                             name:NSUserDefaultsDidChangeNotification
                                                                                           object:nil];
 
                                             [SSRadialControl updateRadialPreference:kPrefMoveControl
                                                                          toPosition:(SSRadialControlPosition)index];
 
-                                            [[NSNotificationCenter defaultCenter] addObserver:self
+                                            [[NSNotificationCenter defaultCenter] addObserver:strongSelf2
                                                                                      selector:@selector(userDefaultsChanged:)
                                                                                          name:NSUserDefaultsDidChangeNotification
                                                                                        object:nil];
@@ -328,7 +328,7 @@
 
 - (void)configureBooleanCell:(SSBooleanCell *)cell atIndexPath:(NSIndexPath *)indexPath {
 
-    @weakify(self);
+    __weak typeof(self) weakSelf = self;
     NSString *prefKey, *label;
     BOOL isSelected = NO;
     SSBooleanChangeHandler changeHandler;
@@ -369,7 +369,7 @@
         isSelected = [[NSUserDefaults standardUserDefaults] boolForKey:prefKey];
 
         changeHandler = ^(BOOL isOn) {
-            @strongify(self);
+            __strong typeof(weakSelf) strongSelf = weakSelf; (void)strongSelf;
             [[NSNotificationCenter defaultCenter] removeObserver:self
                                                             name:NSUserDefaultsDidChangeNotification
                                                           object:nil];

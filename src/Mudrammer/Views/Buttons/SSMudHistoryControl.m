@@ -111,7 +111,7 @@
 #pragma mark - actions
 
 - (void)moveHistory:(HistoryDirection)direction {
-    [self setSelectedSegmentIndex:direction];
+    [self setSelectedSegmentIndex:(NSInteger)direction];
     [self segmentControlPressed:nil];
 }
 

@@ -12,7 +12,8 @@
 #import "SSRadialControl.h"
 #import "SSWorldDisplayController.h"
 #import <IFTTTSplashView.h>
-#import <HockeySDK.h>
+// #import <HockeySDK.h>
+// #import <ARAnalytics/ARAnalytics.h> // ARAnalytics removed - HockeyApp is deprecated/shutdown
 #import <Keys/MudrammerKeys.h>
 
 @interface SSAppDelegate ()
@@ -34,6 +35,8 @@
 
 #pragma mark - URL tapped
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-implementations"
 - (BOOL)application:(UIApplication *)application
             openURL:(NSURL *)url
   sourceApplication:(NSString *)sourceApplication
@@ -70,22 +73,24 @@
 
     return NO;
 }
+#pragma clang diagnostic pop
 
 #pragma mark - SSApplication
 
 - (void) ss_willFinishLaunchingWithOptions:(NSDictionary *)options {
     [[IFTTTSplashView sharedSplash] showSplash];
 
-    BITHockeyManager *manager = [BITHockeyManager sharedHockeyManager];
-    [manager.authenticator setIdentificationType:BITAuthenticatorIdentificationTypeAnonymous];
-    [manager.crashManager setCrashManagerStatus:BITCrashManagerStatusAutoSend];
+    // BITHockeyManager *manager = [BITHockeyManager sharedHockeyManager];
+    // [manager.authenticator setIdentificationType:BITAuthenticatorIdentificationTypeAnonymous];
+    // [manager.crashManager setCrashManagerStatus:BITCrashManagerStatusAutoSend];
 
     MudrammerKeys *keys = [MudrammerKeys new];
 
-    [ARAnalytics setupWithAnalytics:@{
-          ARHockeyAppBetaID   : keys.hOCKEYBETA_KEY,
-          ARHockeyAppLiveID   : keys.hOCKEYLIVE_KEY,
-    }];
+    // ARAnalytics removed - HockeyApp service was shut down by Microsoft in 2019
+    // [ARAnalytics setupWithAnalytics:@{
+    //       ARHockeyAppBetaID   : keys.hOCKEYBETA_KEY,
+    //       ARHockeyAppLiveID   : keys.hOCKEYLIVE_KEY,
+    // }];
 
     [self.class setupCoreData];
 
@@ -172,22 +177,26 @@
 
 #pragma mark - Notifications
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-implementations"
 - (void)application:(UIApplication *)application
 didRegisterUserNotificationSettings:(UIUserNotificationSettings *)notificationSettings {
-    [self.notificationObserver didRegisterUserNotificationSettings:notificationSettings];
+    // Legacy notification registration - no longer used with modern UNUserNotificationCenter
 }
 
 - (void)application:(UIApplication *)application
 handleActionWithIdentifier:(NSString *)identifier
 forLocalNotification:(UILocalNotification *)notification
-  completionHandler:(void (^)())completionHandler {
-    [self.notificationObserver handleActionWithIdentifier:identifier
-                                     forLocalNotification:notification
-                                               completion:completionHandler];
+  completionHandler:(void (^)(void))completionHandler {
+    // Legacy notification handling - no longer used with modern UNUserNotificationCenter
+    if (completionHandler) {
+        completionHandler();
+    }
 }
 
 - (void)application:(UIApplication *)application didReceiveLocalNotification:(UILocalNotification *)notification {
-
+    // Legacy notification handling - no longer used with modern UNUserNotificationCenter
 }
+#pragma clang diagnostic pop
 
 @end

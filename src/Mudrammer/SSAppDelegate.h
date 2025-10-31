@@ -8,7 +8,7 @@
 
 @import UIKit;
 #import <SSApplication.h>
-#import "SPLNotificationManager.h"
+#import "MUDRammer-Swift.h"
 
 @interface SSAppDelegate : SSApplication
 

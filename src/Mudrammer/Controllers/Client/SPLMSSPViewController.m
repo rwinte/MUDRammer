@@ -60,15 +60,15 @@
         _dataSource = [[SSSectionedDataSource alloc] initWithItems:nil];
         self.dataSource.cellClass = [SPLMSSPCell class];
 
-        @weakify(self);
+        __weak typeof(self) weakSelf = self;
         self.dataSource.cellConfigureBlock = ^(SPLMSSPCell *cell,
                                                NSString *dataString,
                                                UITableView *tableView,
                                                NSIndexPath *indexPath) {
-            @strongify(self);
+            __strong typeof(weakSelf) strongSelf = weakSelf;
             [SSThemes configureCell:cell];
             cell.label.text = dataString;
-            cell.label.delegate = self;
+            cell.label.delegate = strongSelf;
         };
         self.dataSource.tableActionBlock = ^BOOL(SSCellActionType action,
                                                  UITableView *tableView,

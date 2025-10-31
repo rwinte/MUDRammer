@@ -238,6 +238,10 @@ CG_INLINE void SPLTelnetEventHandler(telnet_t *telnet,
 
 @implementation SPLTelnetLib
 
+- (instancetype)init {
+    return [self initWithStringCoder:nil];
+}
+
 - (instancetype)initWithStringCoder:(SSStringCoder *)stringCoder {
     if ((self = [super init])) {
         _shouldEchoText = YES;

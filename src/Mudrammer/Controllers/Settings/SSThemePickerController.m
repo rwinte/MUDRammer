@@ -45,11 +45,11 @@
                                    [[SSThemes sharedThemer] themeCount]]];
 
         // cell creation
-        @weakify(self);
+        __weak typeof(self) weakSelf = self;
         dataSource.cellCreationBlock = ^id(NSNumber *row,
                                            UITableView *tableView,
                                            NSIndexPath *indexPath) {
-            @strongify(self);
+            __strong typeof(weakSelf) strongSelf = weakSelf;
             switch( indexPath.section ) {
                 case ThemeTableSectionFontPicker: {
                     switch( indexPath.row ) {
@@ -77,7 +77,7 @@
                 }
                 case ThemeTableSectionThemePicker: {
                     SSThemeCell *cell = [SSThemeCell cellForTableView:tableView];
-                    [self configureThemeCell:cell atIndex:(NSUInteger)indexPath.row];
+                    [strongSelf configureThemeCell:cell atIndex:(NSUInteger)indexPath.row];
                     return cell;
                 }
             }

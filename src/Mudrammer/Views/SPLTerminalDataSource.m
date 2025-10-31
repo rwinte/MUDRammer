@@ -58,7 +58,7 @@ NSUInteger const kLineDeleteAmount = (kMaxLineHistory / 5);
         _kvoController = [FBKVOController controllerWithObserver:self];
         _changeDictionary = [NSMutableDictionary dictionary];
 
-        @weakify(self);
+        __weak typeof(self) weakSelf = self;
         [self.kvoController observe:[SSThemes sharedThemer].currentTheme
                             keyPath:kThemeFontColor
                             options:NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew
@@ -67,7 +67,7 @@ NSUInteger const kLineDeleteAmount = (kMaxLineHistory / 5);
              UIColor *oldColor = change[NSKeyValueChangeOldKey];
              UIColor *newColor = change[NSKeyValueChangeNewKey];
 
-             @strongify(self);
+             __strong typeof(weakSelf) strongSelf = weakSelf; (void)strongSelf;
              [self.operationQueue ss_addBlockOperationWithBlock:^(SSBlockOperation *operation) {
                  if ([operation isCancelled]) {
                      return;
@@ -113,7 +113,7 @@ NSUInteger const kLineDeleteAmount = (kMaxLineHistory / 5);
          }];
 
         void (^FontChangeBlock)(id) = ^(id newValue) {
-            @strongify(self);
+            __strong typeof(weakSelf) strongSelf = weakSelf; (void)strongSelf;
             UIFont *newFont = [SSThemes sharedThemer].currentFont;
 
             [self.operationQueue ss_addBlockOperationWithBlock:^(SSBlockOperation *operation) {
@@ -202,9 +202,9 @@ NSUInteger const kLineDeleteAmount = (kMaxLineHistory / 5);
 #pragma mark - Appending
 
 - (void)appendAttributedLineGroup:(SSAttributedLineGroup *)group {
-    @weakify(self);
+    __weak typeof(self) weakSelf = self;
     [self.operationQueue ss_addBlockOperationWithBlock:^(SSBlockOperation *op) {
-        @strongify(self);
+        __strong typeof(weakSelf) strongSelf = weakSelf; (void)strongSelf;
 
         if ([op isCancelled]) {
             return;
@@ -245,10 +245,10 @@ NSUInteger const kLineDeleteAmount = (kMaxLineHistory / 5);
 #pragma mark - Flush changes
 
 - (void) flushLineQueue {
-    @weakify(self);
+    __weak typeof(self) weakSelf = self;
 
     [self.operationQueue ss_addBlockOperationWithBlock:^(SSBlockOperation *operation) {
-        @strongify(self);
+        __strong typeof(weakSelf) strongSelf = weakSelf; (void)strongSelf;
 
         if ([operation isCancelled] || [self.lineQueue.lines count] == 0) {
             DLog(@"No text to flush.");
@@ -283,8 +283,8 @@ NSUInteger const kLineDeleteAmount = (kMaxLineHistory / 5);
                 [self removeItemsInRange:NSMakeRange(0, kLineDeleteAmount)];
 
                 if (self.cursorPosition.vertical >= kLineDeleteAmount) {
-                    _cursorPosition = UIOffsetMake(self.cursorPosition.horizontal,
-                                                   self.cursorPosition.vertical - kLineDeleteAmount);
+                    self->_cursorPosition = UIOffsetMake(self.cursorPosition.horizontal,
+                                                         self.cursorPosition.vertical - kLineDeleteAmount);
                 }
             }
 

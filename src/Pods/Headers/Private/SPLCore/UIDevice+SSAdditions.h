@@ -1,1 +1,1 @@
-../../../SPLCore/SPLCore/Additions/UIDevice+SSAdditions.h
+../../../../../../SPLCore/SPLCore/Additions/UIDevice+SSAdditions.h

@@ -22,30 +22,39 @@ UIEdgeInsets const kTextContainerInset = (UIEdgeInsets) { 4, 4, 2, 4 };
 
 - (instancetype)initWithFrame:(CGRect)frame textContainer:(NSTextContainer *)textContainer {
     if ((self = [super initWithFrame:frame textContainer:textContainer])) {
-
-        _minHeight = 26.0f;
-        _maxHeight = 72.0f;
-
-        self.contentMode = UIViewContentModeCenter;
-        self.contentInset = kContentInset;
-        self.textContainerInset = kTextContainerInset;
-
-        self.textContainer.lineFragmentPadding = 0;
-        self.textContainer.layoutManager.allowsNonContiguousLayout = NO;
-        self.textContainer.layoutManager.usesFontLeading = NO;
-
-        self.textColor = [UIColor darkGrayColor];
-        self.font = [UIFont systemFontOfSize:14.0f];
-
-        self.returnKeyType = UIReturnKeySend;
-        self.autocapitalizationType = UITextAutocapitalizationTypeNone;
-
-        self.layer.borderWidth = 1.f;
-        self.layer.borderColor = [UIColor lightGrayColor].CGColor;
-        self.layer.cornerRadius = 5.f;
+        [self commonInit];
     }
-
     return self;
+}
+
+- (instancetype)initWithCoder:(NSCoder *)coder {
+    if ((self = [super initWithCoder:coder])) {
+        [self commonInit];
+    }
+    return self;
+}
+
+- (void)commonInit {
+    _minHeight = 26.0f;
+    _maxHeight = 72.0f;
+
+    self.contentMode = UIViewContentModeCenter;
+    self.contentInset = kContentInset;
+    self.textContainerInset = kTextContainerInset;
+
+    self.textContainer.lineFragmentPadding = 0;
+    self.textContainer.layoutManager.allowsNonContiguousLayout = NO;
+    self.textContainer.layoutManager.usesFontLeading = NO;
+
+    self.textColor = [UIColor darkGrayColor];
+    self.font = [UIFont systemFontOfSize:14.0f];
+
+    self.returnKeyType = UIReturnKeySend;
+    self.autocapitalizationType = UITextAutocapitalizationTypeNone;
+
+    self.layer.borderWidth = 1.f;
+    self.layer.borderColor = [UIColor lightGrayColor].CGColor;
+    self.layer.cornerRadius = 5.f;
 }
 
 - (void)dealloc {

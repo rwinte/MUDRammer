@@ -58,12 +58,12 @@
                                                 withPredicate:[World predicateForRecordsWithHidden:NO]
                                                     inContext:[NSManagedObjectContext MR_defaultContext]];
 
-    @weakify(self);
+    __weak typeof(self) weakSelf = self;
     SSCellConfigureBlock worldConfig = ^(SSWorldCell *cell,
                                          World *world,
                                          UITableView *tableView,
                                          NSIndexPath *indexPath ) {
-        @strongify(self);
+        __strong typeof(weakSelf) strongSelf = weakSelf; (void)strongSelf;
         cell.textLabel.text = world.name;
         cell.textLabel.adjustsFontSizeToFitWidth = YES;
         cell.textLabel.minimumScaleFactor = 0.6f;
@@ -71,7 +71,7 @@
                                      world.hostname,
                                      world.port];
 
-        if (self.completeBlock)
+        if (strongSelf.completeBlock)
             cell.accessoryType = UITableViewCellAccessoryNone;
     };
 
@@ -85,8 +85,8 @@
                                              NSIndexPath *indexPath) {
         // Allow deletion only
         // we can edit if this is not a picker VC
-        @strongify(self);
-        return action == SSCellActionTypeEdit && self.completeBlock == nil;
+        __strong typeof(weakSelf) strongSelf = weakSelf; (void)strongSelf;
+        return action == SSCellActionTypeEdit && strongSelf.completeBlock == nil;
     };
     self.dataSource.tableDeletionBlock = ^(SSCoreDataSource *aDataSource,
                                            UITableView *tableView,

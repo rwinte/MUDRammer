@@ -1,10 +1,8 @@
 OCMock
 ======
 
-OCMock is an Objective-C implementation of mock objects. 
+![Build Status](https://github.com/erikdoe/ocmock/actions/workflows/build-and-test.yaml/badge.svg?branch=master)
 
-For downloads, documentation, and support please visit [ocmock.org][].  
+OCMock is an Objective-C implementation of mock objects.
 
-[![Build Status](https://travis-ci.org/erikdoe/ocmock.svg?branch=master)](https://travis-ci.org/erikdoe/ocmock)
-
-  [ocmock.org]: http://ocmock.org/
+For downloads, documentation, and support please visit [ocmock.org](http://ocmock.org/).

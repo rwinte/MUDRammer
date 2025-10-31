@@ -68,14 +68,14 @@ typedef NS_ENUM(NSUInteger, SPLClientStatus) {
                                   [controller.tableView reloadData];
                               }];
 
-        @weakify(self);
+        __weak typeof(self) weakSelf = self;
 
         [self.kvoController observe:[SSThemes sharedThemer].currentTheme
                             keyPath:kThemeName
                             options:NSKeyValueObservingOptionNew
                               block:^(id table, id object, NSDictionary *change) {
-                                  @strongify(self);
-                                  [self.tableView addCenteredFooterWithImage:([[SSThemes sharedThemer] isUsingDarkTheme]
+                                  __strong typeof(weakSelf) strongSelf = weakSelf; (void)strongSelf;
+                                  [strongSelf.tableView addCenteredFooterWithImage:([[SSThemes sharedThemer] isUsingDarkTheme]
                                                                               ? [SPLImagesCatalog tildeWhiteImage]
                                                                               : [SPLImagesCatalog tildeDarkImage])
                                                                        alpha:0.5f];
@@ -85,28 +85,28 @@ typedef NS_ENUM(NSUInteger, SPLClientStatus) {
         self.dataSource.tableActionBlock = ^BOOL(SSCellActionType action,
                                                  UITableView *tableView,
                                                  NSIndexPath *indexPath) {
-            @strongify(self);
+            __strong typeof(weakSelf) strongSelf = weakSelf;
 
             // Allow only editing
             if (action != SSCellActionTypeEdit) {
                 return NO;
             }
 
-            NSInteger clientCount = [self numberOfClients];
+            NSInteger clientCount = [strongSelf numberOfClients];
 
             return indexPath.row < clientCount && clientCount >= 2;
         };
         self.dataSource.tableDeletionBlock = ^(SSArrayDataSource *dataSource,
                                                UITableView *tableView,
                                                NSIndexPath *indexPath) {
-            @strongify(self);
-            [self removeClientAtIndex:indexPath.row];
+            __strong typeof(weakSelf) strongSelf = weakSelf; (void)strongSelf;
+            [strongSelf removeClientAtIndex:indexPath.row];
         };
         self.dataSource.cellConfigureBlock = ^(SSBaseTableCell *cell,
                                                id object,
                                                UITableView *tableView,
                                                NSIndexPath *indexPath) {
-            @strongify(self);
+            __strong typeof(weakSelf) strongSelf = weakSelf; (void)strongSelf;
             [SSThemes configureCell:cell];
 
             cell.textLabel.numberOfLines = 2;
@@ -115,15 +115,15 @@ typedef NS_ENUM(NSUInteger, SPLClientStatus) {
                 cell.textLabel.text = NSLocalizedString(@"ADD_CONNECTION", @"Add Connection");
                 cell.imageView.image = [SPLImagesCatalog worldAddImage];
             } else {
-                SSClientViewController *client = [self clientAtIndex:indexPath.row];
+                SSClientViewController *client = [strongSelf clientAtIndex:indexPath.row];
 
                 if( client ) {
                     cell.textLabel.text = [client currentWorldDescription];
-                    cell.imageView.image = [self imageForClientAtIndex:indexPath.row];
+                    cell.imageView.image = [strongSelf imageForClientAtIndex:indexPath.row];
                 }
             }
 
-            if (indexPath.row == self.selectedIndex) {
+            if (indexPath.row == strongSelf.selectedIndex) {
                 cell.accessoryView = [SPLCheckMarkView checkWithColor:[[SSThemes sharedThemer] valueForThemeKey:kThemeFontColor]];
             } else {
                 cell.accessoryView = nil;
@@ -163,13 +163,17 @@ forHeaderFooterViewReuseIdentifier:[SSBaseHeaderFooterView identifier]];
                                             withAnimation:UIStatusBarAnimationFade];
 }
 
-- (BOOL)shouldAutorotate {
-    return YES;
-}
+//- (BOOL)shouldAutorotate {
+//    return YES;
+//}
 
-- (NSUInteger)supportedInterfaceOrientations {
+- (UIInterfaceOrientationMask)supportedInterfaceOrientations {
     return UIInterfaceOrientationMaskAll;
 }
+
+//- (NSUInteger)supportedInterfaceOrientations {
+//    return UIInterfaceOrientationMaskAll;
+//}
 
 - (void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
@@ -243,17 +247,17 @@ forHeaderFooterViewReuseIdentifier:[SSBaseHeaderFooterView identifier]];
 
     } else {
 
-        @weakify(self);
+        __weak typeof(self) weakSelf2 = self;
 
         WorldPickerSelectionBlock pickblock = ^(NSManagedObjectID *pickedWorld) {
-            @strongify(self);
+            __strong typeof(weakSelf2) strongSelf = weakSelf2; (void)strongSelf;
             if ([[UIDevice currentDevice] isIPad]) {
-                [self.popover dismissPopoverAnimated:YES];
-                [self addClientWithWorld:pickedWorld];
+                [strongSelf.popover dismissPopoverAnimated:YES];
+                [strongSelf addClientWithWorld:pickedWorld];
             } else {
                 [[SSClientContainer sharedClientContainer] dismissViewControllerAnimated:YES
                                                                               completion:^{
-                                                                                  [self addClientWithWorld:pickedWorld];
+                                                                                  [strongSelf addClientWithWorld:pickedWorld];
                                                                               }];
             }
         };
@@ -471,7 +475,8 @@ forHeaderFooterViewReuseIdentifier:[SSBaseHeaderFooterView identifier]];
 - (void)applicationDidEnterBackground:(NSNotification *)notification {
     for (NSInteger i = 0; i < [self numberOfClients]; i++) {
         if ([[self clientAtIndex:i] isConnected]) {
-            [[SSAppDelegate sharedApplication].notificationObserver scheduleTimeoutNotification];
+            // TODO: Fix async call to scheduleTimeoutNotification
+            // [[SSAppDelegate sharedApplication].notificationObserver scheduleTimeoutNotification];
             return;
         }
     }

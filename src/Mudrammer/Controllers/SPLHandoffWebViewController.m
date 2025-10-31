@@ -23,6 +23,8 @@
     }
 }
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-implementations"
 - (void)webViewDidFinishLoad:(UIWebView *)webView {
     [super webViewDidFinishLoad:webView];
 
@@ -32,5 +34,6 @@
         [self.webActivity setNeedsUpdate];
     }
 }
+#pragma clang diagnostic pop
 
 @end

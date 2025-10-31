@@ -8,6 +8,7 @@
 
 #import "SPLMUDTitleView.h"
 #import <Masonry.h>
+#import <BlocksKit/UIControl+BlocksKit.h>
 
 @interface SPLMUDTitleView ()
 
@@ -43,9 +44,9 @@
                          forState:UIControlStateNormal];
         [self.MSSPButton.titleLabel setFont:[UIFont systemFontOfSize:13.f]];
 
-        @weakify(self);
+        __weak typeof(self) weakSelf = self;
         [self.MSSPButton bk_addEventHandler:^(id sender) {
-            @strongify(self);
+            __strong typeof(weakSelf) strongSelf = weakSelf; (void)strongSelf;
             if (self.MSSPButtonBlock) {
                 self.MSSPButtonBlock();
             }
@@ -54,6 +55,10 @@
     }
 
     return self;
+}
+
+- (instancetype)initWithCoder:(NSCoder *)coder {
+    return [self initWithFrame:CGRectZero];
 }
 
 - (void)setTitle:(NSString *)title {

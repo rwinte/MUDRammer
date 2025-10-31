@@ -131,10 +131,6 @@
     });
 }
 
-- (BOOL)shouldAutorotate {
-    return YES;
-}
-
 - (void)dealloc {
     _kvoController = nil;
     [[NSNotificationCenter defaultCenter] removeObserver:self];
@@ -189,7 +185,7 @@
 
         NSInteger currentClient = [[SSClientContainer worldDisplayDrawer] selectedIndex];
 
-        void (^WorldChangeBlock)() = ^{
+        void (^WorldChangeBlock)(void) = ^{
             [[[SSClientContainer worldDisplayDrawer] clientAtIndex:currentClient] updateCurrentWorld:newWorld
                                                                                   connectAfterUpdate:YES];
         };

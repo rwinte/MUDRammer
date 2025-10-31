@@ -28,43 +28,52 @@
 
 @implementation SSTextTableView
 
-- (instancetype)initWithFrame:(CGRect)frame {
-    if ((self = [super initWithFrame:frame style:UITableViewStylePlain])) {
-
-        // table setup
-        self.backgroundColor = [UIColor clearColor];
-        self.separatorStyle = UITableViewCellSeparatorStyleNone;
-        self.separatorColor = [UIColor clearColor];
-        self.indicatorStyle = UIScrollViewIndicatorStyleDefault;
-
-        // observe keypaths for when themes change
-        _kvoController = [FBKVOController controllerWithObserver:self];
-
-        @weakify(self);
-        [self.kvoController observe:[SSThemes sharedThemer].currentTheme
-                            keyPath:kThemeName
-                            options:NSKeyValueObservingOptionNew
-                              block:^(id table, id object, NSDictionary *change) {
-                                  @strongify(self);
-                                  [self addCenteredHeaderWithImage:([[SSThemes sharedThemer] isUsingDarkTheme]
-                                                                    ? [SPLImagesCatalog tildeWhiteImage]
-                                                                    : [SPLImagesCatalog tildeDarkImage])
-                                                             alpha:0.5f];
-                              }];
-
-        // Scroll after rotation
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(willRotate)
-                                                     name:UIApplicationWillChangeStatusBarOrientationNotification
-                                                   object:nil];
-
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(didRotate)
-                                                     name:UIApplicationDidChangeStatusBarOrientationNotification
-                                                   object:nil];
+- (instancetype)initWithFrame:(CGRect)frame style:(UITableViewStyle)style {
+    if ((self = [super initWithFrame:frame style:style])) {
+        [self commonInit];
     }
-
     return self;
+}
+
+- (instancetype)initWithCoder:(NSCoder *)coder {
+    if ((self = [super initWithCoder:coder])) {
+        [self commonInit];
+    }
+    return self;
+}
+
+- (void)commonInit {
+    // table setup
+    self.backgroundColor = [UIColor clearColor];
+    self.separatorStyle = UITableViewCellSeparatorStyleNone;
+    self.separatorColor = [UIColor clearColor];
+    self.indicatorStyle = UIScrollViewIndicatorStyleDefault;
+
+    // observe keypaths for when themes change
+    _kvoController = [FBKVOController controllerWithObserver:self];
+
+    __weak typeof(self) weakSelf = self;
+    [self.kvoController observe:[SSThemes sharedThemer].currentTheme
+                        keyPath:kThemeName
+                        options:NSKeyValueObservingOptionNew
+                          block:^(id table, id object, NSDictionary *change) {
+                              __strong typeof(weakSelf) strongSelf = weakSelf;
+                              [strongSelf addCenteredHeaderWithImage:([[SSThemes sharedThemer] isUsingDarkTheme]
+                                                                ? [SPLImagesCatalog tildeWhiteImage]
+                                                                : [SPLImagesCatalog tildeDarkImage])
+                                                         alpha:0.5f];
+                          }];
+
+    // Scroll after rotation
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(willRotate)
+                                                 name:UIApplicationWillChangeStatusBarOrientationNotification
+                                               object:nil];
+
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(didRotate)
+                                                 name:UIApplicationDidChangeStatusBarOrientationNotification
+                                               object:nil];
 }
 
 - (void)dealloc {

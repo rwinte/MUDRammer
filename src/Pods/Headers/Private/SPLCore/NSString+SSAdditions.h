@@ -1,1 +1,1 @@
-../../../SPLCore/SPLCore/Additions/NSString+SSAdditions.h
+../../../../../../SPLCore/SPLCore/Additions/NSString+SSAdditions.h

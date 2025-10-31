@@ -166,12 +166,19 @@
         }
     }
 
-    if ([ret length] == 0) {
+    if (!ret || [ret length] == 0) {
         // We couldn't decode data using the user's preferred encoding.
-        // Try once again with ASCII.
-        DLog(@"retry with ascii");
+        // Try with UTF-8 first (handles ASCII + extended chars)
+        DLog(@"retry with UTF-8");
         ret = [[NSString alloc] initWithData:data
-                                    encoding:NSASCIIStringEncoding];
+                                    encoding:NSUTF8StringEncoding];
+
+        // If UTF-8 fails, fall back to ISO Latin-1 which accepts any byte value
+        if (!ret || [ret length] == 0) {
+            DLog(@"retry with ISO Latin-1");
+            ret = [[NSString alloc] initWithData:data
+                                        encoding:NSISOLatin1StringEncoding];
+        }
     }
 
 

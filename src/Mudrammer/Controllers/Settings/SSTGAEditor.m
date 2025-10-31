@@ -90,9 +90,9 @@
     SSSoundPickerViewController *picker = [SSSoundPickerViewController new];
     picker.selectedFileName = ((Trigger *)_record).soundFileName;
 
-    @weakify(self);
+    __weak typeof(self) weakSelf = self;
     picker.selectedBlock = ^(NSString *str) {
-        @strongify(self);
+        __strong typeof(weakSelf) strongSelf = weakSelf; (void)strongSelf;
 
         // Manual bind because it's not an entry element?
         [self.record setValue:str forKey:@"soundFileName"];
@@ -115,7 +115,7 @@
 - (void)deleteCurrentRecord {
     [self.quickDialogTableView endEditing:YES];
 
-    @weakify(self);
+    __weak typeof(self) weakSelf = self;
     NSString *title;
 
     if( [_record isKindOfClass:[Trigger class]] )
@@ -130,7 +130,7 @@
                               cancelBlock:nil
                          destructiveTitle:title
                          destructiveBlock:^{
-                             @strongify(self);
+                             __strong typeof(weakSelf) strongSelf = weakSelf; (void)strongSelf;
                              [self.record deleteObject];
                              [self.record saveObjectWithCompletion:^{
                                  [self.navigationController popViewControllerAnimated:YES];

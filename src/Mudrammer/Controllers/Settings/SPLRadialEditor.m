@@ -53,7 +53,7 @@ static NSUInteger const kMaxRadialCommands = 8;
         self.dataSource.rowAnimation = UITableViewRowAnimationFade;
         self.dataSource.shouldRemoveEmptySections = NO;
 
-        @weakify(self);
+        __weak typeof(self) weakSelf = self;
         self.dataSource.cellCreationBlock = ^id(id value,
                                                 UITableView *tableView,
                                                 NSIndexPath *indexPath) {
@@ -89,8 +89,8 @@ static NSUInteger const kMaxRadialCommands = 8;
                                                 NSLocalizedString(@"RIGHT", nil) ]
                                selectedIndex:[[NSUserDefaults standardUserDefaults] integerForKey:kPrefRadialControl]
                                changeHandler:^(NSInteger index) {
-                                   @strongify(self);
-                                   [self changeRadialPrefToIndex:index];
+                                   __strong typeof(weakSelf) strongSelf = weakSelf;
+                                   [strongSelf changeRadialPrefToIndex:index];
                                }];
 
                     break;
@@ -102,7 +102,7 @@ static NSUInteger const kMaxRadialCommands = 8;
                     cell.textField.text = value;
 
                     cell.changeHandler = ^(UITextField *textField) {
-                        @strongify(self);
+                        __strong typeof(weakSelf) strongSelf = weakSelf;
 
                         if ([textField isFirstResponder]) {
                             [textField resignFirstResponder];
@@ -111,18 +111,18 @@ static NSUInteger const kMaxRadialCommands = 8;
                         NSString *text = [textField.text copy];
 
                         if ([text length] == 0) {
-                            if (indexPath.row < (NSInteger)[self.dataSource numberOfItemsInSection:indexPath.section]) {
-                                [self.dataSource removeItemAtIndexPath:indexPath];
+                            if (indexPath.row < (NSInteger)[strongSelf.dataSource numberOfItemsInSection:indexPath.section]) {
+                                [strongSelf.dataSource removeItemAtIndexPath:indexPath];
                             }
                         } else {
-                            SSSection *section = [self.dataSource sectionAtIndex:SPLRadialEditorSectionCommands];
+                            SSSection *section = [strongSelf.dataSource sectionAtIndex:SPLRadialEditorSectionCommands];
 
                             if ((NSUInteger)indexPath.row < [section.items count]) {
                                 (section.items)[(NSUInteger)indexPath.row] = text;
                             }
                         }
 
-                        [self saveChangesToDefaults];
+                        [strongSelf saveChangesToDefaults];
                     };
 
                     break;
@@ -153,11 +153,11 @@ static NSUInteger const kMaxRadialCommands = 8;
         self.dataSource.tableDeletionBlock = ^(SSSectionedDataSource *dataSource,
                                                UITableView *tableView,
                                                NSIndexPath *indexPath) {
-            @strongify(self);
+            __strong typeof(weakSelf) strongSelf = weakSelf;
 
             [dataSource removeItemAtIndexPath:indexPath];
 
-            [self saveChangesToDefaults];
+            [strongSelf saveChangesToDefaults];
         };
 
         // Observe pref changes
