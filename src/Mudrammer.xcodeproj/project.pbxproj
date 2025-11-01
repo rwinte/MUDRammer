@@ -124,6 +124,7 @@
 		5EF10BFF173D635900154A2B /* SSMRConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EF10BFE173D635900154A2B /* SSMRConstants.m */; };
 		5EF7691416A212FE004D291E /* DefaultWorlds.plist in Resources */ = {isa = PBXBuildFile; fileRef = 5EF7691316A212FE004D291E /* DefaultWorlds.plist */; };
 		5EFC45CC19F3263C00D0CB2B /* FiraMono.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5EFC45CB19F3263C00D0CB2B /* FiraMono.ttf */; };
+		8B4C63B8FC634F8484A80D86 /* SSSceneDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = ECB9A4553028442C9B714B1F /* SSSceneDelegate.m */; };
 		C48016B12CA251D900589610 /* SPLNotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C48016B02CA251D900589610 /* SPLNotificationManager.swift */; };
 		C4A3427D2CA0DBF000F581AB /* Pods-MUDRammer-acknowledgements.plist in Resources */ = {isa = PBXBuildFile; fileRef = C4A3427C2CA0DBF000F581AB /* Pods-MUDRammer-acknowledgements.plist */; };
 		CC13CE7D548C1629372672CC /* libPods-MRTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C42E5E36CDA99F1690CF85DE /* libPods-MRTests.a */; };
@@ -253,6 +254,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		224907CF0C3544C89B51B67F /* SSSceneDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SSSceneDelegate.h; sourceTree = "<group>"; };
 		29230E89A825157604F1146A /* Pods-MRTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MRTests.debug.xcconfig"; path = "Target Support Files/Pods-MRTests/Pods-MRTests.debug.xcconfig"; sourceTree = "<group>"; };
 		3C0869131A1B565D24B2D154 /* Pods-MUDRammer.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MUDRammer.release.xcconfig"; path = "Target Support Files/Pods-MUDRammer/Pods-MUDRammer.release.xcconfig"; sourceTree = "<group>"; };
 		52E83D0C4BB3DCC69FB8CCFF /* Pods-MUDRammer.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MUDRammer.debug.xcconfig"; path = "Target Support Files/Pods-MUDRammer/Pods-MUDRammer.debug.xcconfig"; sourceTree = "<group>"; };
@@ -299,7 +301,7 @@
 		5E4F3CD8198D98650041A436 /* MRTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MRTests.m; sourceTree = "<group>"; };
 		5E4F3CDA198D98650041A436 /* MRTests-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MRTests-Prefix.pch"; sourceTree = "<group>"; };
 		5E57401C198F2CC90004E5C2 /* AndaleMono.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = AndaleMono.ttf; sourceTree = "<group>"; };
-		5E591C791634C80C00F2EB9F /* MUDRammer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MUDRammer.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		5E591C791634C80C00F2EB9F /* MudMobile.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MudMobile.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5E591C7D1634C80C00F2EB9F /* UIKit.framework */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		5E591C7F1634C80C00F2EB9F /* Foundation.framework */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		5E591C811634C80C00F2EB9F /* CoreGraphics.framework */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -590,6 +592,7 @@
 		E9ED95631B0CFB110065C7F2 /* SPLTestAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SPLTestAppDelegate.h; sourceTree = "<group>"; };
 		E9ED95641B0CFB110065C7F2 /* SPLTestAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SPLTestAppDelegate.m; sourceTree = "<group>"; };
 		E9ED95661B0E5F960065C7F2 /* youfailedme.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = youfailedme.wav; sourceTree = "<group>"; };
+		ECB9A4553028442C9B714B1F /* SSSceneDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SSSceneDelegate.m; sourceTree = "<group>"; };
 		F64258642A5B17FB1ED3BE20 /* MudHistoryControlTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MudHistoryControlTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -717,7 +720,7 @@
 		5E591C7A1634C80C00F2EB9F /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				5E591C791634C80C00F2EB9F /* MUDRammer.app */,
+				5E591C791634C80C00F2EB9F /* MudMobile.app */,
 				5E4F3CCE198D98650041A436 /* MRTests.xctest */,
 			);
 			name = Products;
@@ -749,6 +752,8 @@
 			children = (
 				5E591C8C1634C80C00F2EB9F /* SSAppDelegate.h */,
 				5E591C8D1634C80C00F2EB9F /* SSAppDelegate.m */,
+				224907CF0C3544C89B51B67F /* SSSceneDelegate.h */,
+				ECB9A4553028442C9B714B1F /* SSSceneDelegate.m */,
 				E9ED95631B0CFB110065C7F2 /* SPLTestAppDelegate.h */,
 				E9ED95641B0CFB110065C7F2 /* SPLTestAppDelegate.m */,
 				5EF10BFD173D635800154A2B /* SSMRConstants.h */,
@@ -1229,7 +1234,7 @@
 			);
 			name = MUDRammer;
 			productName = Mudrammer;
-			productReference = 5E591C791634C80C00F2EB9F /* MUDRammer.app */;
+			productReference = 5E591C791634C80C00F2EB9F /* MudMobile.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -1247,20 +1252,19 @@
 						TestTargetID = 5E591C781634C80C00F2EB9F;
 					};
 					5E591C781634C80C00F2EB9F = {
-						DevelopmentTeam = 4YFMUNMLU8;
 						LastSwiftMigration = 1600;
 					};
 				};
 			};
-			buildConfigurationList = 5E591C731634C80C00F2EB9F /* Build configuration list for PBXProject "MudMobile" */;
+			buildConfigurationList = 5E591C731634C80C00F2EB9F /* Build configuration list for PBXProject "Mudrammer" */;
 			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = English;
+			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
-				English,
 				en,
 				fr,
 				it,
+				Base,
 			);
 			mainGroup = 5E591C6E1634C80C00F2EB9F;
 			productRefGroup = 5E591C7A1634C80C00F2EB9F /* Products */;
@@ -1548,6 +1552,7 @@
 				5E591C8A1634C80C00F2EB9F /* main.m in Sources */,
 				5E786EAC182211DD00557673 /* SSWelcomeViewController.m in Sources */,
 				5E591C8E1634C80C00F2EB9F /* SSAppDelegate.m in Sources */,
+				8B4C63B8FC634F8484A80D86 /* SSSceneDelegate.m in Sources */,
 				5E786EA5182211DD00557673 /* SSClientViewController.m in Sources */,
 				5E0C91D11933F37000713FBE /* SSAccessoryButton.m in Sources */,
 				5E786EDD1822122B00557673 /* SSMudView.m in Sources */,
@@ -1908,9 +1913,10 @@
 				CLANG_WARN__ARC_BRIDGE_CAST_NONARC = YES;
 				CLANG_WARN__EXIT_TIME_DESTRUCTORS = YES;
 				CODE_SIGN_ENTITLEMENTS = "Mudrammer/Supporting Files/MUDRammer.entitlements";
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				COMPRESS_PNG_FILES = NO;
+				DEVELOPMENT_TEAM = S58XDUSMV5;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)",
@@ -1938,38 +1944,34 @@
 				GCC_WARN_UNUSED_LABEL = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Users/bob/code/libtelnet,
-					/Users/bob/code/libtelnet,
-					/Users/bob/code/libtelnet,
-					/Users/bob/code/libtelnet,
-					/Users/bob/code/libtelnet,
-					/Users/bob/code/libtelnet,
+					"/Users/bob/code/libtelnet ",
 				);
 				INFOPLIST_FILE = "Mudrammer/Supporting Files/Mudrammer-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
-				LIBRARY_SEARCH_PATHS = (
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				"LIBRARY_SEARCH_PATHS[sdk=iphoneos*]" = (
 					"$(inherited)",
-					"/Users/bob/code/libtelnet/build-sim/Release-iphonesimulator",
-					"/Users/bob/code/libtelnet/build-sim/Release-iphonesimulator",
-					"/Users/bob/code/libtelnet/build-sim/Release-iphonesimulator",
-					"/Users/bob/code/libtelnet/build-sim/Release-iphonesimulator",
-					"/Users/bob/code/libtelnet/build-sim/Release-iphonesimulator",
+					"/Users/bob/code/libtelnet/build-ipados/Debug",
+				);
+				"LIBRARY_SEARCH_PATHS[sdk=iphonesimulator*]" = (
+					"$(inherited)",
 					"/Users/bob/code/libtelnet/build-sim/Release-iphonesimulator",
 				);
 				ONLY_ACTIVE_ARCH = YES;
-				OTHER_LDFLAGS = (
+				OTHER_LDFLAGS = "$(inherited)";
+				"OTHER_LDFLAGS[sdk=iphoneos*]" = (
 					"$(inherited)",
-					"-llibtelnet",
-					"-llibtelnet",
-					"-llibtelnet",
-					"/Users/bob/code/libtelnet/build-sim/Release-iphonesimulator/liblibtelnet.a",
-					"/Users/bob/code/libtelnet/build-sim/Release-iphonesimulator/liblibtelnet.a",
+					"/Users/bob/code/libtelnet/build-ipados/Debug/liblibtelnet.a",
+				);
+				"OTHER_LDFLAGS[sdk=iphonesimulator*]" = (
+					"$(inherited)",
 					"/Users/bob/code/libtelnet/build-sim/Release-iphonesimulator/liblibtelnet.a",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.splinesoft.theMUDRammer;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.rwtech.MudMobile;
+				PRODUCT_NAME = MudMobile;
 				PROVISIONING_PROFILE = "";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SPLAppIconSuffix = Debug;
 				SWIFT_OBJC_BRIDGING_HEADER = "Mudrammer/Controllers/MUDRammer-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -2017,10 +2019,11 @@
 				CLANG_WARN__ARC_BRIDGE_CAST_NONARC = YES;
 				CLANG_WARN__EXIT_TIME_DESTRUCTORS = YES;
 				CODE_SIGN_ENTITLEMENTS = "Mudrammer/Supporting Files/MUDRammer.entitlements";
-				CODE_SIGN_IDENTITY = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				COMPRESS_PNG_FILES = NO;
 				COPY_PHASE_STRIP = NO;
+				DEVELOPMENT_TEAM = S58XDUSMV5;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)",
@@ -2048,37 +2051,33 @@
 				GCC_WARN_UNUSED_LABEL = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Users/bob/code/libtelnet,
-					/Users/bob/code/libtelnet,
-					/Users/bob/code/libtelnet,
-					/Users/bob/code/libtelnet,
-					/Users/bob/code/libtelnet,
-					/Users/bob/code/libtelnet,
+					"/Users/bob/code/libtelnet ",
 				);
 				INFOPLIST_FILE = "Mudrammer/Supporting Files/Mudrammer-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
-				LIBRARY_SEARCH_PATHS = (
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				"LIBRARY_SEARCH_PATHS[sdk=iphoneos*]" = (
+					"$(inherited)",
+					"/Users/bob/code/libtelnet/build-ipados/Debug",
+				);
+				"LIBRARY_SEARCH_PATHS[sdk=iphonesimulator*]" = (
 					"$(inherited)",
 					"/Users/bob/code/libtelnet/build-sim/Release-iphonesimulator",
-					"/Users/bob/code/libtelnet/build-sim/Release-iphonesimulator",
-					"/Users/bob/code/libtelnet/build-sim/Release-iphonesimulator",
-					"/Users/bob/code/libtelnet/build-sim/Release-iphonesimulator",
-					"/Users/bob/code/libtelnet/build-sim/Release-iphonesimulator",
-					"/Users/bob/code/libtelnet/build-sim/Release-iphonesimulator",
 				);
-				OTHER_LDFLAGS = (
+				OTHER_LDFLAGS = "$(inherited)";
+				"OTHER_LDFLAGS[sdk=iphoneos*]" = (
 					"$(inherited)",
-					"-llibtelnet",
-					"-llibtelnet",
-					"-llibtelnet",
-					"/Users/bob/code/libtelnet/build-sim/Release-iphonesimulator/liblibtelnet.a",
-					"/Users/bob/code/libtelnet/build-sim/Release-iphonesimulator/liblibtelnet.a",
+					"/Users/bob/code/libtelnet/build-ipados/Debug/liblibtelnet.a",
+				);
+				"OTHER_LDFLAGS[sdk=iphonesimulator*]" = (
+					"$(inherited)",
 					"/Users/bob/code/libtelnet/build-sim/Release-iphonesimulator/liblibtelnet.a",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.splinesoft.theMUDRammer;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.rwtech.MudMobile;
+				PRODUCT_NAME = MudMobile;
 				PROVISIONING_PROFILE = "";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SPLAppIconSuffix = Release;
 				SWIFT_OBJC_BRIDGING_HEADER = "Mudrammer/Controllers/MUDRammer-Bridging-Header.h";
 				SWIFT_VERSION = 6.0;
@@ -2111,7 +2110,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		5E591C731634C80C00F2EB9F /* Build configuration list for PBXProject "MudMobile" */ = {
+		5E591C731634C80C00F2EB9F /* Build configuration list for PBXProject "Mudrammer" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5E591C951634C80C00F2EB9F /* Debug */,

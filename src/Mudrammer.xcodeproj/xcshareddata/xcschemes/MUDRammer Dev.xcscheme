@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "5E591C781634C80C00F2EB9F"
-               BuildableName = "MUDRammer.app"
+               BuildableName = "MudMobile.app"
                BlueprintName = "MUDRammer"
                ReferencedContainer = "container:Mudrammer.xcodeproj">
             </BuildableReference>
@@ -37,7 +37,7 @@
       </BuildActionEntries>
    </BuildAction>
    <TestAction
-      buildConfiguration = "Release"
+      buildConfiguration = "Debug"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES">
@@ -45,7 +45,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "5E591C781634C80C00F2EB9F"
-            BuildableName = "MUDRammer.app"
+            BuildableName = "MudMobile.app"
             BlueprintName = "MUDRammer"
             ReferencedContainer = "container:Mudrammer.xcodeproj">
          </BuildableReference>
@@ -64,7 +64,7 @@
       </Testables>
    </TestAction>
    <LaunchAction
-      buildConfiguration = "Release"
+      buildConfiguration = "Debug"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       launchStyle = "0"
@@ -78,14 +78,21 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "5E591C781634C80C00F2EB9F"
-            BuildableName = "MUDRammer.app"
+            BuildableName = "MudMobile.app"
             BlueprintName = "MUDRammer"
             ReferencedContainer = "container:Mudrammer.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
+      <EnvironmentVariables>
+         <EnvironmentVariable
+            key = "_UIConstraintBasedLayoutLogUnsatisfiable"
+            value = "NO"
+            isEnabled = "YES">
+         </EnvironmentVariable>
+      </EnvironmentVariables>
    </LaunchAction>
    <ProfileAction
-      buildConfiguration = "Release"
+      buildConfiguration = "Debug"
       shouldUseLaunchSchemeArgsEnv = "YES"
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
@@ -95,17 +102,17 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "5E591C781634C80C00F2EB9F"
-            BuildableName = "MUDRammer.app"
+            BuildableName = "MudMobile.app"
             BlueprintName = "MUDRammer"
             ReferencedContainer = "container:Mudrammer.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>
    <AnalyzeAction
-      buildConfiguration = "Release">
+      buildConfiguration = "Debug">
    </AnalyzeAction>
    <ArchiveAction
-      buildConfiguration = "Release"
+      buildConfiguration = "Debug"
       revealArchiveInOrganizer = "YES">
    </ArchiveAction>
 </Scheme>

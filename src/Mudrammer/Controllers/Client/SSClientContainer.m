@@ -83,6 +83,27 @@
 }
 
 + (instancetype)sharedClientContainer {
+    // Try to get the root view controller from the active scene (iOS 13+)
+    if (@available(iOS 13.0, *)) {
+        for (UIScene *scene in [UIApplication sharedApplication].connectedScenes) {
+            if ([scene isKindOfClass:[UIWindowScene class]]) {
+                UIWindowScene *windowScene = (UIWindowScene *)scene;
+                if (windowScene.activationState == UISceneActivationStateForegroundActive ||
+                    windowScene.activationState == UISceneActivationStateForegroundInactive) {
+                    for (UIWindow *window in windowScene.windows) {
+                        if (window.isKeyWindow) {
+                            id rootVC = window.rootViewController;
+                            if ([rootVC isKindOfClass:[SSClientContainer class]]) {
+                                return (SSClientContainer *)rootVC;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // Fall back to legacy window access for older iOS versions
     id rootVC = [SSAppDelegate sharedApplication].window.rootViewController;
 
     if ([rootVC isKindOfClass:[SSClientContainer class]]) {
@@ -99,12 +120,16 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
 
+    NSLog(@"SSClientContainer viewDidLoad");
     self.view.backgroundColor = [UIColor blackColor];
 
     // Add drawer and initial client
     SSWorldDisplayController *displayController = [SSWorldDisplayController new];
+    displayController.parentContainer = self; // Set parent reference
     self.rightPanel = displayController;
+    NSLog(@"About to add client with world:nil");
     [displayController addClientWithWorld:nil];
+    NSLog(@"After addClientWithWorld. centerPanel: %@, state: %ld", self.centerPanel, (long)self.state);
 
     // Hide splash if necessary
     double delayInSeconds = 0.5;

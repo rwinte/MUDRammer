@@ -7330,13 +7330,24 @@
 					" ",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				LIBRARY_SEARCH_PATHS = (
+				"LIBRARY_SEARCH_PATHS[sdk=iphoneos*]" = (
+					"$(inherited)",
+					"/Users/bob/code/libtelnet/build-ipados/Debug",
+				);
+				"LIBRARY_SEARCH_PATHS[sdk=iphonesimulator*]" = (
 					"$(inherited)",
 					"/Users/bob/code/libtelnet/build-sim/Release-iphonesimulator",
-					" ",
 				);
 				MACH_O_TYPE = staticlib;
-				OTHER_LDFLAGS = " /Users/bob/code/libtelnet/build-sim/Release-iphonesimulator/liblibtelnet.a";
+				OTHER_LDFLAGS = "";
+				"OTHER_LDFLAGS[sdk=iphoneos*]" = (
+					"$(inherited)",
+					"/Users/bob/code/libtelnet/build-ipados/Debug/liblibtelnet.a",
+				);
+				"OTHER_LDFLAGS[sdk=iphonesimulator*]" = (
+					"$(inherited)",
+					"/Users/bob/code/libtelnet/build-sim/Release-iphonesimulator/liblibtelnet.a",
+				);
 				OTHER_LIBTOOLFLAGS = "";
 				PODS_ROOT = "$(SRCROOT)";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
@@ -7750,13 +7761,24 @@
 					" ",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				LIBRARY_SEARCH_PATHS = (
+				"LIBRARY_SEARCH_PATHS[sdk=iphoneos*]" = (
+					"$(inherited)",
+					"/Users/bob/code/libtelnet/build-ipados/Debug",
+				);
+				"LIBRARY_SEARCH_PATHS[sdk=iphonesimulator*]" = (
 					"$(inherited)",
 					"/Users/bob/code/libtelnet/build-sim/Release-iphonesimulator",
-					" ",
 				);
 				MACH_O_TYPE = staticlib;
-				OTHER_LDFLAGS = " /Users/bob/code/libtelnet/build-sim/Release-iphonesimulator/liblibtelnet.a";
+				OTHER_LDFLAGS = "";
+				"OTHER_LDFLAGS[sdk=iphoneos*]" = (
+					"$(inherited)",
+					"/Users/bob/code/libtelnet/build-ipados/Debug/liblibtelnet.a",
+				);
+				"OTHER_LDFLAGS[sdk=iphonesimulator*]" = (
+					"$(inherited)",
+					"/Users/bob/code/libtelnet/build-sim/Release-iphonesimulator/liblibtelnet.a",
+				);
 				OTHER_LIBTOOLFLAGS = "";
 				PODS_ROOT = "$(SRCROOT)";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";

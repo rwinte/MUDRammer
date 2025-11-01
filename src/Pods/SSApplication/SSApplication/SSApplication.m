@@ -22,12 +22,24 @@
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
         // NSUserDefaults is thread-safe.
         [self _setupDefaultUserDefaults];
-        
+
         [self ss_willLaunchBackgroundSetup];
     });
-    
+
     [self ss_willFinishLaunchingWithOptions:launchOptions];
-    
+
+    // Only create window if not using scene-based lifecycle (iOS 13+)
+    // When using scenes, window creation is handled by the scene delegate
+    if (@available(iOS 13.0, *)) {
+        // Check if app is configured to use scenes
+        if (application.supportsMultipleScenes ||
+            [[[NSBundle mainBundle] objectForInfoDictionaryKey:@"UIApplicationSceneManifest"] isKindOfClass:[NSDictionary class]]) {
+            // Using scenes - do not create window here
+            return YES;
+        }
+    }
+
+    // Legacy pre-iOS 13 window setup
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     self.window.backgroundColor = [UIColor blackColor];
     self.window.rootViewController = [self ss_appRootViewController];

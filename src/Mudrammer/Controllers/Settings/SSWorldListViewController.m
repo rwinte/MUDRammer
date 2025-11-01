@@ -25,8 +25,6 @@
 
 - (instancetype)init {
     if ((self = [self initWithStyle:UITableViewStylePlain])) {
-        [SSThemes configureTable:self.tableView];
-
         self.title = NSLocalizedString(@"WORLDS", @"Worlds");
 
         UIBarButtonItem *addButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd
@@ -51,6 +49,8 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+
+    [SSThemes configureTable:self.tableView];
 
     // data source
     NSFetchRequest *worldFetch = [World MR_requestAllSortedBy:[World defaultSortField]
@@ -111,7 +111,12 @@
 }
 
 - (CGSize)preferredContentSize {
-    return [self.tableView sizeThatFits:CGSizeMake(320, CGFLOAT_MAX)];
+    // Only calculate size if the view is in the window hierarchy to avoid layout warnings
+    if (self.tableView.window) {
+        return [self.tableView sizeThatFits:CGSizeMake(320, CGFLOAT_MAX)];
+    }
+    // Return a reasonable default size when view is not yet in hierarchy
+    return CGSizeMake(320, 400.0f);
 }
 
 - (void)dealloc {

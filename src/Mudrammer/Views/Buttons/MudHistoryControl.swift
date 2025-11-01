@@ -52,6 +52,15 @@ import UIKit
 
     // MARK: - Private Properties
 
+    /// UserDefaults key prefix for storing command history
+    private static let kCommandHistoryKeyPrefix = "MudCommandHistory"
+
+    /// Maximum number of commands to store in history
+    private static let kMaxHistorySize = 300
+
+    /// Current world identifier (hostname) for per-world history storage
+    private var worldIdentifier: String?
+
     /// Full command history (newest at end)
     private var commandHistory: [String] = []
 
@@ -103,6 +112,9 @@ import UIKit
             subviews[1].accessibilityLabel = NSLocalizedString("HISTORY_FORWARD", comment: "")
             subviews[1].accessibilityHint = "Moves one step forward in command history."
         }
+
+        // Load saved command history from UserDefaults
+        loadHistory()
     }
 
     public override var isEnabled: Bool {
@@ -121,9 +133,14 @@ import UIKit
         // Avoid consecutive duplicates
         if commandHistory.last != command {
             commandHistory.append(command)
-            NSLog("📝 Added command to history: '\(command)' - total history count: \(commandHistory.count)")
-        } else {
-            NSLog("⏭️ Skipped duplicate command: '\(command)'")
+
+            // Enforce maximum history size by removing oldest commands
+            if commandHistory.count > Self.kMaxHistorySize {
+                commandHistory.removeFirst(commandHistory.count - Self.kMaxHistorySize)
+            }
+
+            // Save to UserDefaults
+            saveHistory()
         }
 
         // Reset to end state
@@ -136,17 +153,17 @@ import UIKit
     ///   - currentInput: The current text input (used for prefix filtering on first up press)
     @objc public func moveHistory(_ direction: HistoryNavigationDirection,
                                    currentInput: String? = nil) {
-        NSLog("🔍 moveHistory called: direction=\(direction == .backwards ? "backwards" : "forwards"), currentInput='\(currentInput ?? "nil")', isAtEnd=\(isAtEnd)")
-        NSLog("🔍 commandHistory: \(commandHistory)")
-        NSLog("🔍 filteredHistory: \(filteredHistory)")
-        NSLog("🔍 currentFilteredIndex: \(currentFilteredIndex)")
-        NSLog("🔍 searchPrefix: '\(searchPrefix ?? "nil")'")
+        // NSLog("🔍 moveHistory called: direction=\(direction == .backwards ? "backwards" : "forwards"), currentInput='\(currentInput ?? "nil")', isAtEnd=\(isAtEnd)")
+        // NSLog("🔍 commandHistory: \(commandHistory)")
+        // NSLog("🔍 filteredHistory: \(filteredHistory)")
+        // NSLog("🔍 currentFilteredIndex: \(currentFilteredIndex)")
+        // NSLog("🔍 searchPrefix: '\(searchPrefix ?? "nil")'")
 
         let trimmedInput = currentInput?.trimmingCharacters(in: .whitespaces) ?? ""
 
         // Check if the prefix has changed
         if trimmedInput != (searchPrefix ?? "") {
-            NSLog("🔄 Prefix changed from '\(searchPrefix ?? "")' to '\(trimmedInput)' - resetting index to 0")
+            // NSLog("🔄 Prefix changed from '\(searchPrefix ?? "")' to '\(trimmedInput)' - resetting index to 0")
 
             // Reset to index 0 when prefix changes
             currentFilteredIndex = 0
@@ -160,7 +177,7 @@ import UIKit
                 // New prefix - start filtering
                 searchPrefix = trimmedInput
                 filteredHistory = commandHistory.filter { $0.hasPrefix(trimmedInput) }
-                NSLog("🔍 Filtered to \(filteredHistory.count) commands matching '\(trimmedInput)': \(filteredHistory)")
+                // NSLog("🔍 Filtered to \(filteredHistory.count) commands matching '\(trimmedInput)': \(filteredHistory)")
             }
         }
 
@@ -172,6 +189,22 @@ import UIKit
     @objc public func purgeCommandHistory() {
         commandHistory.removeAll()
         resetToEnd()
+
+        // Clear from UserDefaults
+        if let key = historyKey() {
+            UserDefaults.standard.removeObject(forKey: key)
+        }
+    }
+
+    /// Set the current world identifier and load its history
+    /// - Parameter identifier: The world identifier (typically hostname) to use for history storage
+    @objc public func setWorldIdentifier(_ identifier: String?) {
+        // Only reload if the identifier actually changed
+        if worldIdentifier != identifier {
+            worldIdentifier = identifier
+            loadHistory()
+            resetToEnd()
+        }
     }
 
     /// Update the enabled state of the segment buttons
@@ -181,6 +214,29 @@ import UIKit
 
     // MARK: - Private Methods
 
+    /// Save command history to UserDefaults
+    private func saveHistory() {
+        guard let key = historyKey() else { return }
+        UserDefaults.standard.set(commandHistory, forKey: key)
+    }
+
+    /// Load command history from UserDefaults
+    private func loadHistory() {
+        guard let key = historyKey() else { return }
+        if let savedHistory = UserDefaults.standard.array(forKey: key) as? [String] {
+            commandHistory = savedHistory
+        } else {
+            commandHistory = []
+        }
+    }
+
+    /// Generate the UserDefaults key for the current world
+    /// - Returns: The key to use for storing this world's history, or nil if no world is set
+    private func historyKey() -> String? {
+        guard let identifier = worldIdentifier else { return nil }
+        return "\(Self.kCommandHistoryKeyPrefix)-\(identifier)"
+    }
+
     /// Start a prefix-based search through history
     private func startPrefixSearch(prefix: String) {
         searchPrefix = prefix
@@ -188,7 +244,7 @@ import UIKit
         // Filter history to commands starting with the prefix
         filteredHistory = commandHistory.filter { $0.hasPrefix(prefix) }
 
-        NSLog("🔍 Prefix search started - prefix: '\(prefix)', filtered count: \(filteredHistory.count), results: \(filteredHistory)")
+        // NSLog("🔍 Prefix search started - prefix: '\(prefix)', filtered count: \(filteredHistory.count), results: \(filteredHistory)")
 
         // Position at the most recent match (last item in filtered array)
         if filteredHistory.isEmpty {
@@ -225,7 +281,7 @@ import UIKit
 
         // Get current input from delegate for smart filtering
         guard let currentText = delegate?.currentInputForHistoryControl?(self) else {
-            NSLog("🔘 segmentPressed: no delegate or no text")
+            // NSLog("🔘 segmentPressed: no delegate or no text")
             return
         }
 
@@ -235,11 +291,11 @@ import UIKit
            selection.length > 0 && selection.location < currentText.count {
             // If text is selected, only use the unselected portion as prefix
             prefixText = String(currentText.prefix(selection.location))
-            NSLog("🔘 segmentPressed: direction=\(direction == .backwards ? "backwards" : "forwards"), fullText='\(currentText)', selection=(\(selection.location), \(selection.length)), prefix='\(prefixText)'")
+            // NSLog("🔘 segmentPressed: direction=\(direction == .backwards ? "backwards" : "forwards"), fullText='\(currentText)', selection=(\(selection.location), \(selection.length)), prefix='\(prefixText)'")
         } else {
             // No selection, use full text as prefix
             prefixText = currentText
-            NSLog("🔘 segmentPressed: direction=\(direction == .backwards ? "backwards" : "forwards"), text='\(currentText)' (no selection)")
+            // NSLog("🔘 segmentPressed: direction=\(direction == .backwards ? "backwards" : "forwards"), text='\(currentText)' (no selection)")
         }
 
         // Use moveHistory to get smart filtering behavior
@@ -255,7 +311,7 @@ import UIKit
             command = filteredHistory[currentFilteredIndex]
         }
 
-        NSLog("📍 Showing command at index \(currentFilteredIndex): '\(command)'")
+        // NSLog("📍 Showing command at index \(currentFilteredIndex): '\(command)'")
 
         // Calculate selection range based on whether we have a prefix search
         let selectionRange = calculateSelectionRange(for: command)
@@ -273,7 +329,7 @@ import UIKit
 
     /// Internal navigation helper that actually moves through history
     private func navigateInDirection(_ direction: HistoryNavigationDirection) {
-        NSLog("📍 navigateInDirection: \(direction == .backwards ? "backwards" : "forwards")")
+        // NSLog("📍 navigateInDirection: \(direction == .backwards ? "backwards" : "forwards")")
 
         // Update index based on direction
         switch direction {
@@ -285,10 +341,10 @@ import UIKit
 
         // Wrap around at boundaries
         if currentFilteredIndex < 0 {
-            NSLog("📍 Wrapped to end of history")
+            // NSLog("📍 Wrapped to end of history")
             currentFilteredIndex = max(0, filteredHistory.count - 1)
         } else if currentFilteredIndex >= filteredHistory.count {
-            NSLog("📍 Wrapped to beginning of history")
+            // NSLog("📍 Wrapped to beginning of history")
             currentFilteredIndex = 0
         }
 
@@ -300,7 +356,7 @@ import UIKit
             command = filteredHistory[currentFilteredIndex]
         }
 
-        NSLog("📍 Navigated to index \(currentFilteredIndex), command: '\(command)'")
+        // NSLog("📍 Navigated to index \(currentFilteredIndex), command: '\(command)'")
 
         // Calculate selection range based on whether we have a prefix search
         let selectionRange = calculateSelectionRange(for: command)
@@ -339,12 +395,12 @@ import UIKit
         if let prefix = searchPrefix, !prefix.isEmpty, command.hasPrefix(prefix) {
             let prefixLength = prefix.count
             let remainingLength = command.count - prefixLength
-            NSLog("🎯 Prefix '\(prefix)' found, selecting range (\(prefixLength), \(remainingLength))")
+            // NSLog("🎯 Prefix '\(prefix)' found, selecting range (\(prefixLength), \(remainingLength))")
             return NSRange(location: prefixLength, length: remainingLength)
         }
 
         // No prefix search - select the entire command (Mudlet behavior)
-        NSLog("🎯 No prefix, selecting entire command (0, \(command.count))")
+        // NSLog("🎯 No prefix, selecting entire command (0, \(command.count))")
         return NSRange(location: 0, length: command.count)
     }
 }

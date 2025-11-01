@@ -74,14 +74,39 @@
 - (void)tappedButton:(id)sender {
     NSUserDefaults *d = [NSUserDefaults standardUserDefaults];
     [d setBool:YES forKey:kPrefInitialSetupComplete];
+    [d synchronize]; // Ensure the preference is saved immediately
 
     SSClientContainer *container = [SSClientContainer sharedClientContainer];
+
+    if (!container) {
+        NSLog(@"ERROR: Unable to find SSClientContainer - welcome screen cannot be dismissed properly");
+        return;
+    }
 
     [container dismissViewControllerAnimated:YES
                                   completion:^
     {
+        NSLog(@"Welcome screen dismissed. Center panel: %@", container.centerPanel);
+        NSLog(@"Container state: %ld", (long)container.state);
+
+        // Ensure the center panel is visible after dismissal
+        // Force the center panel's view to load if it hasn't already
+        if (container.centerPanel) {
+            NSLog(@"Center panel exists, forcing view load");
+            [container.centerPanel.view setNeedsLayout];
+            [container.centerPanel.view layoutIfNeeded];
+        } else {
+            NSLog(@"ERROR: Center panel is nil!");
+        }
+
+        NSLog(@"Calling showCenterPanelAnimated");
+        [container showCenterPanelAnimated:NO];
+
         SSClientViewController *firstClient = [[SSClientContainer worldDisplayDrawer] clientAtIndex:0];
-        [firstClient connect];
+        NSLog(@"First client: %@", firstClient);
+        if (firstClient) {
+            [firstClient connect];
+        }
     }];
 }
 

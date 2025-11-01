@@ -16,6 +16,11 @@ extern CGFloat const kWorldDisplayWidth;
 @interface SSWorldDisplayController : UITableViewController <SSClientDelegate>
 
 /**
+ * Parent container (weak reference to avoid retain cycle)
+ */
+@property (nonatomic, weak) SSClientContainer *parentContainer;
+
+/**
  * Currently-selected view controller.
  */
 @property (nonatomic, assign) NSInteger selectedIndex;

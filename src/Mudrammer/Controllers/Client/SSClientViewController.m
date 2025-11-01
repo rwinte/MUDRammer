@@ -10,6 +10,7 @@
 
 #import "SSClientViewController.h"
 #import "SSMudView.h"
+#import "SSMUDToolbar.h"
 #import "SSThemePickerController.h"
 #import "SSSettingsViewController.h"
 #import "SSWorldEditViewController.h"
@@ -331,6 +332,11 @@ typedef void (^SPLSettingsCloseBlock) (void);
                                                         : [SPLImagesCatalog tildeDarkImage])
                                                  alpha:0.5f];
 
+    // If a world was already set before viewDidLoad, set it now that mudView exists
+    if (self->currentWorld) {
+        [self.mudView.inputToolbar.historyControl setWorldIdentifier:self->currentWorld.hostname];
+    }
+
     // setup navbar
     [self updateWorldToolbar];
 }
@@ -598,7 +604,10 @@ typedef void (^SPLSettingsCloseBlock) (void);
             [self.titleView setMSSPData:nil];
         }
 
-        [self.mudView purgeHistory];
+        // Set the world identifier for per-world command history
+        // This will automatically load the history for the new world
+        [self.mudView.inputToolbar.historyControl setWorldIdentifier:world.hostname];
+
         [self.mudView clearText];
 
         __weak typeof(self) weakSelf = self;
@@ -762,11 +771,14 @@ typedef void (^SPLSettingsCloseBlock) (void);
 #pragma mark - MUD view delegate
 
 - (void)appendText:(NSString *)text isUserInput:(BOOL)isUserInput {
+    // Capture visibility on the calling thread if on main thread, otherwise don't speak
+    BOOL shouldSpeak = [NSThread isMainThread] ? [self isViewVisible] : NO;
+
     if (isUserInput) {
         if ([[[NSUserDefaults standardUserDefaults] objectForKey:kPrefLocalEcho] boolValue]) {
             [self.mudView appendText:text
                          isUserInput:YES
-                               speak:[self isViewVisible]];
+                               speak:shouldSpeak];
             [self appendTextToLog:[text stringByAppendingString:@"\n"]];
         } else {
             [self appendTextToLog:@"\n"];
@@ -774,7 +786,7 @@ typedef void (^SPLSettingsCloseBlock) (void);
     } else {
         [self.mudView appendText:text
                      isUserInput:NO
-                           speak:[self isViewVisible]];
+                           speak:shouldSpeak];
     }
 }
 
@@ -1091,6 +1103,7 @@ typedef void (^SPLSettingsCloseBlock) (void);
 
 - (void)mudsocket:(SSMUDSocket *)sock didReceiveAttributedLineGroup:(SSAttributedLineGroup *)group {
     NSManagedObjectID *worldID = [currentWorld objectID];
+    BOOL isVisible = [self isViewVisible];
 
     __weak typeof(self) weakSelf = self;
 
@@ -1204,7 +1217,7 @@ typedef void (^SPLSettingsCloseBlock) (void);
             [self appendTextToLog:[[newGroup cleanTextLinesWithCommands:NO] componentsJoinedByString:@"\n"]];
 
             // pass lines to the tableview
-            [self.mudView appendAttributedLineGroup:newGroup speak:[self isViewVisible]];
+            [self.mudView appendAttributedLineGroup:newGroup speak:isVisible];
 
             id del = self.delegate;
 

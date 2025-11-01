@@ -9,7 +9,7 @@
 #import "SSThemes.h"
 #import "DTCustomColoredAccessory.h"
 #import "SSSettingsViewController.h"
-#import "MUDRammer-Swift.h"
+#import "MudMobile-Swift.h"
 
 @interface SSThemes ()
 
@@ -247,7 +247,7 @@
 }
 
 - (void)applyAppThemes {
-    [self startSyncingToCloud];
+    // [self startSyncingToCloud];
     [self loadThemeFromDefaults];
 
     // Navbar/toolbar background

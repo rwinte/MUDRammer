@@ -56,8 +56,6 @@
         currentWorld = world;
         _record = rec;
 
-        [SSThemes configureTable:self.quickDialogTableView];
-
         saveButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSave
                                                                    target:self
                                                                    action:@selector(saveEditing:)];
@@ -76,6 +74,8 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+
+    [SSThemes configureTable:self.quickDialogTableView];
 
     if(![[UIDevice currentDevice] isIPad] || self.navigationController.SPLNavigationIsAtRoot) {
         self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel
@@ -174,7 +174,12 @@
 #pragma mark - lifecycle
 
 - (CGSize)preferredContentSize {
-    return [self.quickDialogTableView sizeThatFits:CGSizeMake(320.f, CGFLOAT_MAX)];
+    // Only calculate size if the view is in the window hierarchy to avoid layout warnings
+    if (self.quickDialogTableView.window) {
+        return [self.quickDialogTableView sizeThatFits:CGSizeMake(320.f, CGFLOAT_MAX)];
+    }
+    // Return a reasonable default size when view is not yet in hierarchy
+    return CGSizeMake(320.f, 400.0f);
 }
 
 @end

@@ -37,8 +37,6 @@
 
         self.clearsSelectionOnViewWillAppear = YES;
         self.title = NSLocalizedString(@"ADVANCED", @"Advanced");
-
-        [SSThemes configureTable:self.tableView];
     }
 
     return self;
@@ -50,6 +48,8 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+
+    [SSThemes configureTable:self.tableView];
 
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(userDefaultsChanged)
@@ -257,7 +257,12 @@
 }
 
 - (CGSize)preferredContentSize {
-    return [self.tableView sizeThatFits:CGSizeMake(320, CGFLOAT_MAX)];
+    // Only calculate size if the view is in the window hierarchy to avoid layout warnings
+    if (self.tableView.window) {
+        return [self.tableView sizeThatFits:CGSizeMake(320, CGFLOAT_MAX)];
+    }
+    // Return a reasonable default size when view is not yet in hierarchy
+    return CGSizeMake(320, 400.0f);
 }
 
 - (void)userDefaultsChanged {

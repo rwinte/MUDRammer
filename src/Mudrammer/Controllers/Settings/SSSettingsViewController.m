@@ -47,8 +47,6 @@
         self.title = NSLocalizedString(@"SETTINGS", @"Settings");
         self.clearsSelectionOnViewWillAppear = YES;
 
-        [SSThemes configureTable:self.tableView];
-
         if( ![[UIDevice currentDevice] isIPad] ) {
             self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone
                                                                                                   target:self
@@ -77,7 +75,12 @@
 }
 
 - (CGSize)preferredContentSize {
-    return [self.tableView sizeThatFits:CGSizeMake(320, CGFLOAT_MAX)];
+    // Only calculate size if the view is in the window hierarchy to avoid layout warnings
+    if (self.tableView.window) {
+        return [self.tableView sizeThatFits:CGSizeMake(320, CGFLOAT_MAX)];
+    }
+    // Return a reasonable default size when view is not yet in hierarchy
+    return CGSizeMake(320, 400.0f);
 }
 
 - (void)dealloc {
@@ -88,6 +91,8 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+
+    [SSThemes configureTable:self.tableView];
 
     __weak typeof(self) weakSelf = self;
 

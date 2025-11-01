@@ -7,7 +7,6 @@
             <key>name</key>  <string>Nanvaent</string>
             <key>hostname</key>  <string>nanvaent.org</string>
             <key>port</key>  <integer>23</integer>
-            <key>isDefault</key> <integer>1</integer>
             <key>id</key> <integer>1</integer>
         </dict>
         
@@ -44,6 +43,14 @@
             <key>hostname</key>  <string>discworld.starturtle.net</string>
             <key>port</key>  <integer>23</integer>
             <key>id</key> <integer>7</integer>
+        </dict>
+
+        <dict>
+            <key>name</key>  <string>Local</string>
+            <key>hostname</key>  <string>192.168.1.202</string>
+            <key>port</key>  <integer>8082</integer>
+            <key>isDefault</key> <integer>1</integer>
+            <key>id</key> <integer>17</integer>
         </dict>
         
         <dict>

@@ -304,7 +304,8 @@ forHeaderFooterViewReuseIdentifier:[SSBaseHeaderFooterView identifier]];
         [self.unreadClientIndexes removeIndex:(NSUInteger)selectedIndex];
     }
 
-    [SSClientContainer sharedClientContainer].centerPanel =
+    SSClientContainer *container = self.parentContainer ?: [SSClientContainer sharedClientContainer];
+    container.centerPanel =
      (UIViewController *)[self.dataSource itemAtIndexPath:
                           [NSIndexPath indexPathForRow:(NSInteger)_selectedIndex
                                              inSection:0]];
@@ -367,11 +368,13 @@ forHeaderFooterViewReuseIdentifier:[SSBaseHeaderFooterView identifier]];
                               withRowAnimation:UITableViewRowAnimationFade];
     }
 
-    [SSClientContainer sharedClientContainer].centerPanel = nav;
+    // Use parentContainer if available, otherwise fall back to sharedClientContainer
+    SSClientContainer *container = self.parentContainer ?: [SSClientContainer sharedClientContainer];
+    container.centerPanel = nav;
 
     [self updateWorldStatusButtons];
 
-    [[SSClientContainer sharedClientContainer] closeDrawerAnimated:!isFirstWorld];
+    [container closeDrawerAnimated:!isFirstWorld];
 }
 
 - (void)removeClientAtIndex:(NSInteger)index {

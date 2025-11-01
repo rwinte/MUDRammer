@@ -8,7 +8,7 @@
 
 @import UIKit;
 #import <SSApplication.h>
-#import "MUDRammer-Swift.h"
+#import "MudMobile-Swift.h"
 
 @interface SSAppDelegate : SSApplication
 

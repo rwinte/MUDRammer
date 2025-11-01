@@ -87,11 +87,12 @@ post_install do |installer|
         config.build_settings['HEADER_SEARCH_PATHS'] ||= '$(inherited) '
         config.build_settings['HEADER_SEARCH_PATHS'] << '/Users/bob/code/libtelnet '
 
-        config.build_settings['LIBRARY_SEARCH_PATHS'] ||= '$(inherited) '
-        config.build_settings['LIBRARY_SEARCH_PATHS'] << '/Users/bob/code/libtelnet/build-sim/Release-iphonesimulator '
+        # Use Xcode build settings to conditionally set library paths
+        config.build_settings['LIBRARY_SEARCH_PATHS[sdk=iphonesimulator*]'] = '$(inherited) /Users/bob/code/libtelnet/build-sim/Release-iphonesimulator'
+        config.build_settings['LIBRARY_SEARCH_PATHS[sdk=iphoneos*]'] = '$(inherited) /Users/bob/code/libtelnet/build-ipados/Debug'
 
-        config.build_settings['OTHER_LDFLAGS'] ||= '$(inherited) '
-        config.build_settings['OTHER_LDFLAGS'] << ' /Users/bob/code/libtelnet/build-sim/Release-iphonesimulator/liblibtelnet.a'
+        config.build_settings['OTHER_LDFLAGS[sdk=iphonesimulator*]'] = '$(inherited) /Users/bob/code/libtelnet/build-sim/Release-iphonesimulator/liblibtelnet.a'
+        config.build_settings['OTHER_LDFLAGS[sdk=iphoneos*]'] = '$(inherited) /Users/bob/code/libtelnet/build-ipados/Debug/liblibtelnet.a'
       end
     end
   end
@@ -102,14 +103,41 @@ post_install do |installer|
   project.targets.each do |target|
     if target.name == 'MUDRammer'
       target.build_configurations.each do |config|
+        # Clean up any existing libtelnet paths from HEADER_SEARCH_PATHS
+        if config.build_settings['HEADER_SEARCH_PATHS'].is_a?(Array)
+          config.build_settings['HEADER_SEARCH_PATHS'].reject! { |path| path.to_s.include?('libtelnet') }
+        elsif config.build_settings['HEADER_SEARCH_PATHS'].is_a?(String)
+          paths = config.build_settings['HEADER_SEARCH_PATHS'].split(' ')
+          paths.reject! { |path| path.include?('libtelnet') }
+          config.build_settings['HEADER_SEARCH_PATHS'] = paths.join(' ')
+        end
         config.build_settings['HEADER_SEARCH_PATHS'] ||= '$(inherited) '
         config.build_settings['HEADER_SEARCH_PATHS'] << '/Users/bob/code/libtelnet '
 
-        config.build_settings['LIBRARY_SEARCH_PATHS'] ||= '$(inherited) '
-        config.build_settings['LIBRARY_SEARCH_PATHS'] << '/Users/bob/code/libtelnet/build-sim/Release-iphonesimulator '
+        # Clean up any existing libtelnet paths from LIBRARY_SEARCH_PATHS
+        if config.build_settings['LIBRARY_SEARCH_PATHS'].is_a?(Array)
+          config.build_settings['LIBRARY_SEARCH_PATHS'].reject! { |path| path.to_s.include?('libtelnet') }
+        elsif config.build_settings['LIBRARY_SEARCH_PATHS'].is_a?(String)
+          paths = config.build_settings['LIBRARY_SEARCH_PATHS'].split(' ')
+          paths.reject! { |path| path.include?('libtelnet') }
+          config.build_settings['LIBRARY_SEARCH_PATHS'] = paths.join(' ')
+        end
 
-        config.build_settings['OTHER_LDFLAGS'] ||= '$(inherited) '
-        config.build_settings['OTHER_LDFLAGS'] << ' /Users/bob/code/libtelnet/build-sim/Release-iphonesimulator/liblibtelnet.a'
+        # Clean up any existing libtelnet references from OTHER_LDFLAGS
+        if config.build_settings['OTHER_LDFLAGS'].is_a?(Array)
+          config.build_settings['OTHER_LDFLAGS'].reject! { |flag| flag.to_s.include?('libtelnet') }
+        elsif config.build_settings['OTHER_LDFLAGS'].is_a?(String)
+          flags = config.build_settings['OTHER_LDFLAGS'].split(' ')
+          flags.reject! { |flag| flag.include?('libtelnet') }
+          config.build_settings['OTHER_LDFLAGS'] = flags.join(' ')
+        end
+
+        # Use Xcode build settings to conditionally set library paths
+        config.build_settings['LIBRARY_SEARCH_PATHS[sdk=iphonesimulator*]'] = '$(inherited) /Users/bob/code/libtelnet/build-sim/Release-iphonesimulator'
+        config.build_settings['LIBRARY_SEARCH_PATHS[sdk=iphoneos*]'] = '$(inherited) /Users/bob/code/libtelnet/build-ipados/Debug'
+
+        config.build_settings['OTHER_LDFLAGS[sdk=iphonesimulator*]'] = '$(inherited) /Users/bob/code/libtelnet/build-sim/Release-iphonesimulator/liblibtelnet.a'
+        config.build_settings['OTHER_LDFLAGS[sdk=iphoneos*]'] = '$(inherited) /Users/bob/code/libtelnet/build-ipados/Debug/liblibtelnet.a'
       end
     end
   end

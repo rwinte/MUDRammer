@@ -27,8 +27,6 @@
         self.clearsSelectionOnViewWillAppear = YES;
         self.title = NSLocalizedString(@"STRING_ENCODING", nil);
 
-        [SSThemes configureTable:self.tableView];
-
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(userDefaultsChanged)
                                                      name:NSUserDefaultsDidChangeNotification
@@ -39,7 +37,12 @@
 }
 
 - (CGSize)preferredContentSize {
-    return [self.tableView sizeThatFits:CGSizeMake(320.0f, CGFLOAT_MAX)];
+    // Only calculate size if the view is in the window hierarchy to avoid layout warnings
+    if (self.tableView.window) {
+        return [self.tableView sizeThatFits:CGSizeMake(320.0f, CGFLOAT_MAX)];
+    }
+    // Return a reasonable default size when view is not yet in hierarchy
+    return CGSizeMake(320.0f, 400.0f);
 }
 
 - (void)dealloc {
@@ -48,6 +51,8 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+
+    [SSThemes configureTable:self.tableView];
 
     _dataSource = [[SSArrayDataSource alloc] initWithItems:[SSStringCoder availableStringEncodings]];
     _dataSource.cellClass = [SSBaseTableCell class];

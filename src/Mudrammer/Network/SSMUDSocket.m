@@ -206,10 +206,14 @@
 }
 
 - (void)socket:(GCDAsyncSocket *)sock didConnectToHost:(NSString *)host port:(uint16_t)port {
-    // try to background it
-    [sock performBlock:^{
-        [sock enableBackgroundingOnSocket];
-    }];
+    // VOIP socket backgrounding is deprecated and causes crashes on modern iOS (iOS 13+)
+    // Apple now requires apps to use proper background task management instead.
+    // Commenting out to prevent crash. Background connection handling is now managed
+    // at the app/scene delegate level with proper UIBackgroundTask.
+
+    // [sock performBlock:^{
+    //     [sock enableBackgroundingOnSocket];
+    // }];
 
     // reset telnet lib
     _telnetLib = [[SPLTelnetLib alloc] initWithStringCoder:[SSStringCoder new]];
