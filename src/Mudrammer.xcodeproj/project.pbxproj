@@ -125,6 +125,7 @@
 		5EF7691416A212FE004D291E /* DefaultWorlds.plist in Resources */ = {isa = PBXBuildFile; fileRef = 5EF7691316A212FE004D291E /* DefaultWorlds.plist */; };
 		5EFC45CC19F3263C00D0CB2B /* FiraMono.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5EFC45CB19F3263C00D0CB2B /* FiraMono.ttf */; };
 		8B4C63B8FC634F8484A80D86 /* SSSceneDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = ECB9A4553028442C9B714B1F /* SSSceneDelegate.m */; };
+		C46D73F32EB6D5110041182C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C46D73F22EB6D5110041182C /* LaunchScreen.storyboard */; };
 		C48016B12CA251D900589610 /* SPLNotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C48016B02CA251D900589610 /* SPLNotificationManager.swift */; };
 		C4A3427D2CA0DBF000F581AB /* Pods-MUDRammer-acknowledgements.plist in Resources */ = {isa = PBXBuildFile; fileRef = C4A3427C2CA0DBF000F581AB /* Pods-MUDRammer-acknowledgements.plist */; };
 		CC13CE7D548C1629372672CC /* libPods-MRTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C42E5E36CDA99F1690CF85DE /* libPods-MRTests.a */; };
@@ -461,6 +462,7 @@
 		5EFC45CB19F3263C00D0CB2B /* FiraMono.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = FiraMono.ttf; sourceTree = "<group>"; };
 		5FDCD2B230AE6EC1850504E2 /* Pods-MRTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MRTests.release.xcconfig"; path = "Target Support Files/Pods-MRTests/Pods-MRTests.release.xcconfig"; sourceTree = "<group>"; };
 		C42E5E36CDA99F1690CF85DE /* libPods-MRTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-MRTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		C46D73F22EB6D5110041182C /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		C48016AF2CA251D900589610 /* MUDRammer-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MUDRammer-Bridging-Header.h"; sourceTree = "<group>"; };
 		C48016B02CA251D900589610 /* SPLNotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SPLNotificationManager.swift; sourceTree = "<group>"; };
 		C4A3427C2CA0DBF000F581AB /* Pods-MUDRammer-acknowledgements.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "Pods-MUDRammer-acknowledgements.plist"; path = "Pods/Target Support Files/Pods-MUDRammer/Pods-MUDRammer-acknowledgements.plist"; sourceTree = SOURCE_ROOT; };
@@ -750,6 +752,7 @@
 		5E591C831634C80C00F2EB9F /* Mudrammer */ = {
 			isa = PBXGroup;
 			children = (
+				C46D73F22EB6D5110041182C /* LaunchScreen.storyboard */,
 				5E591C8C1634C80C00F2EB9F /* SSAppDelegate.h */,
 				5E591C8D1634C80C00F2EB9F /* SSAppDelegate.m */,
 				224907CF0C3544C89B51B67F /* SSSceneDelegate.h */,
@@ -1353,6 +1356,7 @@
 				E9CAA3371ABF9A8A00E36BE3 /* longzipper.wav in Resources */,
 				E9CAA31B1ABF9A8A00E36BE3 /* cat.wav in Resources */,
 				E9CAA33A1ABF9A8A00E36BE3 /* nothingfound.wav in Resources */,
+				C46D73F32EB6D5110041182C /* LaunchScreen.storyboard in Resources */,
 				E9CAA3461ABF9A8A00E36BE3 /* shakeit.wav in Resources */,
 				E9CAA3161ABF9A8A00E36BE3 /* bouchegong.wav in Resources */,
 				E9CAA3381ABF9A8A00E36BE3 /* magicmissile.wav in Resources */,
@@ -1892,7 +1896,6 @@
 			baseConfigurationReference = 52E83D0C4BB3DCC69FB8CCFF /* Pods-MUDRammer.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon$(SPLAppIconSuffix)";
-				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_ANALYZER_SECURITY_FLOATLOOPCOUNTER = YES;
 				CLANG_ANALYZER_SECURITY_INSECUREAPI_RAND = YES;
 				CLANG_ANALYZER_SECURITY_INSECUREAPI_STRCPY = YES;
@@ -1944,7 +1947,7 @@
 				GCC_WARN_UNUSED_LABEL = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"/Users/bob/code/libtelnet ",
+					/Users/bob/code/libtelnet,
 				);
 				INFOPLIST_FILE = "Mudrammer/Supporting Files/Mudrammer-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
@@ -1998,7 +2001,6 @@
 			baseConfigurationReference = 3C0869131A1B565D24B2D154 /* Pods-MUDRammer.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon$(SPLAppIconSuffix)";
-				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_ANALYZER_SECURITY_FLOATLOOPCOUNTER = YES;
 				CLANG_ANALYZER_SECURITY_INSECUREAPI_RAND = YES;
 				CLANG_ANALYZER_SECURITY_INSECUREAPI_STRCPY = YES;
@@ -2051,7 +2053,7 @@
 				GCC_WARN_UNUSED_LABEL = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"/Users/bob/code/libtelnet ",
+					/Users/bob/code/libtelnet,
 				);
 				INFOPLIST_FILE = "Mudrammer/Supporting Files/Mudrammer-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.6;

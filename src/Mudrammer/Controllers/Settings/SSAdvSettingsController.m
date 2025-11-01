@@ -191,6 +191,10 @@
                             label = NSLocalizedString(@"KEEP_TEXT", @"Keep Input Text");
                             pref = kPrefInputKeepsCommands;
                             break;
+                        case SSInputRowRemoveAutocompleteSpace:
+                            label = NSLocalizedString(@"REMOVE_AUTOCOMPLETE_SPACE", @"Remove Autocomplete Trailing Space");
+                            pref = kPrefRemoveAutocompleteSpace;
+                            break;
                         default:
                             break;
                     }

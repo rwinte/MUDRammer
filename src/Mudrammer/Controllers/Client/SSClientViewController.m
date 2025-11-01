@@ -41,7 +41,8 @@ typedef void (^SPLSettingsCloseBlock) (void);
 @interface SSClientViewController () <SSMUDSocketDelegate,
                                       SSMudViewDelegate,
                                       UIPopoverControllerDelegate,
-                                      SettingsDelegate>
+                                      SettingsDelegate,
+                                      SSConnectButtonDelegate>
 - (SSClientViewController *) init;
 
 // socket
@@ -760,6 +761,19 @@ typedef void (^SPLSettingsCloseBlock) (void);
     self.socket.delegate = nil;
     [self.socket disconnect];
     _socket = nil;
+}
+
+#pragma mark - SSConnectButtonDelegate
+
+- (void)connectButton:(SSConnectButton *)button didChangeState:(BOOL)connected {
+    NSLog(@"[SSClientViewController] connectButton:didChangeState: called with connected=%d", connected);
+    if (connected) {
+        NSLog(@"[SSClientViewController] Calling connect");
+        [self connect];
+    } else {
+        NSLog(@"[SSClientViewController] Calling disconnect");
+        [self disconnect];
+    }
 }
 
 - (void)clearText {

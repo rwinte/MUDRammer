@@ -276,9 +276,35 @@ UIEdgeInsets const kToolbarInsets = (UIEdgeInsets) { 4, 8, 4, 8 };
 }
 
 - (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text {
+    // Check for return key
     if ([text isEqualToString:@"\n"]) {
         [self inputButtonPressed];
         return NO;
+    }
+
+    // Check if the preference to remove autocomplete trailing spaces is enabled
+    BOOL shouldRemoveSpace = [[NSUserDefaults standardUserDefaults] boolForKey:kPrefRemoveAutocompleteSpace];
+
+    if (shouldRemoveSpace) {
+        // Heuristic: completion/auto-correct often arrives as "word " replacing a nonzero range.
+        // Avoid eating a legitimate user spacebar press (that would be text == " " and range.length == 0)
+        if (range.length > 0 && [text hasSuffix:@" "]) {
+            NSString *trimmed = [text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+
+            if (trimmed.length > 0) {
+                // Do the replacement ourselves, without the trailing space
+                UITextPosition *start = [textView positionFromPosition:textView.beginningOfDocument offset:(NSInteger)range.location];
+                UITextPosition *end = [textView positionFromPosition:start offset:(NSInteger)range.length];
+
+                if (start && end) {
+                    UITextRange *textRange = [textView textRangeFromPosition:start toPosition:end];
+                    if (textRange) {
+                        [textView replaceRange:textRange withText:trimmed];
+                        return NO;
+                    }
+                }
+            }
+        }
     }
 
     return YES;
@@ -433,22 +459,22 @@ UIEdgeInsets const kToolbarInsets = (UIEdgeInsets) { 4, 8, 4, 8 };
         // Apply the selection range to indicate prefix vs non-prefix text
         if (range.location + range.length <= command.length) {
             [self.textView setSelectedRange:range];
-            NSLog(@"📝 Set text '%@' with selection range (%lu, %lu)",
-                  command, (unsigned long)range.location, (unsigned long)range.length);
+//            NSLog(@"📝 Set text '%@' with selection range (%lu, %lu)",
+//                  command, (unsigned long)range.location, (unsigned long)range.length);
         }
     }
 }
 
 - (NSString *)currentInputForHistoryControl:(MudHistoryControl *)control {
     NSString *currentText = [self.textView.text copy];
-    NSLog(@"📋 Delegate asked for current input: '%@'", currentText);
+    // NSLog(@"📋 Delegate asked for current input: '%@'", currentText);
     return currentText;
 }
 
 - (NSRange)currentSelectionForHistoryControl:(MudHistoryControl *)control {
     NSRange selectedRange = self.textView.selectedRange;
-    NSLog(@"📋 Delegate asked for current selection: (%lu, %lu)",
-          (unsigned long)selectedRange.location, (unsigned long)selectedRange.length);
+    // NSLog(@"📋 Delegate asked for current selection: (%lu, %lu)",
+    //       (unsigned long)selectedRange.location, (unsigned long)selectedRange.length);
     return selectedRange;
 }
 

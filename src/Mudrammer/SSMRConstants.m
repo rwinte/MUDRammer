@@ -44,6 +44,7 @@ NSString * const kPrefStringEncoding            = @"String-Encoding";
 NSString * const kPrefTopBarAlwaysVisible       = @"Top-Bar-Always-Visible";
 NSString * const kPrefAutocapitalization        = @"MRAutocapitalization";
 NSString * const kPrefBTKeyboard                = @"BTKeyboard";
+NSString * const kPrefRemoveAutocompleteSpace   = @"Remove-Autocomplete-Space";
 
 NSString * const kPrefSemicolonCommands         = @"Semicolon-Commands";
 NSString * const kPrefSemicolonCommandDelimiter = @"Semicolon-Command-Delimiter";

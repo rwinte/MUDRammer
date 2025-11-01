@@ -32,6 +32,7 @@ typedef NS_ENUM(NSUInteger, SSInputRow) {
     SSInputRowDarkKeyboard,
     SSInputRowAutocapitalize,
     SSInputRowInputKeep,
+    SSInputRowRemoveAutocompleteSpace,
     SSInputNumRows
 };
 

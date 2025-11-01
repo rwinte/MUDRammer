@@ -99,7 +99,9 @@
                         sourceView:(UIView *)sourceView
                         sourceRect:(CGRect)sourceRect
 {
+    NSLog(@"[SPLAlerts] SPLShowActionViewWithTitle called. barButtonItem: %@, sourceView: %@", barButtonItem, sourceView);
     if ([UIAlertController class]) {
+        NSLog(@"[SPLAlerts] Using UIAlertController");
         UIAlertController *alert = [UIAlertController alertControllerWithTitle:title
                                                                        message:nil
                                                                 preferredStyle:UIAlertControllerStyleActionSheet];
@@ -129,19 +131,48 @@
             [alert addAction:action];
         }
 
-        [[[SSAppDelegate sharedApplication].window.rootViewController SPLFrontViewController] presentViewController:alert
-                                                                                                           animated:YES
-                                                                                                         completion:nil];
+        // Configure popover presentation BEFORE presenting
+        // On iPad, action sheets are presented as popovers
+        UIPopoverPresentationController *popover = alert.popoverPresentationController;
 
-        if (alert.modalPresentationStyle == UIModalPresentationPopover) {
-            UIPopoverPresentationController *popover = alert.popoverPresentationController;
-
+        if (popover) {
+            NSLog(@"[SPLAlerts] Configuring popover presentation controller");
             if (barButtonItem) {
+                NSLog(@"[SPLAlerts] Setting popover.barButtonItem: %@", barButtonItem);
                 popover.barButtonItem = barButtonItem;
             } else if (sourceView && !CGRectEqualToRect(sourceRect, CGRectZero)) {
+                NSLog(@"[SPLAlerts] Setting popover.sourceView: %@ sourceRect: %@", sourceView, NSStringFromCGRect(sourceRect));
                 popover.sourceView = sourceView;
                 popover.sourceRect = sourceRect;
+            } else {
+                NSLog(@"[SPLAlerts] WARNING: No valid anchor point for popover! This will crash on iPad.");
             }
+        }
+
+        // Find the presenting view controller
+        UIViewController *presentingVC = [[SSAppDelegate sharedApplication].window.rootViewController SPLFrontViewController];
+
+        // If we couldn't get it from the app delegate, try to get it from the source view
+        if (!presentingVC && sourceView) {
+            UIResponder *responder = sourceView;
+            while (responder && ![responder isKindOfClass:[UIViewController class]]) {
+                responder = [responder nextResponder];
+            }
+            presentingVC = (UIViewController *)responder;
+            NSLog(@"[SPLAlerts] Got presenting VC from sourceView: %@", presentingVC);
+        }
+
+        NSLog(@"[SPLAlerts] Presenting VC: %@", presentingVC);
+        NSLog(@"[SPLAlerts] Presenting VC already presenting: %@", presentingVC.presentedViewController);
+
+        if (presentingVC) {
+            [presentingVC presentViewController:alert
+                                       animated:YES
+                                     completion:^{
+                                         NSLog(@"[SPLAlerts] Presentation completed");
+                                     }];
+        } else {
+            NSLog(@"[SPLAlerts] ERROR: No presenting view controller found!");
         }
     } else {
         UIActionSheet *sheet = [UIActionSheet bk_actionSheetWithTitle:title];

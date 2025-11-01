@@ -41,9 +41,11 @@
 #pragma mark - tapping button
 
 - (void)didTapButton:(id)sender {
+    NSLog(@"[SSConnectButton] Button tapped. isConnected: %d, delegate: %@", self.isConnected, self.connectDelegate);
     id <SSConnectButtonDelegate> del = self.connectDelegate;
 
     if (self.isConnected) {
+        NSLog(@"[SSConnectButton] Showing disconnect action sheet");
         __weak typeof(self) weakSelf = self;
         [SPLAlerts SPLShowActionViewWithTitle:nil
                                   cancelTitle:NSLocalizedString(@"CANCEL", @"Cancel")
@@ -51,15 +53,20 @@
                              destructiveTitle:NSLocalizedString(@"DISCONNECT", @"Disconnect")
                              destructiveBlock:^{
                                  __strong typeof(weakSelf) strongSelf = weakSelf; (void)strongSelf;
+                                 NSLog(@"[SSConnectButton] Disconnect selected");
                                  if ([del respondsToSelector:@selector(connectButton:didChangeState:)]) {
+                                     NSLog(@"[SSConnectButton] Calling delegate connectButton:didChangeState:NO");
                                      [del connectButton:self
                                          didChangeState:NO];
+                                 } else {
+                                     NSLog(@"[SSConnectButton] WARNING: Delegate does not respond to connectButton:didChangeState:");
                                  }
                              }
                                 barButtonItem:self.targetBarButton
-                                   sourceView:nil
-                                   sourceRect:CGRectZero];
+                                   sourceView:self
+                                   sourceRect:self.bounds];
     } else {
+        NSLog(@"[SSConnectButton] Calling connect");
         if ([del respondsToSelector:@selector(connectButton:didChangeState:)])
             [del connectButton:self
                 didChangeState:YES];

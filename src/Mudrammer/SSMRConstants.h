@@ -54,6 +54,7 @@ extern NSString * const kPrefRadialCommands;
 extern NSString * const kPrefTopBarAlwaysVisible;
 extern NSString * const kPrefAutocapitalization;
 extern NSString * const kPrefBTKeyboard;
+extern NSString * const kPrefRemoveAutocompleteSpace;
 
 extern NSString * const kPrefSemicolonCommands;
 extern NSString * const kPrefSemicolonCommandDelimiter;
