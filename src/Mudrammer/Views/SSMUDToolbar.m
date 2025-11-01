@@ -10,13 +10,13 @@
 #import "SSAccessoryToolbar.h"
 #import "SSSettingsViewController.h"
 #import "SSAccessoryToolbar.h"
-#import "SSMudHistoryDelegate.h"
+#import "MUDRammer-Swift.h"
 #import <UIScreen+SSAdditions.h>
 #import <Masonry.h>
 
 UIEdgeInsets const kToolbarInsets = (UIEdgeInsets) { 4, 8, 4, 8 };
 
-@interface SSMUDToolbar () <SSAccessoryToolbarDelegate, SSStashDelegate, SSMudHistoryDelegate>
+@interface SSMUDToolbar () <SSAccessoryToolbarDelegate, SSStashDelegate, MudHistoryControlDelegate>
 - (void) userDefaultsDidChange:(NSNotification *)notification;
 - (void) setMRAutocorrectEnabled:(BOOL)enabled autocapitalizeEnabled:(BOOL)autocapitalizeEnabled;
 - (void) setInputAccessoryBarEnabled:(BOOL)enabled;
@@ -65,7 +65,7 @@ UIEdgeInsets const kToolbarInsets = (UIEdgeInsets) { 4, 8, 4, 8 };
         }];
 
         // history control
-        _historyControl = [SSMudHistoryControl new];
+        _historyControl = [MudHistoryControl new];
         self.historyControl.delegate = self;
         [stashHistoryView addSubview:self.historyControl];
         [self.historyControl mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -221,23 +221,32 @@ UIEdgeInsets const kToolbarInsets = (UIEdgeInsets) { 4, 8, 4, 8 };
 
 - (void)growingTextViewPressedKeyCommand:(NSString *)direction {
     NSString *currentText = [self.textView.text copy];
+    NSRange selectedRange = self.textView.selectedRange;
+    NSLog(@"⬆️ Arrow key pressed: %@, currentText: '%@', selectedRange: (%lu, %lu)",
+          direction, currentText, (unsigned long)selectedRange.location, (unsigned long)selectedRange.length);
 
     if ([direction isEqualToString:UIKeyInputUpArrow]) {
+        NSLog(@"⬆️ UP arrow - isAtStart: %d", [self.historyControl isAtStart]);
         if ([self.historyControl isAtStart]) {
             return;
         }
 
-        if ([self.historyControl isAtEnd] && [currentText length] > 0) {
-            [self.historyControl addCommand:currentText];
-            [self.textView setText:@""];
-
-            // Move twice, to go past the text we've just added to history
-            [self.historyControl moveHistory:HistoryDirectionBackwards];
+        // If text is selected, treat only the unselected portion as the prefix
+        // This follows Mudlet's behavior: selected text indicates it came from history navigation
+        NSString *prefixText = currentText;
+        if (selectedRange.length > 0 && selectedRange.location < currentText.length) {
+            // Only use the text before the selection as the prefix
+            prefixText = [currentText substringToIndex:selectedRange.location];
+            NSLog(@"📝 Text is selected, using prefix: '%@'", prefixText);
         }
 
-        [self.historyControl moveHistory:HistoryDirectionBackwards];
+        // Smart prefix filtering - pass current input to filter history
+        [self.historyControl moveHistory:HistoryNavigationDirectionBackwards
+                            currentInput:prefixText];
     } else if (![self.historyControl isAtEnd]) {
-        [self.historyControl moveHistory:HistoryDirectionForwards];
+        NSLog(@"⬇️ DOWN arrow - isAtEnd: %d", [self.historyControl isAtEnd]);
+        [self.historyControl moveHistory:HistoryNavigationDirectionForwards
+                            currentInput:nil];
     }
 }
 
@@ -409,10 +418,38 @@ UIEdgeInsets const kToolbarInsets = (UIEdgeInsets) { 4, 8, 4, 8 };
 
 #pragma mark - mud history delegate
 
-- (void)mudHistoryControl:(SSMudHistoryControl *)control willChangeToCommand:(NSString *)command {
+- (void)mudHistoryControl:(MudHistoryControl *)control willChangeToCommand:(NSString *)command {
     if ([self.textView isEditable]) {
         [self.textView setText:command];
     }
+}
+
+- (void)mudHistoryControl:(MudHistoryControl *)control
+       willChangeToCommand:(NSString *)command
+        withSelectionRange:(NSRange)range {
+    if ([self.textView isEditable]) {
+        [self.textView setText:command];
+
+        // Apply the selection range to indicate prefix vs non-prefix text
+        if (range.location + range.length <= command.length) {
+            [self.textView setSelectedRange:range];
+            NSLog(@"📝 Set text '%@' with selection range (%lu, %lu)",
+                  command, (unsigned long)range.location, (unsigned long)range.length);
+        }
+    }
+}
+
+- (NSString *)currentInputForHistoryControl:(MudHistoryControl *)control {
+    NSString *currentText = [self.textView.text copy];
+    NSLog(@"📋 Delegate asked for current input: '%@'", currentText);
+    return currentText;
+}
+
+- (NSRange)currentSelectionForHistoryControl:(MudHistoryControl *)control {
+    NSRange selectedRange = self.textView.selectedRange;
+    NSLog(@"📋 Delegate asked for current selection: (%lu, %lu)",
+          (unsigned long)selectedRange.location, (unsigned long)selectedRange.length);
+    return selectedRange;
 }
 
 @end

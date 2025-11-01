@@ -9,9 +9,9 @@
 @import UIKit;
 
 #import "SSStashButton.h"
-#import "SSMudHistoryControl.h"
 #import "SSGrowingTextView.h"
 
+@class MudHistoryControl;
 @protocol SSMUDToolbarDelegate;
 
 extern UIEdgeInsets const kToolbarInsets;
@@ -23,7 +23,7 @@ extern UIEdgeInsets const kToolbarInsets;
 
 @property (nonatomic, strong) SSStashButton *stashButton;
 @property (nonatomic, strong) SSGrowingTextView *textView;
-@property (nonatomic, strong) SSMudHistoryControl *historyControl;
+@property (nonatomic, strong) MudHistoryControl *historyControl;
 
 @property (nonatomic, weak) id <SSMUDToolbarDelegate> toolbarDelegate;
 

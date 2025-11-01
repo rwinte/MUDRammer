@@ -9,7 +9,7 @@
 #import "SSThemes.h"
 #import "DTCustomColoredAccessory.h"
 #import "SSSettingsViewController.h"
-#import "SSMudHistoryControl.h"
+#import "MUDRammer-Swift.h"
 
 @interface SSThemes ()
 
@@ -306,10 +306,10 @@
     [[UISwitch appearance] setOnTintColor:[self valueForThemeKey:kThemeFontColor]];
 
     // History control
-    [[SSMudHistoryControl appearance] setBackgroundImage:[SPLImagesCatalog transparentImage]
+    [[MudHistoryControl appearance] setBackgroundImage:[SPLImagesCatalog transparentImage]
                                                 forState:UIControlStateNormal
                                               barMetrics:UIBarMetricsDefault];
-    [[SSMudHistoryControl appearance] setDividerImage:[SPLImagesCatalog transparentImage]
+    [[MudHistoryControl appearance] setDividerImage:[SPLImagesCatalog transparentImage]
                                   forLeftSegmentState:UIControlStateNormal
                                     rightSegmentState:UIControlStateNormal
                                            barMetrics:UIBarMetricsDefault];

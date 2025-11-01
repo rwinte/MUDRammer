@@ -30,16 +30,20 @@ typedef struct telnet_t * telnet_t_p;
 
 @end
 
+// GMCP (Generic MUD Communication Protocol) - option 201
+#define TELNET_TELOPT_GMCP 201
+
 static const telnet_telopt_t SPLTelOpts[] = {
     { TELNET_TELOPT_ECHO,      TELNET_WILL, TELNET_DO },
     { TELNET_TELOPT_SGA,       TELNET_WILL, TELNET_DO },
     { TELNET_TELOPT_TTYPE,     TELNET_WILL, TELNET_DO },
     { TELNET_TELOPT_COMPRESS,  TELNET_WONT, TELNET_DONT },
-    { TELNET_TELOPT_COMPRESS2, TELNET_WILL, TELNET_DO },
+    { TELNET_TELOPT_COMPRESS2, TELNET_WONT, TELNET_DONT }, // Disabled - decompression not working
     { TELNET_TELOPT_ZMP,       TELNET_WONT, TELNET_DONT },
     { TELNET_TELOPT_MSSP,      TELNET_WILL, TELNET_DO },
     { TELNET_TELOPT_BINARY,    TELNET_WONT, TELNET_DONT },
     { TELNET_TELOPT_NAWS,      TELNET_WILL, TELNET_DO },
+    { TELNET_TELOPT_GMCP,      TELNET_WILL, TELNET_DO },
     { -1, 0, 0 }
 };
 
@@ -150,6 +154,13 @@ CG_INLINE void SPLTelnetEventHandler(telnet_t *telnet,
         case TELNET_EV_SUBNEGOTIATION:
 
             DLog(@"SUB %@", @(ev->sub.telopt));
+
+            // Silently ignore GMCP and other out-of-band protocols
+            // This prevents their data from appearing as gibberish in the display
+            if (ev->sub.telopt == TELNET_TELOPT_GMCP) {
+                DLog(@"GMCP data received (length: %zu) - ignoring", ev->sub.size);
+                // Could parse JSON here if needed: ev->sub.buffer contains the data
+            }
 
             break;
 

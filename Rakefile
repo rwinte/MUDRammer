@@ -1,5 +1,5 @@
 # encoding: UTF-8
-# MUDRammer
+# MudMobile
 
 class String
   def self.colorize(text, color_code)

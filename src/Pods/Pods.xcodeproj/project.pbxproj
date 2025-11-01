@@ -6297,6 +6297,37 @@
 			};
 			name = Debug;
 		};
+		193157E584814517BCC963ACFC8248C0 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 7BA220B873DF5ECFAD9FEC804E9A135F /* Expecta.debug.xcconfig */;
+			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				ENABLE_MODULE_VERIFIER = NO;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				GCC_PREFIX_HEADER = "Target Support Files/Expecta/Expecta-prefix.pch";
+				GENERATE_INFOPLIST_FILE = NO;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PRIVATE_HEADERS_FOLDER_PATH = "";
+				PRODUCT_MODULE_NAME = Expecta;
+				PRODUCT_NAME = Expecta;
+				PUBLIC_HEADERS_FOLDER_PATH = "";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_INSTALL_OBJC_HEADER = YES;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				WARNING_CFLAGS = (
+					"$(inherited)",
+					"-Wno-newline-eof",
+				);
+			};
+			name = Debug;
+		};
 		1A5CBD73BC92EF44CE4E903AFF38AE44 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 731A6287933FA93DE59D1A7B24DB4087 /* Masonry.debug.xcconfig */;
@@ -6444,6 +6475,39 @@
 				);
 			};
 			name = Debug;
+		};
+		35653D0E7C110841716F2BB37C89B102 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 143EB0CC5AE396AB7FB6001AEEE2640C /* OCMock.release.xcconfig */;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				ENABLE_MODULE_VERIFIER = NO;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				GCC_PREFIX_HEADER = "Target Support Files/OCMock/OCMock-prefix.pch";
+				GENERATE_INFOPLIST_FILE = NO;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PRIVATE_HEADERS_FOLDER_PATH = "";
+				PRODUCT_MODULE_NAME = OCMock;
+				PRODUCT_NAME = OCMock;
+				PUBLIC_HEADERS_FOLDER_PATH = "";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_INSTALL_OBJC_HEADER = YES;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+				WARNING_CFLAGS = (
+					"$(inherited)",
+					"-Wno-newline-eof",
+				);
+			};
+			name = Release;
 		};
 		3B0ACF333DC1381FF433349B1350199A /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -6658,38 +6722,6 @@
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
 				SWIFT_INSTALL_OBJC_HEADER = YES;
 				SWIFT_VERSION = 6.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VALIDATE_PRODUCT = YES;
-				WARNING_CFLAGS = (
-					"$(inherited)",
-					"-Wno-newline-eof",
-				);
-			};
-			name = Release;
-		};
-		4C5162AAEE9F6452B0D13F408DF96F69 /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 143EB0CC5AE396AB7FB6001AEEE2640C /* OCMock.release.xcconfig */;
-			buildSettings = {
-				CLANG_ENABLE_OBJC_WEAK = NO;
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				ENABLE_MODULE_VERIFIER = NO;
-				ENABLE_USER_SCRIPT_SANDBOXING = NO;
-				GCC_PREFIX_HEADER = "Target Support Files/OCMock/OCMock-prefix.pch";
-				GENERATE_INFOPLIST_FILE = NO;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				OTHER_LDFLAGS = "";
-				OTHER_LIBTOOLFLAGS = "";
-				PRIVATE_HEADERS_FOLDER_PATH = "";
-				PRODUCT_MODULE_NAME = OCMock;
-				PRODUCT_NAME = OCMock;
-				PUBLIC_HEADERS_FOLDER_PATH = "";
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				SWIFT_INSTALL_OBJC_HEADER = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 				WARNING_CFLAGS = (
@@ -7032,6 +7064,38 @@
 			};
 			name = Release;
 		};
+		88A9CEACEED29765CB6DCFB0DE7C8D36 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 10CAE96ED446EC3D082E548CFE5393A9 /* Expecta.release.xcconfig */;
+			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				ENABLE_MODULE_VERIFIER = NO;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				GCC_PREFIX_HEADER = "Target Support Files/Expecta/Expecta-prefix.pch";
+				GENERATE_INFOPLIST_FILE = NO;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PRIVATE_HEADERS_FOLDER_PATH = "";
+				PRODUCT_MODULE_NAME = Expecta;
+				PRODUCT_NAME = Expecta;
+				PUBLIC_HEADERS_FOLDER_PATH = "";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_INSTALL_OBJC_HEADER = YES;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+				WARNING_CFLAGS = (
+					"$(inherited)",
+					"-Wno-newline-eof",
+				);
+			};
+			name = Release;
+		};
 		8FCA3670A211956C5D05788279C9ABB1 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 6DFD6B8C1863686AD40E53731C258188 /* QuickDialog.debug.xcconfig */;
@@ -7055,37 +7119,6 @@
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
 				SWIFT_INSTALL_OBJC_HEADER = YES;
 				SWIFT_VERSION = 6.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				WARNING_CFLAGS = (
-					"$(inherited)",
-					"-Wno-newline-eof",
-				);
-			};
-			name = Debug;
-		};
-		915C9A282907524E4595636BC5B1FF58 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = D35720B55F4E807B3FD1E853819F6E4E /* OCMock.debug.xcconfig */;
-			buildSettings = {
-				CLANG_ENABLE_OBJC_WEAK = NO;
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				ENABLE_MODULE_VERIFIER = NO;
-				ENABLE_USER_SCRIPT_SANDBOXING = NO;
-				GCC_PREFIX_HEADER = "Target Support Files/OCMock/OCMock-prefix.pch";
-				GENERATE_INFOPLIST_FILE = NO;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				OTHER_LDFLAGS = "";
-				OTHER_LIBTOOLFLAGS = "";
-				PRIVATE_HEADERS_FOLDER_PATH = "";
-				PRODUCT_MODULE_NAME = OCMock;
-				PRODUCT_NAME = OCMock;
-				PUBLIC_HEADERS_FOLDER_PATH = "";
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				SWIFT_INSTALL_OBJC_HEADER = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				WARNING_CFLAGS = (
 					"$(inherited)",
@@ -7637,36 +7670,6 @@
 			};
 			name = Release;
 		};
-		C1CE19AA994833A4F6D43D1F5F1DA39E /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 7BA220B873DF5ECFAD9FEC804E9A135F /* Expecta.debug.xcconfig */;
-			buildSettings = {
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				ENABLE_MODULE_VERIFIER = NO;
-				ENABLE_USER_SCRIPT_SANDBOXING = NO;
-				GCC_PREFIX_HEADER = "Target Support Files/Expecta/Expecta-prefix.pch";
-				GENERATE_INFOPLIST_FILE = NO;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				OTHER_LDFLAGS = "";
-				OTHER_LIBTOOLFLAGS = "";
-				PRIVATE_HEADERS_FOLDER_PATH = "";
-				PRODUCT_MODULE_NAME = Expecta;
-				PRODUCT_NAME = Expecta;
-				PUBLIC_HEADERS_FOLDER_PATH = "";
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				SWIFT_INSTALL_OBJC_HEADER = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				WARNING_CFLAGS = (
-					"$(inherited)",
-					"-Wno-newline-eof",
-				);
-			};
-			name = Debug;
-		};
 		C9B2D26B0D98BD50C57F2042345CACD5 /* Release */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = F6840E92659EC03F06B1120C17434D45 /* FXForms.release.xcconfig */;
@@ -7729,37 +7732,6 @@
 				);
 			};
 			name = Debug;
-		};
-		CBCFA8A8D616C683E4772F3B31CDABEB /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 10CAE96ED446EC3D082E548CFE5393A9 /* Expecta.release.xcconfig */;
-			buildSettings = {
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				ENABLE_MODULE_VERIFIER = NO;
-				ENABLE_USER_SCRIPT_SANDBOXING = NO;
-				GCC_PREFIX_HEADER = "Target Support Files/Expecta/Expecta-prefix.pch";
-				GENERATE_INFOPLIST_FILE = NO;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				OTHER_LDFLAGS = "";
-				OTHER_LIBTOOLFLAGS = "";
-				PRIVATE_HEADERS_FOLDER_PATH = "";
-				PRODUCT_MODULE_NAME = Expecta;
-				PRODUCT_NAME = Expecta;
-				PUBLIC_HEADERS_FOLDER_PATH = "";
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				SWIFT_INSTALL_OBJC_HEADER = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VALIDATE_PRODUCT = YES;
-				WARNING_CFLAGS = (
-					"$(inherited)",
-					"-Wno-newline-eof",
-				);
-			};
-			name = Release;
 		};
 		CD9E773283463F5276DE6B7A4A9B87F7 /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -8065,6 +8037,38 @@
 			};
 			name = Release;
 		};
+		E8CEC4119EFDAC452781EB8BE3AC5C3D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = D35720B55F4E807B3FD1E853819F6E4E /* OCMock.debug.xcconfig */;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				ENABLE_MODULE_VERIFIER = NO;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				GCC_PREFIX_HEADER = "Target Support Files/OCMock/OCMock-prefix.pch";
+				GENERATE_INFOPLIST_FILE = NO;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PRIVATE_HEADERS_FOLDER_PATH = "";
+				PRODUCT_MODULE_NAME = OCMock;
+				PRODUCT_NAME = OCMock;
+				PUBLIC_HEADERS_FOLDER_PATH = "";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_INSTALL_OBJC_HEADER = YES;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				WARNING_CFLAGS = (
+					"$(inherited)",
+					"-Wno-newline-eof",
+				);
+			};
+			name = Debug;
+		};
 		EC358456112B91E7688978E1857FEB79 /* Release */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = E93C90C2986C1CA3802734091F2D5A5D /* SSOperations.release.xcconfig */;
@@ -8304,8 +8308,8 @@
 		00FD592B0637BB23DECD0ADF313787F3 /* Build configuration list for PBXNativeTarget "OCMock" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				915C9A282907524E4595636BC5B1FF58 /* Debug */,
-				4C5162AAEE9F6452B0D13F408DF96F69 /* Release */,
+				E8CEC4119EFDAC452781EB8BE3AC5C3D /* Debug */,
+				35653D0E7C110841716F2BB37C89B102 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -8439,8 +8443,8 @@
 		7EEAA45DD536595D9EE770EAA6D38FF5 /* Build configuration list for PBXNativeTarget "Expecta" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				C1CE19AA994833A4F6D43D1F5F1DA39E /* Debug */,
-				CBCFA8A8D616C683E4772F3B31CDABEB /* Release */,
+				193157E584814517BCC963ACFC8248C0 /* Debug */,
+				88A9CEACEED29765CB6DCFB0DE7C8D36 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
