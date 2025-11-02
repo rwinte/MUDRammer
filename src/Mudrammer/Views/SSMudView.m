@@ -398,7 +398,7 @@
 
 - (NSUInteger)numberOfSectorsInRadialControl:(SSRadialControl *)control {
     if (control == self.movementControl) {
-        return 8;
+        return [[[NSUserDefaults standardUserDefaults] arrayForKey:kPrefMoveCommands] count];
     } else {
         return [[[NSUserDefaults standardUserDefaults] arrayForKey:kPrefRadialCommands] count];
     }
@@ -407,23 +407,10 @@
 - (NSString *)centerTextForRadialControl:(SSRadialControl *)control inSector:(NSUInteger)sector {
 
     if (control == self.movementControl) {
-        switch( sector ) {
-            case 0:
-                return @"N";
-            case 1:
-                return @"NE";
-            case 2:
-                return @"E";
-            case 3:
-                return @"SE";
-            case 4:
-                return @"S";
-            case 5:
-                return @"SW";
-            case 6:
-                return @"W";
-            default:
-                return @"NW";
+        NSArray *commands = [[NSUserDefaults standardUserDefaults] arrayForKey:kPrefMoveCommands];
+
+        if (sector < [commands count]) {
+            return [commands[sector] uppercaseString];
         }
     } else {
         NSArray *commands = [[NSUserDefaults standardUserDefaults] arrayForKey:kPrefRadialCommands];

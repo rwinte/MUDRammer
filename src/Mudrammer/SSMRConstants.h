@@ -51,6 +51,7 @@ extern NSString * const kPrefConnectOnStartup;
 extern NSString * const kPrefStringEncoding;
 extern NSString * const kPrefRadialControl;
 extern NSString * const kPrefRadialCommands;
+extern NSString * const kPrefMoveCommands;
 extern NSString * const kPrefTopBarAlwaysVisible;
 extern NSString * const kPrefAutocapitalization;
 extern NSString * const kPrefBTKeyboard;

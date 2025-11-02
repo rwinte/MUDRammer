@@ -146,6 +146,7 @@
              kPrefKeyboardStyle         : @YES,
              kPrefRadialControl         : @(SSRadialControlPositionLeft),
              kPrefRadialCommands        : @[ @"up", @"in", @"down", @"out", @"look" ],
+             kPrefMoveCommands          : @[ @"n", @"ne", @"e", @"se", @"s", @"sw", @"w", @"nw" ],
              kPrefTopBarAlwaysVisible   : @NO,
              kPrefAutocapitalization    : @NO,
              kPrefBTKeyboard            : @NO,

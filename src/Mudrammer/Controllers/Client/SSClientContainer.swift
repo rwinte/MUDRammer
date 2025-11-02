@@ -174,6 +174,10 @@ class SSClientContainer: JASidePanelController, MFMailComposeViewControllerDeleg
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: workItem)
     }
 
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .lightContent
+    }
+
     deinit {
         // Remove observers in a way that's compatible with Swift concurrency
         NotificationCenter.default.removeObserver(self)
@@ -199,8 +203,12 @@ class SSClientContainer: JASidePanelController, MFMailComposeViewControllerDeleg
                     mailViewController.mailComposeDelegate = self
 
                     self.present(mailViewController, animated: true) {
-                        // MAIL HACK
-                        UIApplication.shared.statusBarStyle = .lightContent
+                        // Ensure status bar appearance is refreshed without using deprecated APIs
+                        if let presenting = self.presentingViewController {
+                            presenting.setNeedsStatusBarAppearanceUpdate()
+                        } else {
+                            self.setNeedsStatusBarAppearanceUpdate()
+                        }
                     }
                 }
             } else {
@@ -285,3 +293,4 @@ class SSClientContainer: JASidePanelController, MFMailComposeViewControllerDeleg
         }
     }
 }
+

@@ -19,6 +19,7 @@
 #import "SPLRadialEditor.h"
 #import "SSRadialControl.h"
 #import "SPLAlerts.h"
+#import "MudMobile-Swift.h"
 
 #define OBS @[ kThemeBackgroundColor, kThemeFontColor ]
 
@@ -178,9 +179,6 @@
                         return [SSBooleanCell cellForTableView:table];
 
                     case SettingsActionRowMoveControl:
-
-                        return [SSSegmentCell cellForTableView:table];
-
                     case SettingsActionRowRadialCommands:
 
                         return [SSBaseTableCell cellForTableView:table];
@@ -215,33 +213,6 @@
         // Shortcuts
         if ([cell isKindOfClass:[SSBooleanCell class]]) {
             [strongSelf configureBooleanCell:(SSBooleanCell *)cell atIndexPath:indexPath];
-            return;
-        } else if ([cell isKindOfClass:[SSSegmentCell class]]) {
-            NSString *label = NSLocalizedString(@"MOVE_CONTROL", @"Move Control");
-
-            [(SSSegmentCell *)cell configureWithLabel:label
-                                             segments:@[ NSLocalizedString(@"LEFT", nil),
-                                                         NSLocalizedString(@"OFF", nil),
-                                                         NSLocalizedString(@"RIGHT", nil) ]
-                                        selectedIndex:[[[NSUserDefaults standardUserDefaults]
-                                                        objectForKey:kPrefMoveControl] integerValue]
-                                        changeHandler:^(NSInteger index) {
-                                            __strong typeof(weakSelf) strongSelf2 = weakSelf;
-                                            [[NSNotificationCenter defaultCenter] removeObserver:strongSelf2
-                                                                                            name:NSUserDefaultsDidChangeNotification
-                                                                                          object:nil];
-
-                                            [SSRadialControl updateRadialPreference:kPrefMoveControl
-                                                                         toPosition:(SSRadialControlPosition)index];
-
-                                            [[NSNotificationCenter defaultCenter] addObserver:strongSelf2
-                                                                                     selector:@selector(userDefaultsChanged:)
-                                                                                         name:NSUserDefaultsDidChangeNotification
-                                                                                       object:nil];
-                                        }];
-
-            [SSThemes configureCell:cell];
-
             return;
         }
 
@@ -288,6 +259,13 @@
 
                     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
                     cell.textLabel.text = NSLocalizedString(@"ADVANCED", @"Advanced");
+
+                    [SSThemes configureCell:cell];
+
+                } else if (indexPath.row == SettingsActionRowMoveControl) {
+
+                    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+                    cell.textLabel.text = NSLocalizedString(@"MOVE_CONTROL", nil);
 
                     [SSThemes configureCell:cell];
 
@@ -481,6 +459,9 @@
             switch( indexPath.row ) {
                 case SettingsActionRowAdvanced:
                     nextVC = [SSAdvSettingsController new];
+                    break;
+                case SettingsActionRowMoveControl:
+                    nextVC = [SPLMoveControlEditor new];
                     break;
                 case SettingsActionRowRadialCommands:
                     nextVC = [SPLRadialEditor new];

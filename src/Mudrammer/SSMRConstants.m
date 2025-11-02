@@ -35,6 +35,7 @@ NSString * const kPrefInputKeepsCommands        = @"InputKeepsCommands";
 NSString * const kPrefKeyboardStyle             = @"Keyboard-Style";
 NSString * const kPrefRadialControl             = @"Radial-Control";
 NSString * const kPrefRadialCommands            = @"Radial-Commands";
+NSString * const kPrefMoveCommands              = @"Move-Commands";
 NSString * const kPrefAutocorrect               = @"Autocorrect-Enabled";
 NSString * const kPrefMoveControl               = @"MovementControl";
 NSString * const kPrefLocalEcho                 = @"Local-Echo";

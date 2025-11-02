@@ -13,6 +13,14 @@
 #import <Masonry/Masonry.h>
 #import "UIViewController+Additions.h"
 
+// Required for SPLMoveControlEditor
+#import "SSSectionedDataSource.h"
+#import "SSSection.h"
+#import "SSSegmentCell.h"
+#import "SSTextEntryCell.h"
+#import "SSBaseTableCell.h"
+#import "SSRadialControl.h"
+
 // Required for SSClientContainer
 #import <JASidePanelController.h>
 #import <FBKVOController.h>

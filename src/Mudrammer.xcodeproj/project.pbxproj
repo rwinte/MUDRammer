@@ -127,6 +127,7 @@
 		C46D73F32EB6D5110041182C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C46D73F22EB6D5110041182C /* LaunchScreen.storyboard */; };
 		C4751E9A2EB7DC10005690F5 /* SSWelcomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4751E992EB7DC10005690F5 /* SSWelcomeViewController.swift */; };
 		C4751E9C2EB7E4F8005690F5 /* SSClientContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4751E9B2EB7E4F8005690F5 /* SSClientContainer.swift */; };
+		C4751E9E2EB7EF45005690F5 /* SPLMoveControlEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4751E9D2EB7EF45005690F5 /* SPLMoveControlEditor.swift */; };
 		C48016B12CA251D900589610 /* SPLNotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C48016B02CA251D900589610 /* SPLNotificationManager.swift */; };
 		C4A3427D2CA0DBF000F581AB /* Pods-MUDRammer-acknowledgements.plist in Resources */ = {isa = PBXBuildFile; fileRef = C4A3427C2CA0DBF000F581AB /* Pods-MUDRammer-acknowledgements.plist */; };
 		CC13CE7D548C1629372672CC /* libPods-MRTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C42E5E36CDA99F1690CF85DE /* libPods-MRTests.a */; };
@@ -462,6 +463,7 @@
 		C46D73F22EB6D5110041182C /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		C4751E992EB7DC10005690F5 /* SSWelcomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SSWelcomeViewController.swift; sourceTree = "<group>"; };
 		C4751E9B2EB7E4F8005690F5 /* SSClientContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SSClientContainer.swift; sourceTree = "<group>"; };
+		C4751E9D2EB7EF45005690F5 /* SPLMoveControlEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SPLMoveControlEditor.swift; sourceTree = "<group>"; };
 		C48016AF2CA251D900589610 /* MUDRammer-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MUDRammer-Bridging-Header.h"; sourceTree = "<group>"; };
 		C48016B02CA251D900589610 /* SPLNotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SPLNotificationManager.swift; sourceTree = "<group>"; };
 		C4A3427C2CA0DBF000F581AB /* Pods-MUDRammer-acknowledgements.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "Pods-MUDRammer-acknowledgements.plist"; path = "Pods/Target Support Files/Pods-MUDRammer/Pods-MUDRammer-acknowledgements.plist"; sourceTree = SOURCE_ROOT; };
@@ -905,6 +907,7 @@
 		5E786E94182211DD00557673 /* Settings */ = {
 			isa = PBXGroup;
 			children = (
+				C4751E9D2EB7EF45005690F5 /* SPLMoveControlEditor.swift */,
 				5E313BAC18E48AAD00623B29 /* SPLRadialEditor.h */,
 				5E313BAD18E48AAD00623B29 /* SPLRadialEditor.m */,
 				5E786E95182211DD00557673 /* SSAdvSettingsController.h */,
@@ -1571,6 +1574,7 @@
 				5E33DA1B17E633D500D2AECA /* SSAliasForm.m in Sources */,
 				5E313BB118E4AD4E00623B29 /* SSTextEntryCell.m in Sources */,
 				5E786EAB182211DD00557673 /* SSWorldListViewController.m in Sources */,
+				C4751E9E2EB7EF45005690F5 /* SPLMoveControlEditor.swift in Sources */,
 				5EEFA597197B514000B62F26 /* SPLFXFormViewController.m in Sources */,
 				5E313BAE18E48AAD00623B29 /* SPLRadialEditor.m in Sources */,
 				E9CAA2B21ABF346D00E36BE3 /* UINavigationController+SPLAdditions.m in Sources */,
