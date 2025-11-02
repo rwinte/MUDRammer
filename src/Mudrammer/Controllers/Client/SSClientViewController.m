@@ -14,7 +14,8 @@
 #import "SSThemePickerController.h"
 #import "SSSettingsViewController.h"
 #import "SSWorldEditViewController.h"
-#import "SSClientContainer.h"
+// #import "SSClientContainer.h" // Now in Swift
+#import "MudMobile-Swift.h"
 #import "SSMUDSocket.h"
 #import "SSConnectButton.h"
 #import "SSSessionLogger.h"

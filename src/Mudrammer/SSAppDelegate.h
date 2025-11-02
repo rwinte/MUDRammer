@@ -8,7 +8,8 @@
 
 @import UIKit;
 #import <SSApplication.h>
-#import "MudMobile-Swift.h"
+
+@class SPLNotificationManager;
 
 @interface SSAppDelegate : SSApplication
 

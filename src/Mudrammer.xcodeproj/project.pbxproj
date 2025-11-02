@@ -53,7 +53,6 @@
 		5E786E7E1822102700557673 /* SSMUDSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E786E7B1822102700557673 /* SSMUDSocket.m */; };
 		5E786E851822104900557673 /* UIViewController+Additions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E786E831822104900557673 /* UIViewController+Additions.m */; };
 		5E786E8B1822115500557673 /* Worlds.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 5E786E881822115500557673 /* Worlds.xcdatamodeld */; };
-		5E786EA4182211DD00557673 /* SSClientContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E786E91182211DD00557673 /* SSClientContainer.m */; };
 		5E786EA5182211DD00557673 /* SSClientViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E786E93182211DD00557673 /* SSClientViewController.m */; };
 		5E786EA6182211DD00557673 /* SSAdvSettingsController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E786E96182211DD00557673 /* SSAdvSettingsController.m */; };
 		5E786EA7182211DD00557673 /* SSSettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E786E98182211DD00557673 /* SSSettingsViewController.m */; };
@@ -61,7 +60,6 @@
 		5E786EA9182211DD00557673 /* SSThemePickerController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E786E9C182211DD00557673 /* SSThemePickerController.m */; };
 		5E786EAA182211DD00557673 /* SSWorldEditViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E786E9E182211DD00557673 /* SSWorldEditViewController.m */; };
 		5E786EAB182211DD00557673 /* SSWorldListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E786EA0182211DD00557673 /* SSWorldListViewController.m */; };
-		5E786EAC182211DD00557673 /* SSWelcomeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E786EA2182211DD00557673 /* SSWelcomeViewController.m */; };
 		5E786ED11822122B00557673 /* SSConnectButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E786EB21822122B00557673 /* SSConnectButton.m */; };
 		5E786ED31822122B00557673 /* SSRadialControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E786EB71822122B00557673 /* SSRadialControl.m */; };
 		5E786ED41822122B00557673 /* SSStashButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E786EB91822122B00557673 /* SSStashButton.m */; };
@@ -127,6 +125,8 @@
 		5F64D7414C78EB5AD5C4D674 /* SSColorValueTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = FFBA7D79175A557725E81D53 /* SSColorValueTransformer.m */; };
 		8B4C63B8FC634F8484A80D86 /* SSSceneDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = ECB9A4553028442C9B714B1F /* SSSceneDelegate.m */; };
 		C46D73F32EB6D5110041182C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C46D73F22EB6D5110041182C /* LaunchScreen.storyboard */; };
+		C4751E9A2EB7DC10005690F5 /* SSWelcomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4751E992EB7DC10005690F5 /* SSWelcomeViewController.swift */; };
+		C4751E9C2EB7E4F8005690F5 /* SSClientContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4751E9B2EB7E4F8005690F5 /* SSClientContainer.swift */; };
 		C48016B12CA251D900589610 /* SPLNotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C48016B02CA251D900589610 /* SPLNotificationManager.swift */; };
 		C4A3427D2CA0DBF000F581AB /* Pods-MUDRammer-acknowledgements.plist in Resources */ = {isa = PBXBuildFile; fileRef = C4A3427C2CA0DBF000F581AB /* Pods-MUDRammer-acknowledgements.plist */; };
 		CC13CE7D548C1629372672CC /* libPods-MRTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C42E5E36CDA99F1690CF85DE /* libPods-MRTests.a */; };
@@ -338,8 +338,6 @@
 		5E786E87182210FF00557673 /* SSModels.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SSModels.h; sourceTree = "<group>"; };
 		5E786E891822115500557673 /* Worlds 2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "Worlds 2.xcdatamodel"; sourceTree = "<group>"; };
 		5E786E8A1822115500557673 /* Worlds.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Worlds.xcdatamodel; sourceTree = "<group>"; };
-		5E786E90182211DD00557673 /* SSClientContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSClientContainer.h; sourceTree = "<group>"; };
-		5E786E91182211DD00557673 /* SSClientContainer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSClientContainer.m; sourceTree = "<group>"; };
 		5E786E92182211DD00557673 /* SSClientViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSClientViewController.h; sourceTree = "<group>"; };
 		5E786E93182211DD00557673 /* SSClientViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSClientViewController.m; sourceTree = "<group>"; };
 		5E786E95182211DD00557673 /* SSAdvSettingsController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSAdvSettingsController.h; sourceTree = "<group>"; };
@@ -354,8 +352,6 @@
 		5E786E9E182211DD00557673 /* SSWorldEditViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSWorldEditViewController.m; sourceTree = "<group>"; };
 		5E786E9F182211DD00557673 /* SSWorldListViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSWorldListViewController.h; sourceTree = "<group>"; };
 		5E786EA0182211DD00557673 /* SSWorldListViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSWorldListViewController.m; sourceTree = "<group>"; };
-		5E786EA1182211DD00557673 /* SSWelcomeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSWelcomeViewController.h; sourceTree = "<group>"; };
-		5E786EA2182211DD00557673 /* SSWelcomeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSWelcomeViewController.m; sourceTree = "<group>"; };
 		5E786EB11822122B00557673 /* SSConnectButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSConnectButton.h; sourceTree = "<group>"; };
 		5E786EB21822122B00557673 /* SSConnectButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSConnectButton.m; sourceTree = "<group>"; };
 		5E786EB31822122B00557673 /* SSMudHistoryControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSMudHistoryControl.h; sourceTree = "<group>"; };
@@ -464,6 +460,8 @@
 		5FDCD2B230AE6EC1850504E2 /* Pods-MRTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MRTests.release.xcconfig"; path = "Target Support Files/Pods-MRTests/Pods-MRTests.release.xcconfig"; sourceTree = "<group>"; };
 		C42E5E36CDA99F1690CF85DE /* libPods-MRTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-MRTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		C46D73F22EB6D5110041182C /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
+		C4751E992EB7DC10005690F5 /* SSWelcomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SSWelcomeViewController.swift; sourceTree = "<group>"; };
+		C4751E9B2EB7E4F8005690F5 /* SSClientContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SSClientContainer.swift; sourceTree = "<group>"; };
 		C48016AF2CA251D900589610 /* MUDRammer-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MUDRammer-Bridging-Header.h"; sourceTree = "<group>"; };
 		C48016B02CA251D900589610 /* SPLNotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SPLNotificationManager.swift; sourceTree = "<group>"; };
 		C4A3427C2CA0DBF000F581AB /* Pods-MUDRammer-acknowledgements.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "Pods-MUDRammer-acknowledgements.plist"; path = "Pods/Target Support Files/Pods-MUDRammer/Pods-MUDRammer-acknowledgements.plist"; sourceTree = SOURCE_ROOT; };
@@ -871,12 +869,11 @@
 		5E786E8C182211DD00557673 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				C4751E992EB7DC10005690F5 /* SSWelcomeViewController.swift */,
 				5E786E8F182211DD00557673 /* Client */,
 				5E786E94182211DD00557673 /* Settings */,
 				E9CAA2AB1ABE084800E36BE3 /* SPLHandoffWebViewController.h */,
 				E9CAA2AC1ABE084800E36BE3 /* SPLHandoffWebViewController.m */,
-				5E786EA1182211DD00557673 /* SSWelcomeViewController.h */,
-				5E786EA2182211DD00557673 /* SSWelcomeViewController.m */,
 				C48016B02CA251D900589610 /* SPLNotificationManager.swift */,
 				C48016AF2CA251D900589610 /* MUDRammer-Bridging-Header.h */,
 			);
@@ -886,8 +883,7 @@
 		5E786E8F182211DD00557673 /* Client */ = {
 			isa = PBXGroup;
 			children = (
-				5E786E90182211DD00557673 /* SSClientContainer.h */,
-				5E786E91182211DD00557673 /* SSClientContainer.m */,
+				C4751E9B2EB7E4F8005690F5 /* SSClientContainer.swift */,
 				5E786E92182211DD00557673 /* SSClientViewController.h */,
 				5E786E93182211DD00557673 /* SSClientViewController.m */,
 				E9BD4C3A1A46487B00AEE3D0 /* SSClientViewController+Interactions.h */,
@@ -1561,7 +1557,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				5E591C8A1634C80C00F2EB9F /* main.m in Sources */,
-				5E786EAC182211DD00557673 /* SSWelcomeViewController.m in Sources */,
 				5E591C8E1634C80C00F2EB9F /* SSAppDelegate.m in Sources */,
 				8B4C63B8FC634F8484A80D86 /* SSSceneDelegate.m in Sources */,
 				5E786EA5182211DD00557673 /* SSClientViewController.m in Sources */,
@@ -1599,6 +1594,7 @@
 				5E786E781822100300557673 /* World.m in Sources */,
 				5E786EA6182211DD00557673 /* SSAdvSettingsController.m in Sources */,
 				5E33DA1817E62B6800D2AECA /* SSTriggerForm.m in Sources */,
+				C4751E9C2EB7E4F8005690F5 /* SSClientContainer.swift in Sources */,
 				5E786ED31822122B00557673 /* SSRadialControl.m in Sources */,
 				5E7E48AB17ECBBA700682574 /* SSColorPickerElement.m in Sources */,
 				5E786E6818220FED00557673 /* UIApplication+Additions.m in Sources */,
@@ -1618,10 +1614,10 @@
 				E927EECE1A06CFF30093365D /* SPLAlerts.m in Sources */,
 				5EEFA59D197C528200B62F26 /* SPLFXWorldEditor.m in Sources */,
 				5E786E751822100300557673 /* Gag.m in Sources */,
+				C4751E9A2EB7DC10005690F5 /* SSWelcomeViewController.swift in Sources */,
 				5EEFA59A197B59B000B62F26 /* SPLWorldTickerManager.m in Sources */,
 				5E33DA1E17E6342800D2AECA /* SSGagForm.m in Sources */,
 				5E786ED81822122B00557673 /* SSThemeCell.m in Sources */,
-				5E786EA4182211DD00557673 /* SSClientContainer.m in Sources */,
 				5E786EAA182211DD00557673 /* SSWorldEditViewController.m in Sources */,
 				5E786EA7182211DD00557673 /* SSSettingsViewController.m in Sources */,
 				5E786E7E1822102700557673 /* SSMUDSocket.m in Sources */,
@@ -1960,7 +1956,7 @@
 				GCC_WARN_UNUSED_LABEL = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"/Users/bob/code/libtelnet ",
+					/Users/bob/code/libtelnet,
 				);
 				INFOPLIST_FILE = "Mudrammer/Supporting Files/Mudrammer-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
@@ -2066,7 +2062,7 @@
 				GCC_WARN_UNUSED_LABEL = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"/Users/bob/code/libtelnet ",
+					/Users/bob/code/libtelnet,
 				);
 				INFOPLIST_FILE = "Mudrammer/Supporting Files/Mudrammer-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.6;

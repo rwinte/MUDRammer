@@ -6,7 +6,8 @@
 //
 
 #import "SSSceneDelegate.h"
-#import "SSClientContainer.h"
+// #import "SSClientContainer.h" // Now in Swift
+#import "MudMobile-Swift.h"
 
 @implementation SSSceneDelegate
 

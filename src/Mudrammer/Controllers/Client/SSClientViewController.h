@@ -7,6 +7,7 @@
 //
 
 @import UIKit;
+@import CoreData;
 
 @protocol SSClientDelegate;
 @class SSMudView, SSMUDSocket;

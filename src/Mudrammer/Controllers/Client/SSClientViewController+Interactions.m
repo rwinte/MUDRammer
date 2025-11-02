@@ -10,7 +10,8 @@
 #import "SSMudView.h"
 #import "SSMUDSocket.h"
 #import <BlocksKit.h>
-#import "SSClientContainer.h"
+// #import "SSClientContainer.h" // Now in Swift
+#import "MudMobile-Swift.h"
 #import "SSWorldDisplayController.h"
 #import "SSMUDToolbar.h"
 

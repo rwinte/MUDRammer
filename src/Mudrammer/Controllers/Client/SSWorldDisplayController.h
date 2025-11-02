@@ -7,8 +7,10 @@
 //
 
 @import UIKit;
+@import CoreData;
 
-#import "SSClientContainer.h"
+// #import "SSClientContainer.h" // Now in Swift
+@class SSClientContainer;
 #import "SSClientViewController.h"
 
 extern CGFloat const kWorldDisplayWidth;

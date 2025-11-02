@@ -7,7 +7,7 @@
 //
 
 #import "SSAppDelegate.h"
-#import "SSClientContainer.h"
+// #import "SSClientContainer.h" // Now in Swift
 #import <UserVoice.h>
 #import "SSRadialControl.h"
 #import "SSWorldDisplayController.h"
@@ -16,6 +16,9 @@
 // #import <ARAnalytics/ARAnalytics.h> // ARAnalytics removed - HockeyApp is deprecated/shutdown
 #import <Keys/MudrammerKeys.h>
 #import "SSColorValueTransformer.h"
+
+// Import Swift module to access SSClientContainer
+#import "MudMobile-Swift.h"
 
 @interface SSAppDelegate ()
 + (void) setupCoreData;

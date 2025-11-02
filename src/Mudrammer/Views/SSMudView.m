@@ -19,6 +19,8 @@
 #import "SSTextViewCell.h"
 #import "NSAttributedString+SPLAdditions.h"
 #import <SAMRateLimit.h>
+// Import Swift module to access MudHistoryControl
+#import "MudMobile-Swift.h"
 
 @interface SSMudView () <SSRadialDelegate, SSMUDToolbarDelegate>
 

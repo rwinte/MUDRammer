@@ -12,6 +12,8 @@
 #import <SSDataSources.h>
 #import <Masonry.h>
 #import "SPLCheckMarkView.h"
+// Import Swift module to access SSClientContainer
+#import "MudMobile-Swift.h"
 
 CGFloat const kWorldHeaderHeight = 20.0f;
 CGFloat const kWorldDisplayWidth = 220;

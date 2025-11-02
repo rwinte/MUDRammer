@@ -8,7 +8,8 @@
 
 #import "MRTestHelpers.h"
 #import "SSWorldDisplayController.h"
-#import "SSClientContainer.h"
+// #import "SSClientContainer.h" // Now in Swift
+#import "MudMobile-Swift.h"
 
 @interface MRWorldDisplayTests : XCTestCase
 
