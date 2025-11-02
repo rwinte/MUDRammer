@@ -198,6 +198,7 @@ static NSString * const kSSMUDSocketTelnetErrorDomain = @"com.splinesoft.mudramm
 #pragma mark - GCDAsyncSocketDelegate
 
 - (void)socketDidSecure:(GCDAsyncSocket *)sock {
+    DLog(@"[CONNECTION DEBUG] SSL handshake completed successfully");
     SSAttributedLineGroup *secureLine = [SSAttributedLineGroup lineGroupWithAttributedString:
                                          [NSAttributedString worldStringForString:NSLocalizedString(@"SSL_SUCCESS", nil)]];
 
@@ -205,6 +206,13 @@ static NSString * const kSSMUDSocketTelnetErrorDomain = @"com.splinesoft.mudramm
     dispatch_async(dispatch_get_main_queue(), ^{
         [del mudsocket:self didReceiveAttributedLineGroup:secureLine];
     });
+
+    // NOW it's safe to send telnet negotiation and start reading - SSL is established
+    DLog(@"[CONNECTION DEBUG] Starting telnet negotiation over secure connection");
+    [self.telnetLib socketDidConnect];
+
+    DLog(@"[CONNECTION DEBUG] Starting to read from secure socket");
+    [sock readFromSocket];
 }
 
 - (void)socket:(GCDAsyncSocket *)sock didConnectToHost:(NSString *)host port:(uint16_t)port {
@@ -224,12 +232,25 @@ static NSString * const kSSMUDSocketTelnetErrorDomain = @"com.splinesoft.mudramm
     // Reset default string color
     self.ansiEngine.defaultTextColor = [[SSThemes sharedThemer] valueForThemeKey:kThemeFontColor];
 
+    // Clear saved options
+    self.dataCache = [NSMutableString new];
+
+    // inform delegate
+    [self informDelegateWithSelector:@selector(mudsocketDidConnectToHost:)
+                              object:nil];
+
     // try to enable SSL
+    // IMPORTANT: We must NOT send telnet data or start reading before SSL negotiation completes
+    // Otherwise unencrypted data is sent before SSL starts, causing error -9806
     id del = self.delegate;
-    if ([del respondsToSelector:@selector(mudsocketShouldAttemptSSL:)]) {
+    BOOL shouldCheckSSL = [del respondsToSelector:@selector(mudsocketShouldAttemptSSL:)];
+
+    if (shouldCheckSSL) {
+        DLog(@"[CONNECTION DEBUG] Checking if SSL should be attempted...");
         dispatch_async(dispatch_get_main_queue(), ^{
-            if ([del mudsocketShouldAttemptSSL:self]) {
-                DLog(@"ATTEMPTING SSL");
+            BOOL needsSSL = [del mudsocketShouldAttemptSSL:self];
+            if (needsSSL) {
+                DLog(@"[CONNECTION DEBUG] ATTEMPTING SSL - handshake starting");
                 [sock startTLS:@{
                      (SPLSOCKET_BRIDGE_STRING)kCFStreamSSLLevel                     : (SPLSOCKET_BRIDGE_STRING)kCFStreamSocketSecurityLevelNegotiatedSSL,
         #pragma clang diagnostic push
@@ -240,24 +261,27 @@ static NSString * const kSSMUDSocketTelnetErrorDomain = @"com.splinesoft.mudramm
         #pragma clang diagnostic pop
                      (SPLSOCKET_BRIDGE_STRING)kCFStreamSSLValidatesCertificateChain : (SPLSOCKET_BRIDGE_NUMBER)kCFBooleanTrue,
                 }];
+                // Don't call telnetLib socketDidConnect or start reading - wait for socketDidSecure callback
+                DLog(@"[CONNECTION DEBUG] Waiting for SSL handshake to complete before sending telnet negotiation");
+            } else {
+                DLog(@"[CONNECTION DEBUG] SSL NOT required - starting telnet negotiation and reading immediately");
+                [self.telnetLib socketDidConnect];
+                [sock readFromSocket];
             }
         });
+    } else {
+        DLog(@"[CONNECTION DEBUG] SSL check not available - starting telnet negotiation and reading immediately");
+        [self.telnetLib socketDidConnect];
+        [sock readFromSocket];
     }
-
-    // Clear saved options
-    self.dataCache = [NSMutableString new];
-
-    [self.telnetLib socketDidConnect];
-
-    // inform delegate
-    [self informDelegateWithSelector:@selector(mudsocketDidConnectToHost:)
-                              object:nil];
-
-    // Start reading!
-    [sock readFromSocket];
 }
 
-- (void)socketDidDisconnect:(SSMUDSocket *)sock withError:(NSError *)err {
+- (void)socketDidDisconnect:(GCDAsyncSocket *)sock withError:(NSError *)err {
+    DLog(@"[CONNECTION DEBUG] socketDidDisconnect called - error: %@", err);
+    if (err) {
+        DLog(@"[CONNECTION DEBUG] Error domain: %@, code: %ld, description: %@",
+             err.domain, (long)err.code, err.localizedDescription);
+    }
     __weak typeof(self) weakSelf = self;
     [self.parsingQueue ss_addBlockOperationWithBlock:^(SSBlockOperation *operation) {
         __strong typeof(weakSelf) strongSelf = weakSelf; (void)strongSelf;
@@ -268,17 +292,20 @@ static NSString * const kSSMUDSocketTelnetErrorDomain = @"com.splinesoft.mudramm
 }
 
 - (void)socket:(GCDAsyncSocket *)sock didReadData:(NSData *)data withTag:(long)tag {
+    DLog(@"[CONNECTION DEBUG] didReadData called - received %@ bytes from socket", @([data length]));
     __weak typeof(self) weakSelf = self;
 
     [self.parsingQueue ss_addBlockOperationWithBlock:^(SSBlockOperation *operation) {
         __strong typeof(weakSelf) strongSelf = weakSelf; (void)strongSelf;
         if ([operation isCancelled]) {
+            DLog(@"[CONNECTION DEBUG] Parsing operation cancelled for %@ bytes", @([data length]));
             return;
         }
 
         // Initiate telnet library processing
         DLog(@"RCV %@ bytes", @([data length]));
         [self.telnetLib receivedSocketData:data];
+        DLog(@"[CONNECTION DEBUG] Data passed to telnet library for processing");
     }];
 
     // Continue reading
@@ -319,8 +346,10 @@ static NSString * const kSSMUDSocketTelnetErrorDomain = @"com.splinesoft.mudramm
 }
 
 - (void)telnetLibrary:(SPLTelnetLib *)library shouldPrintString:(NSString *)string {
+    DLog(@"[CONNECTION DEBUG] telnetLibrary:shouldPrintString called - processing %lu characters", (unsigned long)[string length]);
     [self.parsingQueue ss_addBlockOperationWithBlock:^(SSBlockOperation *operation) {
         if ([string length] == 0 || [operation isCancelled]) {
+            DLog(@"[CONNECTION DEBUG] Skipping empty or cancelled string");
             return;
         }
 
@@ -328,6 +357,7 @@ static NSString * const kSSMUDSocketTelnetErrorDomain = @"com.splinesoft.mudramm
         NSString *fullStr = [self stringBySplittingAndCachingString:string];
 
         if ([fullStr length] == 0 || [operation isCancelled]) {
+            DLog(@"[CONNECTION DEBUG] String empty after caching/splitting or operation cancelled");
             return;
         }
 
@@ -335,14 +365,18 @@ static NSString * const kSSMUDSocketTelnetErrorDomain = @"com.splinesoft.mudramm
         SSAttributedLineGroup *group = [self.ansiEngine parseANSIString:fullStr];
 
         if ([operation isCancelled]) {
+            DLog(@"[CONNECTION DEBUG] Operation cancelled after ANSI parsing");
             return;
         }
 
+        DLog(@"[CONNECTION DEBUG] Dispatching attributed line group to delegate (UI)");
         id del = self.delegate;
         if ([del respondsToSelector:@selector(mudsocket:didReceiveAttributedLineGroup:)]) {
             dispatch_async( dispatch_get_main_queue(), ^{
                 [del mudsocket:self didReceiveAttributedLineGroup:group];
             });
+        } else {
+            DLog(@"[CONNECTION DEBUG] WARNING: Delegate does not respond to didReceiveAttributedLineGroup!");
         }
     }];
 }
