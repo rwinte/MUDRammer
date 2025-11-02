@@ -124,6 +124,7 @@
 		5EF10BFF173D635900154A2B /* SSMRConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EF10BFE173D635900154A2B /* SSMRConstants.m */; };
 		5EF7691416A212FE004D291E /* DefaultWorlds.plist in Resources */ = {isa = PBXBuildFile; fileRef = 5EF7691316A212FE004D291E /* DefaultWorlds.plist */; };
 		5EFC45CC19F3263C00D0CB2B /* FiraMono.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5EFC45CB19F3263C00D0CB2B /* FiraMono.ttf */; };
+		5F64D7414C78EB5AD5C4D674 /* SSColorValueTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = FFBA7D79175A557725E81D53 /* SSColorValueTransformer.m */; };
 		8B4C63B8FC634F8484A80D86 /* SSSceneDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = ECB9A4553028442C9B714B1F /* SSSceneDelegate.m */; };
 		C46D73F32EB6D5110041182C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C46D73F22EB6D5110041182C /* LaunchScreen.storyboard */; };
 		C48016B12CA251D900589610 /* SPLNotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C48016B02CA251D900589610 /* SPLNotificationManager.swift */; };
@@ -466,6 +467,7 @@
 		C48016AF2CA251D900589610 /* MUDRammer-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MUDRammer-Bridging-Header.h"; sourceTree = "<group>"; };
 		C48016B02CA251D900589610 /* SPLNotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SPLNotificationManager.swift; sourceTree = "<group>"; };
 		C4A3427C2CA0DBF000F581AB /* Pods-MUDRammer-acknowledgements.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "Pods-MUDRammer-acknowledgements.plist"; path = "Pods/Target Support Files/Pods-MUDRammer/Pods-MUDRammer-acknowledgements.plist"; sourceTree = SOURCE_ROOT; };
+		D2106BD442ED2D9FCD882B46 /* SSColorValueTransformer.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = SSColorValueTransformer.h; sourceTree = "<group>"; };
 		E556503696B1C577CD15083F /* MudHistoryControl.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MudHistoryControl.swift; sourceTree = "<group>"; };
 		E85C140EA2AE65B2F2768CEB /* libPods-MUDRammer.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-MUDRammer.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E903E73D1B41BAE800F07B10 /* MRStringMatchingTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MRStringMatchingTests.m; sourceTree = "<group>"; };
@@ -596,6 +598,7 @@
 		E9ED95661B0E5F960065C7F2 /* youfailedme.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = youfailedme.wav; sourceTree = "<group>"; };
 		ECB9A4553028442C9B714B1F /* SSSceneDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SSSceneDelegate.m; sourceTree = "<group>"; };
 		F64258642A5B17FB1ED3BE20 /* MudHistoryControlTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MudHistoryControlTests.swift; sourceTree = "<group>"; };
+		FFBA7D79175A557725E81D53 /* SSColorValueTransformer.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = SSColorValueTransformer.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -842,6 +845,8 @@
 				5E786E721822100300557673 /* World.h */,
 				5E786E731822100300557673 /* World.m */,
 				5E786E881822115500557673 /* Worlds.xcdatamodeld */,
+				D2106BD442ED2D9FCD882B46 /* SSColorValueTransformer.h */,
+				FFBA7D79175A557725E81D53 /* SSColorValueTransformer.m */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -1248,7 +1253,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
 				CLASSPREFIX = SPL;
-				LastUpgradeCheck = 1600;
+				LastUpgradeCheck = 2600;
 				ORGANIZATIONNAME = "splinesoft LLC";
 				TargetAttributes = {
 					5E4F3CCD198D98650041A436 = {
@@ -1482,6 +1487,7 @@
 			);
 			name = "Generate Asset Catalog Class";
 			outputPaths = (
+				"$(DERIVED_FILE_DIR)/asset-catalog-generated.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -1496,6 +1502,7 @@
 			);
 			name = "Warn about TODO and FIXME";
 			outputPaths = (
+				"$(DERIVED_FILE_DIR)/todo-fixme-warnings.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -1642,6 +1649,7 @@
 				5E7E48B817ECC13500682574 /* SSPortElement.m in Sources */,
 				E9C9F0421A87F40A0046BA23 /* NSCharacterSet+SPLAdditions.m in Sources */,
 				F2B095F12D604A702208B7F9 /* MudHistoryControl.swift in Sources */,
+				5F64D7414C78EB5AD5C4D674 /* SSColorValueTransformer.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1791,6 +1799,7 @@
 		5E591C951634C80C00F2EB9F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
@@ -1840,6 +1849,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				SCAN_ALL_SOURCE_FILES_FOR_INCLUDES = YES;
 				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -1847,6 +1857,7 @@
 		5E591C961634C80C00F2EB9F /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
@@ -1886,6 +1897,8 @@
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
 				SCAN_ALL_SOURCE_FILES_FOR_INCLUDES = YES;
 				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -1947,7 +1960,7 @@
 				GCC_WARN_UNUSED_LABEL = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Users/bob/code/libtelnet,
+					"/Users/bob/code/libtelnet ",
 				);
 				INFOPLIST_FILE = "Mudrammer/Supporting Files/Mudrammer-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
@@ -2053,7 +2066,7 @@
 				GCC_WARN_UNUSED_LABEL = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Users/bob/code/libtelnet,
+					"/Users/bob/code/libtelnet ",
 				);
 				INFOPLIST_FILE = "Mudrammer/Supporting Files/Mudrammer-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.6;

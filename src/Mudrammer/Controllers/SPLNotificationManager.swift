@@ -37,7 +37,13 @@ import UserNotifications
             await registerForNotifications()
         }
     }
-    
+
+    @objc func scheduleTimeoutNotificationFromObjC() {
+        Task {
+            await scheduleTimeoutNotification()
+        }
+    }
+
     @objc func scheduleTimeoutNotification() async {
         if !askedForLocalNotifications {
             await registerForNotifications()

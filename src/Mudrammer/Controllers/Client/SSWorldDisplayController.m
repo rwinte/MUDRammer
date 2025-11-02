@@ -478,8 +478,7 @@ forHeaderFooterViewReuseIdentifier:[SSBaseHeaderFooterView identifier]];
 - (void)applicationDidEnterBackground:(NSNotification *)notification {
     for (NSInteger i = 0; i < [self numberOfClients]; i++) {
         if ([[self clientAtIndex:i] isConnected]) {
-            // TODO: Fix async call to scheduleTimeoutNotification
-            // [[SSAppDelegate sharedApplication].notificationObserver scheduleTimeoutNotification];
+            [[SSAppDelegate sharedApplication].notificationObserver scheduleTimeoutNotificationFromObjC];
             return;
         }
     }

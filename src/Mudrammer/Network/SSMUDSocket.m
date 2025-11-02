@@ -18,6 +18,8 @@
 #define SPLSOCKET_BRIDGE_STRING __bridge NSString *
 #define SPLSOCKET_BRIDGE_NUMBER __bridge NSNumber *
 
+static NSString * const kSSMUDSocketTelnetErrorDomain = @"com.splinesoft.mudrammer.telnet";
+
 @interface GCDAsyncSocket (SPLAdditions)
 
 - (void) readFromSocket;
@@ -298,7 +300,16 @@
 
 - (void)telnetLibrary:(SPLTelnetLib *)library encounteredFatalError:(NSString *)error {
     DLog(@"Fatal telnet error: %@", error);
-    // TODO: surface this error to the user
+
+    // Create an NSError to surface this to the user
+    NSError *telnetError = [NSError errorWithDomain:kSSMUDSocketTelnetErrorDomain
+                                               code:1
+                                           userInfo:@{NSLocalizedDescriptionKey: error ?: @"Unknown telnet error"}];
+
+    // Notify delegate of the error before disconnecting
+    [self informDelegateWithSelector:@selector(mudsocket:didDisconnectWithError:)
+                              object:telnetError];
+
     [self.socket disconnect];
 }
 

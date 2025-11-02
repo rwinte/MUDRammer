@@ -15,6 +15,7 @@
 // #import <HockeySDK.h>
 // #import <ARAnalytics/ARAnalytics.h> // ARAnalytics removed - HockeyApp is deprecated/shutdown
 #import <Keys/MudrammerKeys.h>
+#import "SSColorValueTransformer.h"
 
 @interface SSAppDelegate ()
 + (void) setupCoreData;
@@ -25,6 +26,11 @@
 #pragma mark - setup and scaffolding
 
 + (void)setupCoreData {
+    // Register secure value transformer for UIColor before setting up Core Data
+    SSColorValueTransformer *transformer = [[SSColorValueTransformer alloc] init];
+    [NSValueTransformer setValueTransformer:transformer
+                                    forName:NSStringFromClass([SSColorValueTransformer class])];
+
 #ifdef DEBUG
     [MagicalRecord setLoggingLevel:MagicalRecordLoggingLevelAll];
 #else
